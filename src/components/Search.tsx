@@ -21,6 +21,7 @@ export default class Search extends Component<Props, State> {
 
   handleSearch = () => {
     const trimmed = this.state.term.trim();
+    console.log(trimmed);
     localStorage.setItem('searchTerm', trimmed);
     this.props.onSearch?.(trimmed);
   };
@@ -31,7 +32,7 @@ export default class Search extends Component<Props, State> {
         <input
           value={this.state.term}
           onChange={this.handleChange}
-          placeholder="Search..."
+          placeholder="Search characters (e.g. Rick, Morty)..."
         />
         <button onClick={this.handleSearch}>Search</button>
       </div>

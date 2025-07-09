@@ -1,7 +1,11 @@
 import { Component } from 'react';
 import Search from './Search';
 
-export default class Header extends Component {
+interface Props {
+  onSearch?: (term: string) => void;
+}
+
+export default class Header extends Component<Props> {
   throwError = () => {
     throw new Error("Test error triggered!");
   };
@@ -9,7 +13,7 @@ export default class Header extends Component {
   render() {
     return (
       <header>
-        <Search />
+        <Search onSearch={this.props.onSearch} />
         <button onClick={this.throwError}>Throw Error</button>
       </header>
     );
