@@ -1,0 +1,6 @@
+@import './ErrorBoundary.scss';
+@import './Header.scss';
+@import './Search.scss';
+@import './Results.scss';
+@import './Card.scss';
+@import './Loader.scss';

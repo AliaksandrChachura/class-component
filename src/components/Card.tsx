@@ -8,7 +8,7 @@ interface Props {
 export default class Card extends React.Component<Props> {
   render() {
     return (
-      <div>
+      <div className="card">
         <h3>{this.props.name}</h3>
         <p>{this.props.description}</p>
       </div>

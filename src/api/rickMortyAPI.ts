@@ -1,4 +1,3 @@
-// Rick and Morty API - Free, CORS-enabled, supports search and "get all"
 const baseURL = 'https://rickandmortyapi.com/api';
 
 export interface RickMortyResponse {
@@ -39,40 +38,33 @@ export interface CharacterSearchPayload {
 }
 
 export async function fetchCharacters(
-    searchTerm: string = '',
-    pageNumber: number = 1,
-    pageSize: number = 20
+  searchTerm: string = '',
+  pageNumber: number = 1
+  // pageSize: number = 20
 ): Promise<RickMortyResponse> {
-    try {
-        // Build URL - if searchTerm is empty, get all characters, otherwise search
-        let url = `${baseURL}/character`;
-        const params = new URLSearchParams();
-        
-        if (searchTerm && searchTerm.trim()) {
-            params.append('name', searchTerm.trim());
-        }
-        
-        if (pageNumber > 1) {
-            params.append('page', pageNumber.toString());
-        }
+  let url = `${baseURL}/character`;
+  const params = new URLSearchParams();
 
-        if (params.toString()) {
-            url += `?${params.toString()}`;
-        }
+  if (searchTerm && searchTerm.trim()) {
+    params.append('name', searchTerm.trim());
+  }
 
-        const response = await fetch(url, {
-            method: 'GET'
-        });
+  if (pageNumber > 1) {
+    params.append('page', pageNumber.toString());
+  }
 
-        if (!response.ok) {
-            throw new Error('API request failed');
-        }
+  if (params.toString()) {
+    url += `?${params.toString()}`;
+  }
 
-        const data: RickMortyResponse = await response.json();
-        return data;
+  const response = await fetch(url, {
+    method: 'GET',
+  });
 
-    } catch (error) {
-        // Silent error - just rethrow without console messages
-        throw error;
-    }
+  if (!response.ok) {
+    throw new Error('API request failed');
+  }
+
+  const data: RickMortyResponse = await response.json();
+  return data;
 }

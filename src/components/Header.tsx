@@ -7,14 +7,16 @@ interface Props {
 
 export default class Header extends Component<Props> {
   throwError = () => {
-    throw new Error("Test error triggered!");
+    throw new Error('Test error triggered!');
   };
 
   render() {
     return (
-      <header>
+      <header className="header">
         <Search onSearch={this.props.onSearch} />
-        <button onClick={this.throwError}>Throw Error</button>
+        <button className="error-button" onClick={this.throwError}>
+          Throw Error
+        </button>
       </header>
     );
   }

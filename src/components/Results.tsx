@@ -11,15 +11,15 @@ interface State {
   searchTerm: string;
 }
 
-export default class Results extends Component<{}, State> {
-  constructor(props: {}) {
+export default class Results extends Component<Record<string, unknown>, State> {
+  constructor(props: Record<string, unknown>) {
     super(props);
     const savedTerm = localStorage.getItem('searchTerm') || '';
     this.state = {
       loading: false,
       error: null,
       results: [],
-      searchTerm: savedTerm
+      searchTerm: savedTerm,
     };
   }
 
@@ -37,8 +37,8 @@ export default class Results extends Component<{}, State> {
     this.setState({ loading: true, error: null });
     const { searchTerm } = this.state;
 
-    fetchCharacters(searchTerm, 1, 20)
-      .then(data => {
+    fetchCharacters(searchTerm, 1)
+      .then((data) => {
         this.setState({ results: data.results, loading: false });
       })
       .catch(() => {
@@ -50,20 +50,27 @@ export default class Results extends Component<{}, State> {
   render() {
     const { loading, error, results } = this.state;
 
-    if (loading) return <Loader />;
-    if (error) return <div>Error: {error}</div>;
+    if (loading)
+      return (
+        <Loader
+          variant="spinner"
+          size="large"
+          text="Loading Rick and Morty characters..."
+        />
+      );
+    if (error) return <div className="error">Error: {error}</div>;
 
     return (
-      <div>
+      <div className="results">
         <h2>Rick and Morty Characters</h2>
         {results.length === 0 ? (
           <p>No characters found.</p>
         ) : (
           results.map((character) => (
-            <Card 
-              key={character.id} 
-              name={character.name} 
-              description={`${character.species} from ${character.origin.name}. Status: ${character.status}. Currently at: ${character.location.name}`} 
+            <Card
+              key={character.id}
+              name={character.name}
+              description={`${character.species} from ${character.origin.name}. Status: ${character.status}. Currently at: ${character.location.name}`}
             />
           ))
         )}

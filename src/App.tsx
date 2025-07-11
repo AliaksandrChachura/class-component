@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, type ErrorInfo } from 'react';
 import Header from './components/Header';
 import Results from './components/Results';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -8,13 +8,13 @@ interface State {
   searchTerm: string;
 }
 
-export default class App extends Component<{}, State> {
+export default class App extends Component<Record<string, unknown>, State> {
   private resultsRef = React.createRef<Results>();
 
-  constructor(props: {}) {
+  constructor(props: Record<string, unknown>) {
     super(props);
     this.state = {
-      searchTerm: localStorage.getItem('searchTerm') || ''
+      searchTerm: localStorage.getItem('searchTerm') || '',
     };
   }
 
@@ -26,13 +26,16 @@ export default class App extends Component<{}, State> {
     }
   };
 
+  handleError = (error: Error, errorInfo: ErrorInfo) => {
+    console.error('ErrorBoundary caught an error', error, errorInfo);
+  };
+
   render() {
     return (
-      <ErrorBoundary>
+      <ErrorBoundary onError={this.handleError} fallback={<div>Error</div>}>
         <Header onSearch={this.handleSearch} />
         <Results ref={this.resultsRef} />
       </ErrorBoundary>
     );
   }
 }
-

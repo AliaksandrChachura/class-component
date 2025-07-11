@@ -28,7 +28,7 @@ export default class Search extends Component<Props, State> {
 
   render() {
     return (
-      <div>
+      <div className="search">
         <input
           value={this.state.term}
           onChange={this.handleChange}
