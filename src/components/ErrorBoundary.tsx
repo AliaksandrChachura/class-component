@@ -34,24 +34,20 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error details
     console.group('🚨 ErrorBoundary caught an error');
     console.error('Error:', error);
     console.error('Error Info:', errorInfo);
     console.error('Component Stack:', errorInfo.componentStack);
     console.groupEnd();
 
-    // Update state with error info
     this.setState({
       errorInfo,
     });
 
-    // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
 
-    // Report to error tracking service in production
     if (process.env.NODE_ENV === 'production') {
       // Here you could integrate with services like Sentry, LogRocket, etc.
       // reportError(error, errorInfo);
@@ -84,7 +80,6 @@ export default class ErrorBoundary extends Component<Props, State> {
       timestamp: new Date().toISOString(),
     };
 
-    // Create a mailto link with error details
     const subject = encodeURIComponent('Error Report');
     const body = encodeURIComponent(
       `Error Details:\n\n${JSON.stringify(errorData, null, 2)}`

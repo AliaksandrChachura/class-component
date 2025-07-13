@@ -42,7 +42,6 @@ export default class Results extends Component<Record<string, unknown>, State> {
         this.setState({ results: data.results, loading: false });
       })
       .catch(() => {
-        // Silent error handling - no console messages
         this.setState({ error: 'Unable to load characters', loading: false });
       });
   };

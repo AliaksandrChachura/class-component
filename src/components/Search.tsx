@@ -21,7 +21,6 @@ export default class Search extends Component<Props, State> {
 
   handleSearch = () => {
     const trimmed = this.state.term.trim();
-    console.log(trimmed);
     localStorage.setItem('searchTerm', trimmed);
     this.props.onSearch?.(trimmed);
   };

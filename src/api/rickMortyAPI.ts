@@ -40,7 +40,6 @@ export interface CharacterSearchPayload {
 export async function fetchCharacters(
   searchTerm: string = '',
   pageNumber: number = 1
-  // pageSize: number = 20
 ): Promise<RickMortyResponse> {
   let url = `${baseURL}/character`;
   const params = new URLSearchParams();
