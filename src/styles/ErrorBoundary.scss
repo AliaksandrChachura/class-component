@@ -1,0 +1,309 @@
+// ErrorBoundary SCSS Styles
+.error-boundary {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+
+  .error-container {
+    background: white;
+    border-radius: 16px;
+    padding: 3rem;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e2e8f0;
+
+    @media (max-width: 768px) {
+      padding: 2rem;
+      margin: 1rem;
+    }
+  }
+
+  .error-icon {
+    color: #ef4444;
+    margin-bottom: 1.5rem;
+    animation: pulse 2s infinite;
+
+    svg {
+      display: block;
+      margin: 0 auto;
+    }
+  }
+
+  .error-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    line-height: 1.25;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .error-message {
+    font-size: 1.125rem;
+    color: #6b7280;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .retry-info {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: none;
+    min-width: 120px;
+    position: relative;
+    overflow: hidden;
+
+    &:focus {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.btn-primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    &.btn-secondary {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(107, 114, 128, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    &.btn-outline {
+      background: white;
+      border: 2px solid #d1d5db;
+      color: #374151;
+
+      &:hover:not(:disabled) {
+        border-color: #9ca3af;
+        background: #f9fafb;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .error-details {
+    text-align: left;
+    margin-top: 2rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+
+    summary {
+      padding: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: #374151;
+      border-radius: 8px;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: #f3f4f6;
+      }
+
+      &:focus {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+      }
+    }
+
+    .error-info {
+      padding: 0 1rem 1rem;
+      border-top: 1px solid #e5e7eb;
+      margin-top: 0.5rem;
+
+      h4 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 1rem 0 0.5rem;
+
+        &:first-child {
+          margin-top: 0.5rem;
+        }
+      }
+
+      pre {
+        background: #1f2937;
+        color: #f9fafb;
+        padding: 1rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin: 0.5rem 0 1rem;
+        border: 1px solid #374151;
+
+        &::-webkit-scrollbar {
+          height: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #374151;
+          border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #6b7280;
+          border-radius: 4px;
+
+          &:hover {
+            background: #9ca3af;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animation for error icon
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .error-boundary {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+
+    .error-container {
+      background: #374151;
+      border-color: #4b5563;
+      color: #f9fafb;
+    }
+
+    .error-title {
+      color: #f9fafb;
+    }
+
+    .error-message {
+      color: #d1d5db;
+    }
+
+    .retry-info {
+      color: #9ca3af;
+    }
+
+    .btn.btn-outline {
+      background: #374151;
+      border-color: #6b7280;
+      color: #f9fafb;
+
+      &:hover:not(:disabled) {
+        border-color: #9ca3af;
+        background: #4b5563;
+      }
+    }
+
+    .error-details {
+      background: #1f2937;
+      border-color: #4b5563;
+
+      summary {
+        color: #f9fafb;
+
+        &:hover {
+          background: #374151;
+        }
+      }
+
+      .error-info {
+        border-top-color: #4b5563;
+
+        h4 {
+          color: #f9fafb;
+        }
+      }
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .error-boundary {
+    .error-icon {
+      animation: none;
+    }
+
+    .btn {
+      transition: none;
+
+      &:hover:not(:disabled) {
+        transform: none;
+      }
+    }
+  }
+}
