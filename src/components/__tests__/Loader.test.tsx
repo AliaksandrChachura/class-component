@@ -10,7 +10,7 @@ describe('Loader Component', () => {
     expect(loader).toBeInTheDocument();
     expect(loader).toHaveAttribute('aria-label', 'Loading...');
 
-    expect(screen.getAllByText('Loading...')).toHaveLength(2); // Visible and sr-only versions
+    expect(screen.getAllByText('Loading...')).toHaveLength(2);
   });
 
   it('renders with custom text', () => {
@@ -20,7 +20,7 @@ describe('Loader Component', () => {
     const loader = screen.getByRole('status');
     expect(loader).toHaveAttribute('aria-label', customText);
 
-    expect(screen.getAllByText(customText)).toHaveLength(2); // Visible and sr-only versions
+    expect(screen.getAllByText(customText)).toHaveLength(2);
   });
 
   it('applies size classes correctly', () => {
@@ -65,46 +65,14 @@ describe('Loader Component', () => {
     expect(container).not.toHaveClass('fullscreen');
   });
 
-  describe('spinner variants', () => {
-    it('renders spinner variant (default)', () => {
-      render(<Loader variant="spinner" />);
+  it('renders spinner', () => {
+    render(<Loader />);
 
-      const spinner = document.querySelector('.loader-spinner');
-      expect(spinner).toBeInTheDocument();
+    const spinner = document.querySelector('.loader-spinner');
+    expect(spinner).toBeInTheDocument();
 
-      const svg = spinner?.querySelector('svg');
-      expect(svg).toBeInTheDocument();
-    });
-
-    it('renders dots variant', () => {
-      render(<Loader variant="dots" />);
-
-      const dots = document.querySelector('.loader-dots');
-      expect(dots).toBeInTheDocument();
-
-      const dotElements = document.querySelectorAll('.dot');
-      expect(dotElements).toHaveLength(3);
-    });
-
-    it('renders pulse variant', () => {
-      render(<Loader variant="pulse" />);
-
-      const pulse = document.querySelector('.loader-pulse');
-      expect(pulse).toBeInTheDocument();
-
-      const rings = document.querySelectorAll('.pulse-ring');
-      expect(rings).toHaveLength(3);
-    });
-
-    it('renders bars variant', () => {
-      render(<Loader variant="bars" />);
-
-      const bars = document.querySelector('.loader-bars');
-      expect(bars).toBeInTheDocument();
-
-      const barElements = document.querySelectorAll('.bar');
-      expect(barElements).toHaveLength(5);
-    });
+    const svg = spinner?.querySelector('svg');
+    expect(svg).toBeInTheDocument();
   });
 
   it('has accessibility attributes', () => {

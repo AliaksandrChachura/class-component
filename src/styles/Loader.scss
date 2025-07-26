@@ -1,4 +1,3 @@
-// Loader Component SCSS
 .loader-container {
   display: flex;
   align-items: center;
@@ -38,7 +37,6 @@
     color: inherit;
   }
 
-  // Screen reader only text
   .sr-only {
     position: absolute;
     width: 1px;
@@ -51,7 +49,6 @@
     border: 0;
   }
 
-  // Size variants
   &.small {
     .loader-spinner svg {
       width: 24px;
@@ -118,7 +115,6 @@
     }
   }
 
-  // Color variants
   &.primary {
     color: #3b82f6;
   }
@@ -132,7 +128,6 @@
   }
 }
 
-// Spinner Variant (SVG Circle)
 .loader-spinner {
   svg {
     animation: rotate 2s linear infinite;
@@ -164,7 +159,6 @@
   }
 }
 
-// Dots Variant
 .loader-dots {
   display: flex;
   gap: 0.5rem;
@@ -200,7 +194,6 @@
   }
 }
 
-// Pulse Variant
 .loader-pulse {
   position: relative;
   display: flex;
@@ -236,7 +229,6 @@
   }
 }
 
-// Bars Variant
 .loader-bars {
   display: flex;
   gap: 0.25rem;
@@ -278,7 +270,6 @@
   }
 }
 
-// Dark mode adjustments
 @media (prefers-color-scheme: dark) {
   .loader-container {
     &.primary {
@@ -291,7 +282,6 @@
   }
 }
 
-// Reduced motion support
 @media (prefers-reduced-motion: reduce) {
   .loader-spinner svg {
     animation: none;
@@ -323,7 +313,6 @@
   }
 }
 
-// High contrast mode support
 @media (prefers-contrast: high) {
   .loader-container {
     &.primary {
@@ -340,7 +329,6 @@
   }
 }
 
-// Focus management for accessibility
 .loader-container:focus {
   outline: 2px solid currentColor;
   outline-offset: 4px;

@@ -6,13 +6,17 @@ import {
   type RickMortyResponse,
 } from '../../api/rickMortyAPI';
 import { mockAPIResponse } from '../../test/mocks/rickMortyAPI';
+import { SearchProvider } from '../../context/SearchProvider';
 
-// Mock the API module
 vi.mock('../../api/rickMortyAPI', () => ({
   fetchCharacters: vi.fn(),
 }));
 
 const mockFetchCharacters = vi.mocked(fetchCharacters);
+
+const renderWithProvider = (component: React.ReactElement) => {
+  return render(<SearchProvider>{component}</SearchProvider>);
+};
 
 describe('Results Component', () => {
   beforeEach(() => {
@@ -26,10 +30,9 @@ describe('Results Component', () => {
   });
 
   it('renders loading state initially', () => {
-    // Make API call hang to test loading state
     mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
 
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     expect(
       screen.getAllByText(/loading rick and morty characters/i)
@@ -40,15 +43,15 @@ describe('Results Component', () => {
   it('loads saved search term from localStorage on mount', () => {
     vi.mocked(localStorage.getItem).mockReturnValue('Rick');
 
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     expect(localStorage.getItem).toHaveBeenCalledWith('searchTerm');
     expect(mockFetchCharacters).toHaveBeenCalledWith('Rick', 1);
   });
 
   it('fetches data on component mount', async () => {
-    vi.mocked(localStorage.getItem).mockReturnValue(''); // Ensure empty string
-    render(<Results />);
+    vi.mocked(localStorage.getItem).mockReturnValue('');
+    renderWithProvider(<Results />);
 
     await waitFor(() => {
       expect(mockFetchCharacters).toHaveBeenCalledWith('', 1);
@@ -56,7 +59,7 @@ describe('Results Component', () => {
   });
 
   it('renders characters when data is loaded successfully', async () => {
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     await waitFor(() => {
       expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
@@ -67,7 +70,7 @@ describe('Results Component', () => {
   });
 
   it('renders character cards with correct descriptions', async () => {
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     await waitFor(() => {
       expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -85,7 +88,7 @@ describe('Results Component', () => {
   it('renders error message when API call fails', async () => {
     mockFetchCharacters.mockRejectedValue(new Error('API Error'));
 
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     await waitFor(() => {
       expect(
@@ -104,7 +107,7 @@ describe('Results Component', () => {
       results: [],
     });
 
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     await waitFor(() => {
       expect(screen.getByText('No characters found.')).toBeInTheDocument();
@@ -112,15 +115,13 @@ describe('Results Component', () => {
   });
 
   it('updateSearchTerm method updates state and refetches data', async () => {
-    vi.mocked(localStorage.getItem).mockReturnValue(''); // Ensure empty string
-    render(<Results />);
+    vi.mocked(localStorage.getItem).mockReturnValue('');
+    renderWithProvider(<Results />);
 
-    // Wait for initial load
     await waitFor(() => {
       expect(mockFetchCharacters).toHaveBeenCalledWith('', 1);
     });
 
-    // Get component instance to test updateSearchTerm
     const resultsComponent = screen
       .getByText('Rick and Morty Characters')
       .closest('div');
@@ -135,17 +136,14 @@ describe('Results Component', () => {
 
     mockFetchCharacters.mockReturnValue(promise);
 
-    render(<Results />);
+    renderWithProvider(<Results />);
 
-    // Should show loading initially
     expect(
       screen.getAllByText(/loading rick and morty characters/i)
     ).toHaveLength(2);
 
-    // Resolve the promise
     resolvePromise(mockAPIResponse);
 
-    // Should show results after loading
     await waitFor(() => {
       expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
     });
@@ -154,10 +152,9 @@ describe('Results Component', () => {
   });
 
   it('clears error state when refetching data', async () => {
-    // First call fails
     mockFetchCharacters.mockRejectedValueOnce(new Error('API Error'));
 
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     await waitFor(() => {
       expect(
@@ -165,18 +162,13 @@ describe('Results Component', () => {
       ).toBeInTheDocument();
     });
 
-    // Second call succeeds (simulating retry)
     mockFetchCharacters.mockResolvedValueOnce(mockAPIResponse);
-
-    // This would require triggering a refetch, which we can't easily do
-    // without access to component methods. In a real app, this might be
-    // triggered by a retry button or search update.
   });
 
   it('passes correct props to Loader component', () => {
     mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
 
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     const loader = screen.getByRole('status');
     expect(loader).toHaveAttribute(
@@ -186,13 +178,12 @@ describe('Results Component', () => {
   });
 
   it('renders cards with unique keys', async () => {
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     await waitFor(() => {
       expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
     });
 
-    // Check that each character card is rendered
     const cards = document.querySelectorAll('.card');
     expect(cards).toHaveLength(2);
   });
@@ -218,7 +209,7 @@ describe('Results Component', () => {
       results: [customCharacter],
     });
 
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     await waitFor(() => {
       expect(screen.getByText('Custom Character')).toBeInTheDocument();
@@ -237,18 +228,14 @@ describe('Results Component', () => {
 
     mockFetchCharacters.mockReturnValue(promise);
 
-    render(<Results />);
+    renderWithProvider(<Results />);
 
-    // Should be loading
     expect(screen.getAllByText(/loading/i)).toHaveLength(2);
 
-    // Resolve after a short delay
     setTimeout(() => resolvePromise(mockAPIResponse), 100);
 
-    // Should still be loading before resolution
     expect(screen.getAllByText(/loading/i)).toHaveLength(2);
 
-    // Should show results after resolution
     await waitFor(
       () => {
         expect(
@@ -260,7 +247,7 @@ describe('Results Component', () => {
   });
 
   it('has correct CSS classes and structure', async () => {
-    render(<Results />);
+    renderWithProvider(<Results />);
 
     await waitFor(() => {
       expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
