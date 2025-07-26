@@ -1,23 +1,27 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Header from '../Header';
+import { SearchProvider } from '../../context/SearchProvider';
+
+const renderWithProvider = (component: React.ReactElement) => {
+  return render(<SearchProvider>{component}</SearchProvider>);
+};
 
 describe('Header Component', () => {
   it('renders header with search component', () => {
-    render(<Header />);
+    renderWithProvider(<Header />);
 
     const header = screen.getByRole('banner');
     expect(header).toBeInTheDocument();
     expect(header).toHaveClass('header');
 
-    // Check if Search component is rendered
     expect(
       screen.getByPlaceholderText(/search characters/i)
     ).toBeInTheDocument();
   });
 
   it('renders error button', () => {
-    render(<Header />);
+    renderWithProvider(<Header />);
 
     const errorButton = screen.getByRole('button', { name: /throw error/i });
     expect(errorButton).toBeInTheDocument();
@@ -25,10 +29,9 @@ describe('Header Component', () => {
   });
 
   it('error button exists and is functional', () => {
-    render(<Header />);
+    renderWithProvider(<Header />);
 
     const errorButton = screen.getByRole('button', { name: /throw error/i });
-    // Verify button exists and has correct attributes
     expect(errorButton).toBeInTheDocument();
     expect(errorButton).toHaveClass('error-button');
     expect(errorButton).toHaveTextContent('Throw Error');
@@ -36,8 +39,7 @@ describe('Header Component', () => {
   });
 
   it('passes onSearch prop to Search component', () => {
-    const mockOnSearch = vi.fn();
-    render(<Header onSearch={mockOnSearch} />);
+    renderWithProvider(<Header />);
 
     const searchInput = screen.getByPlaceholderText(/search characters/i);
     const searchButton = screen.getByRole('button', { name: /search/i });
@@ -45,12 +47,12 @@ describe('Header Component', () => {
     fireEvent.change(searchInput, { target: { value: 'Rick' } });
     fireEvent.click(searchButton);
 
-    expect(mockOnSearch).toHaveBeenCalledWith('Rick');
+    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', 'Rick');
   });
 
   it('works without onSearch prop', () => {
     expect(() => {
-      render(<Header />);
+      renderWithProvider(<Header />);
     }).not.toThrow();
 
     const searchInput = screen.getByPlaceholderText(/search characters/i);

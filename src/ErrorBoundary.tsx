@@ -47,11 +47,6 @@ export default class ErrorBoundary extends Component<Props, State> {
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
-
-    if (process.env.NODE_ENV === 'production') {
-      // Here you could integrate with services like Sentry, LogRocket, etc.
-      // reportError(error, errorInfo);
-    }
   }
 
   handleRetry = () => {

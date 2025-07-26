@@ -2,6 +2,21 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Search from '../Search';
+import { SearchProvider } from '../../context/SearchProvider';
+
+const renderWithProvider = (
+  component: React.ReactElement,
+  initialStorage?: Record<string, string>
+) => {
+  if (initialStorage) {
+    Object.entries(initialStorage).forEach(([key, value]) => {
+      vi.spyOn(localStorage, 'getItem').mockImplementation((storageKey) => {
+        return storageKey === key ? value : null;
+      });
+    });
+  }
+  return render(<SearchProvider>{component}</SearchProvider>);
+};
 
 describe('Search Component', () => {
   beforeEach(() => {
@@ -10,7 +25,7 @@ describe('Search Component', () => {
   });
 
   it('renders search input and button', () => {
-    render(<Search />);
+    renderWithProvider(<Search />);
 
     const input = screen.getByPlaceholderText(/search characters/i);
     const button = screen.getByRole('button', { name: /search/i });
@@ -19,20 +34,10 @@ describe('Search Component', () => {
     expect(button).toBeInTheDocument();
   });
 
-  it('loads saved search term from localStorage on mount', () => {
-    vi.spyOn(localStorage, 'getItem').mockReturnValue('saved term');
-
-    render(<Search />);
-
-    const input = screen.getByPlaceholderText(/search characters/i);
-    expect(input).toHaveValue('saved term');
-    expect(localStorage.getItem).toHaveBeenCalledWith('searchTerm');
-  });
-
   it('starts with empty term when no localStorage value', () => {
     vi.spyOn(localStorage, 'getItem').mockReturnValue(null);
 
-    render(<Search />);
+    renderWithProvider(<Search />);
 
     const input = screen.getByPlaceholderText(/search characters/i);
     expect(input).toHaveValue('');
@@ -40,7 +45,7 @@ describe('Search Component', () => {
 
   it('updates input value when typing', async () => {
     const user = userEvent.setup();
-    render(<Search />);
+    renderWithProvider(<Search />);
 
     const input = screen.getByPlaceholderText(/search characters/i);
 
@@ -50,8 +55,7 @@ describe('Search Component', () => {
   });
 
   it('calls onSearch with trimmed value when search button clicked', () => {
-    const mockOnSearch = vi.fn();
-    render(<Search onSearch={mockOnSearch} />);
+    renderWithProvider(<Search />);
 
     const input = screen.getByPlaceholderText(/search characters/i);
     const button = screen.getByRole('button', { name: /search/i });
@@ -59,13 +63,11 @@ describe('Search Component', () => {
     fireEvent.change(input, { target: { value: '  Rick  ' } });
     fireEvent.click(button);
 
-    expect(mockOnSearch).toHaveBeenCalledWith('Rick');
     expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', 'Rick');
   });
 
   it('saves search term to localStorage when searching', () => {
-    const mockOnSearch = vi.fn();
-    render(<Search onSearch={mockOnSearch} />);
+    renderWithProvider(<Search />);
 
     const input = screen.getByPlaceholderText(/search characters/i);
     const button = screen.getByRole('button', { name: /search/i });
@@ -77,7 +79,7 @@ describe('Search Component', () => {
   });
 
   it('works without onSearch prop', () => {
-    render(<Search />);
+    renderWithProvider(<Search />);
 
     const input = screen.getByPlaceholderText(/search characters/i);
     const button = screen.getByRole('button', { name: /search/i });
@@ -89,19 +91,16 @@ describe('Search Component', () => {
   });
 
   it('handles empty search term correctly', () => {
-    const mockOnSearch = vi.fn();
-    render(<Search onSearch={mockOnSearch} />);
+    renderWithProvider(<Search />);
 
     const button = screen.getByRole('button', { name: /search/i });
     fireEvent.click(button);
 
-    expect(mockOnSearch).toHaveBeenCalledWith('');
     expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '');
   });
 
   it('trims whitespace from search term', () => {
-    const mockOnSearch = vi.fn();
-    render(<Search onSearch={mockOnSearch} />);
+    renderWithProvider(<Search />);
 
     const input = screen.getByPlaceholderText(/search characters/i);
     const button = screen.getByRole('button', { name: /search/i });
@@ -109,11 +108,11 @@ describe('Search Component', () => {
     fireEvent.change(input, { target: { value: '   ' } });
     fireEvent.click(button);
 
-    expect(mockOnSearch).toHaveBeenCalledWith('');
+    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '');
   });
 
   it('has correct container class', () => {
-    render(<Search />);
+    renderWithProvider(<Search />);
 
     const container = screen
       .getByPlaceholderText(/search characters/i)

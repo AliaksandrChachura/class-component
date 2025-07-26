@@ -5,13 +5,13 @@ interface Props {
   description: string;
 }
 
-export default class Card extends React.Component<Props> {
-  render() {
-    return (
-      <div className="card">
-        <h3>{this.props.name}</h3>
-        <p>{this.props.description}</p>
-      </div>
-    );
-  }
-}
+const Card: React.FC<Props> = ({ name, description }) => {
+  return (
+    <div className="card">
+      <h3>{name}</h3>
+      <p>{description}</p>
+    </div>
+  );
+};
+
+export default Card;

@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Component } from 'react';
 import ErrorBoundary from '../ErrorBoundary';
 
-// Test component that throws an error
 class ThrowError extends Component<{ shouldThrow?: boolean }> {
   render() {
     if (this.props.shouldThrow) {
@@ -13,21 +12,18 @@ class ThrowError extends Component<{ shouldThrow?: boolean }> {
   }
 }
 
-// Mock window.location.reload
 const mockReload = vi.fn();
 Object.defineProperty(window, 'location', {
   value: { reload: mockReload },
   writable: true,
 });
 
-// Mock window.open
 const mockOpen = vi.fn();
 window.open = mockOpen;
 
 describe('ErrorBoundary Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Mock console methods to avoid error output in tests
     vi.spyOn(console, 'group').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.spyOn(console, 'groupEnd').mockImplementation(() => {});
@@ -96,11 +92,8 @@ describe('ErrorBoundary Component', () => {
     const retryButton = screen.getByRole('button', { name: /try again/i });
     expect(retryButton).toBeInTheDocument();
 
-    // Click retry button - this should reset the error state
     fireEvent.click(retryButton);
 
-    // After retry, error boundary should attempt to re-render children
-    // The retry count should be visible
     expect(screen.getByText(/retry attempt/i)).toBeInTheDocument();
   });
 
@@ -145,7 +138,6 @@ describe('ErrorBoundary Component', () => {
       </ErrorBoundary>
     );
 
-    // Should show error UI with retry button
     expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /try again/i })
@@ -176,15 +168,12 @@ describe('ErrorBoundary Component', () => {
   });
 
   it('shows retry count when retries have been attempted', () => {
-    // This would require more complex state management to test properly
-    // For now, we'll just verify the text structure exists
     render(
       <ErrorBoundary>
         <ThrowError shouldThrow={true} />
       </ErrorBoundary>
     );
 
-    // Initial render should not show retry info
     expect(screen.queryByText(/retry attempt/i)).not.toBeInTheDocument();
   });
 
