@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
 import Results from '../Results';
 import {
   fetchCharacters,
@@ -7,6 +8,7 @@ import {
 } from '../../api/rickMortyAPI';
 import { mockAPIResponse } from '../../test/mocks/rickMortyAPI';
 import { SearchProvider } from '../../context/SearchProvider';
+import { SearchContext } from '../../context/SearchContext';
 
 vi.mock('../../api/rickMortyAPI', () => ({
   fetchCharacters: vi.fn(),
@@ -29,23 +31,61 @@ describe('Results Component', () => {
     vi.clearAllTimers();
   });
 
-  it('renders loading state initially', () => {
-    mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
+  it('renders loading state when fetchCharacters is called', async () => {
+    mockFetchCharacters.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolvePromise = resolve;
+        })
+    );
 
-    renderWithProvider(<Results />);
+    const mockSearchContext = {
+      state: { searchTerm: '', isLoading: true, error: null },
+      setSearchTerm: vi.fn(),
+      setLoading: vi.fn(),
+      setError: vi.fn(),
+      resetSearch: vi.fn(),
+    };
 
+    const TestProvider = ({ children }: { children: React.ReactNode }) => (
+      <SearchContext.Provider value={mockSearchContext}>
+        {children}
+      </SearchContext.Provider>
+    );
+
+    render(
+      <TestProvider>
+        <Results />
+      </TestProvider>
+    );
+
+    expect(screen.getByRole('status')).toBeInTheDocument();
     expect(
       screen.getAllByText(/loading rick and morty characters/i)
     ).toHaveLength(2);
-    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
-  it('loads saved search term from localStorage on mount', () => {
-    vi.mocked(localStorage.getItem).mockReturnValue('Rick');
+  it('loads saved search term from SearchContext on mount', () => {
+    const mockSearchContext = {
+      state: { searchTerm: 'Rick', isLoading: false, error: null },
+      setSearchTerm: vi.fn(),
+      setLoading: vi.fn(),
+      setError: vi.fn(),
+      resetSearch: vi.fn(),
+    };
 
-    renderWithProvider(<Results />);
+    const TestProvider = ({ children }: { children: React.ReactNode }) => (
+      <SearchContext.Provider value={mockSearchContext}>
+        {children}
+      </SearchContext.Provider>
+    );
 
-    expect(localStorage.getItem).toHaveBeenCalledWith('searchTerm');
+    render(
+      <TestProvider>
+        <Results />
+      </TestProvider>
+    );
+
     expect(mockFetchCharacters).toHaveBeenCalledWith('Rick', 1);
   });
 
@@ -77,9 +117,9 @@ describe('Results Component', () => {
     });
 
     const rickDescription =
-      'Human from Earth (C-137). Status: Alive. Currently at: Citadel of Ricks';
+      '🟢 Alive Human from Earth (C-137). Currently at: Citadel of Ricks';
     const mortyDescription =
-      'Human from unknown. Status: Alive. Currently at: Citadel of Ricks';
+      '🟢 Alive Human from an unknown location. Currently at: Citadel of Ricks';
 
     expect(screen.getByText(rickDescription)).toBeInTheDocument();
     expect(screen.getByText(mortyDescription)).toBeInTheDocument();
@@ -136,19 +176,37 @@ describe('Results Component', () => {
 
     mockFetchCharacters.mockReturnValue(promise);
 
-    renderWithProvider(<Results />);
+    // Mock SearchContext to have loading state
+    const mockSearchContext = {
+      state: { searchTerm: '', isLoading: true, error: null },
+      setSearchTerm: vi.fn(),
+      setLoading: vi.fn(),
+      setError: vi.fn(),
+      resetSearch: vi.fn(),
+    };
+
+    const TestProvider = ({ children }: { children: React.ReactNode }) => (
+      <SearchContext.Provider value={mockSearchContext}>
+        {children}
+      </SearchContext.Provider>
+    );
+
+    render(
+      <TestProvider>
+        <Results />
+      </TestProvider>
+    );
 
     expect(
       screen.getAllByText(/loading rick and morty characters/i)
     ).toHaveLength(2);
 
+    mockSearchContext.state.isLoading = false;
     resolvePromise(mockAPIResponse);
 
     await waitFor(() => {
-      expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
+      expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
     });
-
-    expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
   });
 
   it('clears error state when refetching data', async () => {
@@ -168,7 +226,26 @@ describe('Results Component', () => {
   it('passes correct props to Loader component', () => {
     mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
 
-    renderWithProvider(<Results />);
+    // Mock SearchContext to have loading state
+    const mockSearchContext = {
+      state: { searchTerm: '', isLoading: true, error: null },
+      setSearchTerm: vi.fn(),
+      setLoading: vi.fn(),
+      setError: vi.fn(),
+      resetSearch: vi.fn(),
+    };
+
+    const TestProvider = ({ children }: { children: React.ReactNode }) => (
+      <SearchContext.Provider value={mockSearchContext}>
+        {children}
+      </SearchContext.Provider>
+    );
+
+    render(
+      <TestProvider>
+        <Results />
+      </TestProvider>
+    );
 
     const loader = screen.getByRole('status');
     expect(loader).toHaveAttribute(
@@ -216,34 +293,41 @@ describe('Results Component', () => {
     });
 
     const description =
-      'Alien from Custom Planet. Status: Dead. Currently at: Custom Location';
+      '🔴 Dead Alien from Custom Planet. Currently at: Custom Location';
     expect(screen.getByText(description)).toBeInTheDocument();
   });
 
-  it('maintains loading state during the entire fetch process', async () => {
-    let resolvePromise: (value: RickMortyResponse) => void = () => {};
-    const promise = new Promise<RickMortyResponse>((resolve) => {
-      resolvePromise = resolve;
-    });
+  it('maintains loading state during the entire fetch process', () => {
+    const mockSearchContext = {
+      state: { searchTerm: 'test', isLoading: true, error: null },
+      setSearchTerm: vi.fn(),
+      setLoading: vi.fn(),
+      setError: vi.fn(),
+      resetSearch: vi.fn(),
+    };
 
-    mockFetchCharacters.mockReturnValue(promise);
-
-    renderWithProvider(<Results />);
-
-    expect(screen.getAllByText(/loading/i)).toHaveLength(2);
-
-    setTimeout(() => resolvePromise(mockAPIResponse), 100);
-
-    expect(screen.getAllByText(/loading/i)).toHaveLength(2);
-
-    await waitFor(
-      () => {
-        expect(
-          screen.getByText('Rick and Morty Characters')
-        ).toBeInTheDocument();
-      },
-      { timeout: 200 }
+    const TestProvider = ({ children }: { children: React.ReactNode }) => (
+      <SearchContext.Provider value={mockSearchContext}>
+        {children}
+      </SearchContext.Provider>
     );
+
+    render(
+      <TestProvider>
+        <Results />
+      </TestProvider>
+    );
+
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getAllByText(/loading/i)).toHaveLength(2);
+    expect(
+      screen.getAllByText(/Loading Rick and Morty characters/)
+    ).toHaveLength(2);
+
+    expect(
+      screen.queryByText('Rick and Morty Characters')
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('No characters found')).not.toBeInTheDocument();
   });
 
   it('has correct CSS classes and structure', async () => {

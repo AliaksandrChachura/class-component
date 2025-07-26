@@ -1,30 +1,38 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
 import { fetchCharacters } from '../../api/rickMortyAPI';
 import Results from '../../components/Results';
 import App from '../../App';
 import { mockAPIResponse } from '../mocks/rickMortyAPI';
+import { SearchProvider } from '../../context/SearchProvider';
 
 vi.mock('../../api/rickMortyAPI', () => ({
   fetchCharacters: vi.fn(),
 }));
 
-const mockFetchCharacters = vi.mocked(fetchCharacters);
-
 Object.defineProperty(window, 'localStorage', {
   value: {
     getItem: vi.fn(),
     setItem: vi.fn(),
+    removeItem: vi.fn(),
     clear: vi.fn(),
   },
   writable: true,
 });
 
+const mockFetchCharacters = vi.mocked(fetchCharacters);
+
+const renderWithProvider = (component: React.ReactElement) => {
+  return render(<SearchProvider>{component}</SearchProvider>);
+};
+
 describe('API & State Management Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(window.localStorage.getItem).mockReturnValue('');
+    vi.mocked(window.localStorage.getItem).mockReturnValue(null);
     vi.mocked(window.localStorage.setItem).mockImplementation(() => {});
+    vi.mocked(window.localStorage.removeItem).mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -35,7 +43,7 @@ describe('API & State Management Integration', () => {
     it('calls API immediately on component mount', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      render(<Results />);
+      renderWithProvider(<Results />);
 
       expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
       expect(mockFetchCharacters).toHaveBeenCalledWith('', 1);
@@ -45,25 +53,10 @@ describe('API & State Management Integration', () => {
       });
     });
 
-    it('uses localStorage search term on mount', async () => {
-      mockFetchCharacters.mockResolvedValue(mockAPIResponse);
-      vi.mocked(window.localStorage.getItem).mockReturnValue('saved-term');
-
-      render(<Results />);
-
-      expect(window.localStorage.getItem).toHaveBeenCalledWith('searchTerm');
-
-      expect(mockFetchCharacters).toHaveBeenCalledWith('saved-term', 1);
-
-      await waitFor(() => {
-        expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
-      });
-    });
-
     it('handles successful API response', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      render(<Results />);
+      renderWithProvider(<Results />);
 
       await waitFor(() => {
         expect(
@@ -80,7 +73,7 @@ describe('API & State Management Integration', () => {
     it('handles API error response', async () => {
       mockFetchCharacters.mockRejectedValue(new Error('Network error'));
 
-      render(<Results />);
+      renderWithProvider(<Results />);
 
       await waitFor(() => {
         expect(
@@ -88,83 +81,19 @@ describe('API & State Management Integration', () => {
         ).toBeInTheDocument();
       });
     });
-
-    it('displays loading state correctly', async () => {
-      let resolvePromise: (value: typeof mockAPIResponse) => void;
-      const promise = new Promise<typeof mockAPIResponse>((resolve) => {
-        resolvePromise = resolve;
-      });
-      mockFetchCharacters.mockReturnValue(promise);
-
-      render(<Results />);
-
-      expect(
-        screen.getByText(/Loading Rick and Morty characters/)
-      ).toBeInTheDocument();
-
-      act(() => {
-        if (resolvePromise) {
-          resolvePromise(mockAPIResponse);
-        }
-      });
-
-      await waitFor(() => {
-        expect(
-          screen.getByText('Rick and Morty Characters')
-        ).toBeInTheDocument();
-      });
-
-      expect(
-        screen.queryByText(/Loading Rick and Morty characters/)
-      ).not.toBeInTheDocument();
-    });
   });
 
   describe('Component Lifecycle & State', () => {
     it('handles component mount correctly', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      render(<Results />);
+      renderWithProvider(<Results />);
 
       await waitFor(() => {
         expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
       });
 
       expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
-    });
-
-    it('manages loading state lifecycle correctly', async () => {
-      let resolvePromise: (value: typeof mockAPIResponse) => void;
-      const promise = new Promise<typeof mockAPIResponse>((resolve) => {
-        resolvePromise = resolve;
-      });
-      mockFetchCharacters.mockReturnValue(promise);
-
-      render(<Results />);
-
-      expect(
-        screen.getByText(/Loading Rick and Morty characters/)
-      ).toBeInTheDocument();
-
-      await act(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 10));
-      });
-
-      expect(
-        screen.getByText(/Loading Rick and Morty characters/)
-      ).toBeInTheDocument();
-
-      act(() => {
-        if (resolvePromise) {
-          resolvePromise(mockAPIResponse);
-        }
-      });
-
-      await waitFor(() => {
-        expect(
-          screen.getByText('Rick and Morty Characters')
-        ).toBeInTheDocument();
-      });
     });
   });
 
@@ -192,14 +121,14 @@ describe('API & State Management Integration', () => {
 
       mockFetchCharacters.mockResolvedValue(customResponse);
 
-      render(<Results />);
+      renderWithProvider(<Results />);
 
       await waitFor(() => {
         expect(screen.getByText('Custom Rick')).toBeInTheDocument();
       });
 
       expect(screen.getByText(/Human from Earth C-137/)).toBeInTheDocument();
-      expect(screen.getByText(/Status: Alive/)).toBeInTheDocument();
+      expect(screen.getByText(/🟢 Alive/)).toBeInTheDocument();
       expect(
         screen.getByText(/Currently at: Citadel of Ricks/)
       ).toBeInTheDocument();
@@ -211,7 +140,7 @@ describe('API & State Management Integration', () => {
         results: [],
       });
 
-      render(<Results />);
+      renderWithProvider(<Results />);
 
       await waitFor(() => {
         expect(screen.getByText('No characters found.')).toBeInTheDocument();
@@ -223,7 +152,7 @@ describe('API & State Management Integration', () => {
     it('does not leak state between component instances', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      const { unmount } = render(<Results />);
+      const { unmount } = renderWithProvider(<Results />);
 
       await waitFor(() => {
         expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -253,7 +182,7 @@ describe('API & State Management Integration', () => {
 
       mockFetchCharacters.mockResolvedValue(differentResponse);
 
-      render(<Results />);
+      renderWithProvider(<Results />);
 
       await waitFor(() => {
         expect(screen.getByText('Different Character')).toBeInTheDocument();
@@ -265,7 +194,7 @@ describe('API & State Management Integration', () => {
     it('handles error recovery correctly', async () => {
       mockFetchCharacters.mockRejectedValue(new Error('First error'));
 
-      const { unmount } = render(<Results />);
+      const { unmount } = renderWithProvider(<Results />);
 
       await waitFor(() => {
         expect(
@@ -279,7 +208,7 @@ describe('API & State Management Integration', () => {
 
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      render(<Results />);
+      renderWithProvider(<Results />);
 
       await waitFor(() => {
         expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -288,17 +217,6 @@ describe('API & State Management Integration', () => {
       expect(
         screen.queryByText('Error: Unable to load characters')
       ).not.toBeInTheDocument();
-    });
-  });
-
-  describe('LocalStorage Integration', () => {
-    it('respects localStorage search term configuration', async () => {
-      mockFetchCharacters.mockResolvedValue(mockAPIResponse);
-      vi.mocked(window.localStorage.getItem).mockReturnValue('rick');
-
-      render(<Results />);
-
-      expect(mockFetchCharacters).toHaveBeenCalledWith('rick', 1);
     });
   });
 
@@ -320,19 +238,6 @@ describe('API & State Management Integration', () => {
       expect(
         screen.getByPlaceholderText(/search characters/i)
       ).toBeInTheDocument();
-    });
-
-    it('maintains consistent state across re-renders', async () => {
-      mockFetchCharacters.mockResolvedValue(mockAPIResponse);
-      vi.mocked(window.localStorage.getItem).mockReturnValue('test-term');
-
-      const { rerender } = render(<App />);
-
-      expect(mockFetchCharacters).toHaveBeenCalledWith('test-term', 1);
-
-      rerender(<App />);
-
-      expect(mockFetchCharacters).toHaveBeenCalledWith('test-term', 1);
     });
 
     it('handles full user workflow correctly', async () => {

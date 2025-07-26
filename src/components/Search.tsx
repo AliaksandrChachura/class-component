@@ -14,7 +14,8 @@ const Search: React.FC = () => {
   };
 
   const handleSearch = () => {
-    setSearchTerm(inputValue);
+    const trimmedValue = inputValue.trim();
+    setSearchTerm(trimmedValue);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {

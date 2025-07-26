@@ -47,7 +47,7 @@ describe('Header Component', () => {
     fireEvent.change(searchInput, { target: { value: 'Rick' } });
     fireEvent.click(searchButton);
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', 'Rick');
+    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '"Rick"');
   });
 
   it('works without onSearch prop', () => {

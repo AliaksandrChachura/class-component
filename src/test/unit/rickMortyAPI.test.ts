@@ -59,7 +59,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -73,7 +73,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character?name=Rick',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -87,7 +87,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character?page=2',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -101,7 +101,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character?name=Morty&page=3',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -115,7 +115,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character?name=Rick',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -129,7 +129,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -143,7 +143,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character?name=Rick',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
   });
@@ -281,7 +281,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -295,7 +295,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -309,7 +309,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character?name=Rick',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -323,7 +323,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character?name=Rick',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -339,7 +339,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         `https://rickandmortyapi.com/api/character?name=${longSearchTerm}`,
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
 
@@ -355,7 +355,7 @@ describe('rickMortyAPI', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://rickandmortyapi.com/api/character?name=Rick+%26+Morty%E2%84%A2+%28C-137%29',
-        { method: 'GET' }
+        { method: 'GET', signal: expect.any(AbortSignal) }
       );
     });
   });

@@ -63,7 +63,7 @@ describe('Search Component', () => {
     fireEvent.change(input, { target: { value: '  Rick  ' } });
     fireEvent.click(button);
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', 'Rick');
+    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '"Rick"');
   });
 
   it('saves search term to localStorage when searching', () => {
@@ -75,7 +75,7 @@ describe('Search Component', () => {
     fireEvent.change(input, { target: { value: 'Morty' } });
     fireEvent.click(button);
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', 'Morty');
+    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '"Morty"');
   });
 
   it('works without onSearch prop', () => {
@@ -96,7 +96,7 @@ describe('Search Component', () => {
     const button = screen.getByRole('button', { name: /search/i });
     fireEvent.click(button);
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '');
+    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '""');
   });
 
   it('trims whitespace from search term', () => {
@@ -108,7 +108,7 @@ describe('Search Component', () => {
     fireEvent.change(input, { target: { value: '   ' } });
     fireEvent.click(button);
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '');
+    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '""');
   });
 
   it('has correct container class', () => {

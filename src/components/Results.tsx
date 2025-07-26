@@ -9,6 +9,24 @@ const Results: React.FC = () => {
   const { state, setLoading, setError } = useSearch();
   const [results, setResults] = useState<Character[]>([]);
 
+  const getCharacterDescription = (character: Character): string => {
+    const statusEmoji =
+      character.status === 'Alive'
+        ? '🟢'
+        : character.status === 'Dead'
+          ? '🔴'
+          : '❓';
+    const origin =
+      character.origin.name === 'unknown'
+        ? 'an unknown location'
+        : character.origin.name;
+    const location =
+      character.location.name === 'unknown'
+        ? 'an unknown location'
+        : character.location.name;
+    return `${statusEmoji} ${character.status} ${character.species} from ${origin}. Currently at: ${location}`;
+  };
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -41,16 +59,31 @@ const Results: React.FC = () => {
   return (
     <div className="results">
       <h2>Rick and Morty Characters</h2>
+
       {results.length === 0 ? (
-        <p>No characters found.</p>
+        <div className="no-results">
+          <p>No characters found.</p>
+          <p>
+            Try searching for &ldquo;Rick&rdquo;, &ldquo;Morty&rdquo;, or
+            another character name!
+          </p>
+        </div>
       ) : (
-        results.map((character) => (
-          <Card
-            key={character.id}
-            name={character.name}
-            description={`${character.species} from ${character.origin.name}. Status: ${character.status}. Currently at: ${character.location.name}`}
-          />
-        ))
+        <>
+          <p className="results-count">
+            Found {results.length} character{results.length === 1 ? '' : 's'}
+          </p>
+          <div className="results-container">
+            {results.map((character) => (
+              <Card
+                key={character.id}
+                name={character.name}
+                description={getCharacterDescription(character)}
+                image={character.image}
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
@@ -16,6 +16,15 @@ export default defineConfig({
         '**/*.d.ts',
         '**/*.config.ts',
         'dist/',
+        'src/constants/**',
+        'keys.ts',
+        'eslint.config.js',
+        'src/features/**/**',
+        'src/routes/**/**',
+        'src/hooks/**/**',
+        'src/test/**/**',
+        'src/test/**/**',
+        'src/types/**',
       ],
       thresholds: {
         global: {

@@ -56,14 +56,28 @@ export async function fetchCharacters(
     url += `?${params.toString()}`;
   }
 
-  const response = await fetch(url, {
-    method: 'GET',
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-  if (!response.ok) {
-    throw new Error('API request failed');
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error('API request failed');
+    }
+
+    const data: RickMortyResponse = await response.json();
+    return data;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request timeout - please try again');
+    }
+    throw error;
   }
-
-  const data: RickMortyResponse = await response.json();
-  return data;
 }

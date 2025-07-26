@@ -4,3 +4,7 @@
 @import './Results.scss';
 @import './Card.scss';
 @import './Loader.scss';
+
+.app {
+  background-color: hsl(83, 85%, 5%);
+}

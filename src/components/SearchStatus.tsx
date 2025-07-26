@@ -4,6 +4,10 @@ import { useSearch } from '../hooks/useSearch';
 const SearchStatus: React.FC = () => {
   const { state, resetSearch } = useSearch();
 
+  const handleReset = () => {
+    resetSearch();
+  };
+
   if (!state.searchTerm && !state.isLoading && !state.error) {
     return null;
   }
@@ -13,7 +17,7 @@ const SearchStatus: React.FC = () => {
       {state.searchTerm && (
         <p>
           Searching for: <strong>&ldquo;{state.searchTerm}&rdquo;</strong>
-          <button onClick={resetSearch} className="reset-btn">
+          <button onClick={handleReset} className="reset-btn">
             Clear Search
           </button>
         </p>
