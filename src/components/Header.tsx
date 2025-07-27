@@ -1,23 +1,31 @@
-import { Component } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Search from './Search';
 
-interface Props {
-  onSearch?: (term: string) => void;
-}
+const Header: React.FC = () => {
+  const navigate = useNavigate();
 
-export default class Header extends Component<Props> {
-  throwError = () => {
+  const throwError = () => {
     throw new Error('Test error triggered!');
   };
 
-  render() {
-    return (
-      <header className="header">
-        <Search onSearch={this.props.onSearch} />
-        <button className="error-button" onClick={this.throwError}>
+  const handleAboutClick = () => {
+    navigate('/about');
+  };
+
+  return (
+    <header className="header">
+      <Search />
+      <div className="actions-section">
+        <button className="about-button" onClick={handleAboutClick}>
+          About
+        </button>
+        <button className="error-button" onClick={throwError}>
           Throw Error
         </button>
-      </header>
-    );
-  }
-}
+      </div>
+    </header>
+  );
+};
+
+export default Header;

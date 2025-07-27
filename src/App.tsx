@@ -1,41 +1,23 @@
-import { Component, type ErrorInfo } from 'react';
-import Header from './components/Header';
-import Results from './components/Results';
-import ErrorBoundary from './components/ErrorBoundary';
 import React from 'react';
+import { SearchProvider } from './context/SearchProvider';
+import { Outlet } from 'react-router-dom';
+import ErrorBoundary from './ErrorBoundary';
 
-interface State {
-  searchTerm: string;
-}
-
-export default class App extends Component<Record<string, unknown>, State> {
-  private resultsRef = React.createRef<Results>();
-
-  constructor(props: Record<string, unknown>) {
-    super(props);
-    this.state = {
-      searchTerm: localStorage.getItem('searchTerm') || '',
-    };
-  }
-
-  handleSearch = (term: string) => {
-    this.setState({ searchTerm: term });
-    localStorage.setItem('searchTerm', term);
-    if (this.resultsRef.current) {
-      this.resultsRef.current.updateSearchTerm(term);
-    }
+const App: React.FC = () => {
+  const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
+    console.error('Application Error:', error);
+    console.error('Error Info:', errorInfo);
   };
 
-  handleError = (error: Error, errorInfo: ErrorInfo) => {
-    console.error('ErrorBoundary caught an error', error, errorInfo);
-  };
+  return (
+    <ErrorBoundary onError={handleError}>
+      <SearchProvider>
+        <div className="app">
+          <Outlet />
+        </div>
+      </SearchProvider>
+    </ErrorBoundary>
+  );
+};
 
-  render() {
-    return (
-      <ErrorBoundary onError={this.handleError} fallback={<div>Error</div>}>
-        <Header onSearch={this.handleSearch} />
-        <Results ref={this.resultsRef} />
-      </ErrorBoundary>
-    );
-  }
-}
+export default App;

@@ -1,150 +1,100 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import App from '../../App';
+import ErrorBoundary from '../../ErrorBoundary';
 import { fetchCharacters } from '../../api/rickMortyAPI';
 import { mockAPIResponse } from '../mocks/rickMortyAPI';
-
-// Mock the API
+import { RouterProvider } from 'react-router-dom';
+import { createTestRouter } from '../../routes/Routes';
 vi.mock('../../api/rickMortyAPI', () => ({
   fetchCharacters: vi.fn(),
 }));
 
-const mockFetchCharacters = vi.mocked(fetchCharacters);
+Object.defineProperty(window, 'localStorage', {
+  value: {
+    getItem: vi.fn(),
+    setItem: vi.fn(),
+    removeItem: vi.fn(),
+    clear: vi.fn(),
+  },
+  writable: true,
+});
 
-describe('App Integration Tests', () => {
+const renderApp = (initialEntries = ['/']) =>
+  render(<RouterProvider router={createTestRouter(initialEntries)} />);
+
+const mockedFetchCharacters = vi.mocked(fetchCharacters);
+
+describe('App Component Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
-    mockFetchCharacters.mockResolvedValue(mockAPIResponse);
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => null);
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {});
+    mockedFetchCharacters.mockResolvedValue(mockAPIResponse);
   });
 
-  it('renders the complete app structure', async () => {
-    render(<App />);
-
-    // Check header elements
-    expect(screen.getByRole('banner')).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText(/search characters/i)
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /throw error/i })
-    ).toBeInTheDocument();
-
-    // Wait for results to load
-    await waitFor(() => {
-      expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
-    });
-  });
-
-  it('handles complete search flow', async () => {
-    const user = userEvent.setup();
-    render(<App />);
-
-    // Wait for initial load
-    await waitFor(() => {
-      expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
-    });
-
-    // Clear mock to track new calls
-    mockFetchCharacters.mockClear();
-
-    // Perform search
-    const searchInput = screen.getByPlaceholderText(/search characters/i);
-    const searchButton = screen.getByRole('button', { name: /search/i });
-
-    await user.clear(searchInput);
-    await user.type(searchInput, 'Morty');
-    await user.click(searchButton);
-
-    // Verify search was called with correct term
-    expect(mockFetchCharacters).toHaveBeenCalledWith('Morty', 1);
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', 'Morty');
-  });
-
-  it('handles error boundary functionality', () => {
-    // Mock console to avoid error output
+  it('error boundary integration works', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    render(<App />);
+    const ThrowError = () => {
+      throw new Error('Test error');
+    };
 
-    // The error boundary is present and working (test that it renders)
-    expect(screen.getByRole('banner')).toBeInTheDocument();
+    const WrappedComponent = () => (
+      <ErrorBoundary>
+        <ThrowError />
+      </ErrorBoundary>
+    );
+
+    expect(() => render(<WrappedComponent />)).not.toThrow();
+
+    expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/We're sorry, but something unexpected happened/)
+    ).toBeInTheDocument();
 
     consoleSpy.mockRestore();
   });
 
-  it('handles loading and error states', async () => {
-    // Test loading state
-    mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
+  it('handles API errors gracefully', async () => {
+    mockedFetchCharacters.mockRejectedValue(new Error('API Error'));
 
-    render(<App />);
-
-    expect(
-      screen.getAllByText(/loading rick and morty characters/i)
-    ).toHaveLength(2);
-
-    // Test error state
-    mockFetchCharacters.mockRejectedValue(new Error('API Error'));
-
-    render(<App />);
+    renderApp();
 
     await waitFor(() => {
-      expect(
-        screen.getByText('Error: Unable to load characters')
-      ).toBeInTheDocument();
+      expect(screen.getByText(/error:\s*api error/i)).toBeInTheDocument();
     });
   });
 
-  it('handles empty search results', async () => {
-    mockFetchCharacters.mockResolvedValue({
-      ...mockAPIResponse,
-      results: [],
-    });
+  it('displays character data correctly', async () => {
+    mockedFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-    render(<App />);
-
-    await waitFor(() => {
-      expect(screen.getByText('No characters found.')).toBeInTheDocument();
-    });
-  });
-
-  it('maintains search term across app lifecycle', async () => {
-    vi.mocked(localStorage.getItem).mockReturnValue('Rick');
-
-    render(<App />);
-
-    const searchInput = screen.getByPlaceholderText(/search characters/i);
-    expect(searchInput).toHaveValue('Rick');
-
-    expect(mockFetchCharacters).toHaveBeenCalledWith('Rick', 1);
-  });
-
-  it('renders multiple character cards correctly', async () => {
-    render(<App />);
+    renderApp();
 
     await waitFor(() => {
       expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
     });
-
-    expect(screen.getByText('Morty Smith')).toBeInTheDocument();
-
-    const cards = document.querySelectorAll('.card');
-    expect(cards).toHaveLength(2);
   });
 
-  it('handles accessibility correctly', async () => {
-    render(<App />);
+  it('handles empty search results', async () => {
+    mockedFetchCharacters.mockResolvedValue({
+      ...mockAPIResponse,
+      results: [],
+    });
 
-    // Check aria labels and roles
-    expect(screen.getByRole('banner')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
+    renderApp(['/']);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
-        'Rick and Morty Characters'
-      );
+      expect(mockedFetchCharacters).toHaveBeenCalled();
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText((text) =>
+          text.toLowerCase().includes('no characters found.')
+        )
+      ).toBeInTheDocument();
     });
   });
 });

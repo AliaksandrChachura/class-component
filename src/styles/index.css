@@ -4,3 +4,27 @@
 @import './Results.scss';
 @import './Card.scss';
 @import './Loader.scss';
+@import './CharacterDetails.scss';
+@import './SearchStatus.scss';
+@import './NotFoundPage.scss';
+@import '../components/Pagination.scss';
+@import '../features/Search/SearchPage.scss';
+
+.app {
+  background-color: hsl(83, 85%, 5%);
+  position: relative;
+}
+
+.app-content {
+  transition: transform 0.3s ease;
+}
+
+.app-content.details-open {
+  transform: translateX(-100px);
+}
+
+@media (max-width: 768px) {
+  .app-content.details-open {
+    transform: none;
+  }
+}

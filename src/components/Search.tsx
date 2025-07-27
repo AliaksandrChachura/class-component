@@ -1,40 +1,40 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearch } from '../hooks/useSearch';
 
-interface Props {
-  onSearch?: (term: string) => void;
-}
+const Search: React.FC = () => {
+  const { state, setSearchTerm } = useSearch();
+  const [inputValue, setInputValue] = useState(state.searchTerm);
 
-interface State {
-  term: string;
-}
+  useEffect(() => {
+    setInputValue(state.searchTerm);
+  }, [state.searchTerm]);
 
-export default class Search extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    const savedTerm = localStorage.getItem('searchTerm') || '';
-    this.state = { term: savedTerm };
-  }
-
-  handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ term: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
   };
 
-  handleSearch = () => {
-    const trimmed = this.state.term.trim();
-    localStorage.setItem('searchTerm', trimmed);
-    this.props.onSearch?.(trimmed);
+  const handleSearch = () => {
+    const trimmedValue = inputValue.trim();
+    setSearchTerm(trimmedValue);
   };
 
-  render() {
-    return (
-      <div className="search">
-        <input
-          value={this.state.term}
-          onChange={this.handleChange}
-          placeholder="Search characters (e.g. Rick, Morty)..."
-        />
-        <button onClick={this.handleSearch}>Search</button>
-      </div>
-    );
-  }
-}
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  return (
+    <div className="search">
+      <input
+        value={inputValue}
+        onChange={handleChange}
+        onKeyPress={handleKeyPress}
+        placeholder="Search characters (e.g. Rick, Morty)..."
+      />
+      <button onClick={handleSearch}>Search</button>
+    </div>
+  );
+};
+
+export default Search;

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Card from '../Card';
 
 describe('Card Component', () => {
@@ -61,5 +61,55 @@ describe('Card Component', () => {
 
     expect(screen.getByText('A'.repeat(100))).toBeInTheDocument();
     expect(screen.getByText('B'.repeat(500))).toBeInTheDocument();
+  });
+
+  it('calls onClick when card is clicked', () => {
+    const mockOnClick = vi.fn();
+    render(<Card {...mockProps} onClick={mockOnClick} />);
+
+    const cardElement = screen.getByText('Test Character').closest('.card');
+    if (cardElement) {
+      fireEvent.click(cardElement);
+    }
+
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles keyboard events', () => {
+    const mockOnClick = vi.fn();
+    render(<Card {...mockProps} onClick={mockOnClick} />);
+
+    const cardElement = screen.getByText('Test Character').closest('.card');
+    if (cardElement) {
+      fireEvent.keyDown(cardElement, { key: 'Enter' });
+      expect(mockOnClick).toHaveBeenCalledTimes(1);
+
+      fireEvent.keyDown(cardElement, { key: ' ' });
+    }
+    expect(mockOnClick).toHaveBeenCalledTimes(2);
+  });
+
+  it('renders with image when provided', () => {
+    const propsWithImage = {
+      ...mockProps,
+      image: 'https://example.com/image.jpg',
+    };
+
+    render(<Card {...propsWithImage} />);
+
+    const image = screen.getByAltText('Test Character');
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute('src', 'https://example.com/image.jpg');
+  });
+
+  it('does not call onClick when none is provided', () => {
+    render(<Card {...mockProps} />);
+
+    const cardElement = screen.getByText('Test Character').closest('.card');
+    expect(() => {
+      if (cardElement) {
+        fireEvent.click(cardElement);
+      }
+    }).not.toThrow();
   });
 });

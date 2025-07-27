@@ -1,0 +1,258 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import CharacterDetails from '../CharacterDetails';
+import { fetchCharacterDetails, type Character } from '../../api/rickMortyAPI';
+
+vi.mock('../../api/rickMortyAPI', () => ({
+  fetchCharacterDetails: vi.fn(),
+}));
+
+const mockFetchCharacterDetails = vi.mocked(fetchCharacterDetails);
+
+const mockCharacter = {
+  id: 1,
+  name: 'Rick Sanchez',
+  status: 'Alive',
+  species: 'Human',
+  type: '',
+  gender: 'Male',
+  origin: {
+    name: 'Earth (C-137)',
+    url: 'https://rickandmortyapi.com/api/location/1',
+  },
+  location: {
+    name: 'Citadel of Ricks',
+    url: 'https://rickandmortyapi.com/api/location/3',
+  },
+  image: 'https://rickandmortyapi.com/api/character/avatar/1.jpeg',
+  episode: [
+    'https://rickandmortyapi.com/api/episode/1',
+    'https://rickandmortyapi.com/api/episode/2',
+  ],
+  url: 'https://rickandmortyapi.com/api/character/1',
+  created: '2017-11-04T18:48:46.250Z',
+};
+
+describe('CharacterDetails Component', () => {
+  const mockOnClose = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockFetchCharacterDetails.mockResolvedValue(mockCharacter);
+  });
+
+  it('renders nothing when isOpen is false', () => {
+    render(
+      <CharacterDetails characterId={1} isOpen={false} onClose={mockOnClose} />
+    );
+
+    expect(screen.queryByText('Character Details')).not.toBeInTheDocument();
+  });
+
+  it('shows loading state when fetching character details', async () => {
+    let resolvePromise: (value: Character) => void;
+    const promise = new Promise<Character>((resolve) => {
+      resolvePromise = resolve;
+    });
+    mockFetchCharacterDetails.mockReturnValue(promise);
+
+    render(
+      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+    );
+
+    expect(screen.getByText('Character Details')).toBeInTheDocument();
+    expect(
+      screen.getByText('Loading character details...')
+    ).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
+
+    if (resolvePromise) {
+      resolvePromise(mockCharacter);
+    }
+  });
+
+  it('displays character information after successful fetch', async () => {
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Alive - Human')).toBeInTheDocument();
+      expect(screen.getByText('Male')).toBeInTheDocument();
+      expect(screen.getByText('Earth (C-137)')).toBeInTheDocument();
+      expect(screen.getByText('Citadel of Ricks')).toBeInTheDocument();
+      expect(screen.getByText('2')).toBeInTheDocument();
+    });
+
+    it('displays character image with correct attributes', async () => {
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      await waitFor(() => {
+        const image = screen.getByAltText('Rick Sanchez');
+        expect(image).toBeInTheDocument();
+        expect(image).toHaveAttribute('src', mockCharacter.image);
+        expect(image).toHaveClass('character-detail-image');
+      });
+    });
+
+    it('calls onClose when close button is clicked', () => {
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      const closeButton = screen.getByLabelText('Close details panel');
+      fireEvent.click(closeButton);
+
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles API error gracefully', async () => {
+      const errorMessage = 'Failed to fetch character';
+      mockFetchCharacterDetails.mockRejectedValue(new Error(errorMessage));
+
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText(`Error: ${errorMessage}`)).toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByText('Close');
+      fireEvent.click(closeButton);
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not fetch when characterId is null', () => {
+      render(
+        <CharacterDetails
+          characterId={null}
+          isOpen={true}
+          onClose={mockOnClose}
+        />
+      );
+
+      expect(mockFetchCharacterDetails).not.toHaveBeenCalled();
+    });
+
+    it('fetches new character when characterId changes', async () => {
+      const { rerender } = render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      await waitFor(() => {
+        expect(mockFetchCharacterDetails).toHaveBeenCalledWith(1);
+      });
+
+      rerender(
+        <CharacterDetails characterId={2} isOpen={true} onClose={mockOnClose} />
+      );
+
+      expect(mockFetchCharacterDetails).toHaveBeenCalledWith(2);
+    });
+
+    it('displays correct status color for alive character', async () => {
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      await waitFor(() => {
+        const statusDot = document.querySelector('.status-dot');
+        expect(statusDot).toHaveStyle('background-color: #55cc44');
+      });
+    });
+
+    it('displays correct status color for dead character', async () => {
+      const deadCharacter = {
+        ...mockCharacter,
+        status: 'Dead',
+      };
+      mockFetchCharacterDetails.mockResolvedValue(deadCharacter);
+
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      await waitFor(() => {
+        const statusDot = document.querySelector('.status-dot');
+        expect(statusDot).toHaveStyle('background-color: #d63d2e');
+      });
+    });
+
+    it('displays correct status color for unknown status', async () => {
+      const unknownCharacter = {
+        ...mockCharacter,
+        status: 'unknown',
+      };
+      mockFetchCharacterDetails.mockResolvedValue(unknownCharacter);
+
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      await waitFor(() => {
+        const statusDot = document.querySelector('.status-dot');
+        expect(statusDot).toHaveStyle('background-color: #9e9e9e');
+      });
+    });
+
+    it('formats creation date correctly', async () => {
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('November 4, 2017')).toBeInTheDocument();
+      });
+    });
+
+    it('handles character with type field', async () => {
+      const characterWithType = {
+        ...mockCharacter,
+        type: 'Scientist',
+      };
+      mockFetchCharacterDetails.mockResolvedValue(characterWithType);
+
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Scientist')).toBeInTheDocument();
+      });
+    });
+
+    it('has correct accessibility attributes', () => {
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      const closeButton = screen.getByLabelText('Close details panel');
+      expect(closeButton).toHaveAttribute('aria-label', 'Close details panel');
+    });
+
+    it('has correct CSS classes for styling', async () => {
+      render(
+        <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+      );
+
+      expect(
+        document.querySelector('.character-details-overlay')
+      ).toBeInTheDocument();
+      expect(
+        document.querySelector('.character-details-panel')
+      ).toBeInTheDocument();
+      expect(
+        document.querySelector('.character-details-header')
+      ).toBeInTheDocument();
+      expect(
+        document.querySelector('.character-details-content')
+      ).toBeInTheDocument();
+    });
+  });
+});

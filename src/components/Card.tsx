@@ -1,17 +1,49 @@
 import React from 'react';
+import useLocalStorageOperations from '../hooks/useLocalStorageOperations';
+import '../styles/Card.scss';
 
 interface Props {
   name: string;
   description: string;
+  image?: string;
+  onClick?: () => void;
 }
 
-export default class Card extends React.Component<Props> {
-  render() {
-    return (
-      <div className="card">
-        <h3>{this.props.name}</h3>
-        <p>{this.props.description}</p>
+const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
+  const { setItem } = useLocalStorageOperations();
+
+  const handleSelectedCharacter = () => {
+    setItem('selectedCharacter', { name, description, image });
+    if (onClick) {
+      onClick();
+    }
+  };
+
+  return (
+    <div
+      className="card"
+      role="button"
+      tabIndex={0}
+      onClick={handleSelectedCharacter}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          handleSelectedCharacter();
+        }
+      }}
+    >
+      <div className="card-layout">
+        {image && (
+          <div className="card-image">
+            <img src={image} alt={name} loading="lazy" />
+          </div>
+        )}
+        <div className="card-content">
+          <h3>{name}</h3>
+          <p>{description}</p>
+        </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+export default Card;

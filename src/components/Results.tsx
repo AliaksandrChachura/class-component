@@ -1,79 +1,161 @@
-import { Component } from 'react';
-import Loader from './Loader';
-import Card from './Card';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useSearch } from '../hooks/useSearch';
 import { fetchCharacters } from '../api/rickMortyAPI';
-import type { Character } from '../api/rickMortyAPI';
+import type { Character, RickMortyResponse } from '../api/rickMortyAPI';
+import Card from './Card';
+import Loader from './Loader';
+import Pagination from './Pagination';
+import NotFoundPage from './NotFoundPage';
 
-interface State {
-  loading: boolean;
-  error: string | null;
-  results: Character[];
-  searchTerm: string;
+interface ResultsProps {
+  onCharacterSelect?: (characterId: number) => void;
 }
 
-export default class Results extends Component<Record<string, unknown>, State> {
-  constructor(props: Record<string, unknown>) {
-    super(props);
-    const savedTerm = localStorage.getItem('searchTerm') || '';
-    this.state = {
-      loading: false,
-      error: null,
-      results: [],
-      searchTerm: savedTerm,
+const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
+  const { state } = useSearch();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [paginationInfo, setPaginationInfo] = useState<
+    RickMortyResponse['info'] | null
+  >(null);
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+
+  useEffect(() => {
+    const isCharacterDetailsRoute = /\/results\/\d+/.test(
+      window.location.pathname
+    );
+    if (isCharacterDetailsRoute) return;
+
+    const params = new URLSearchParams(searchParams);
+    if (state.searchTerm) {
+      params.set('q', state.searchTerm);
+    } else {
+      params.delete('q');
+    }
+    if (currentPage > 1) {
+      params.set('page', currentPage.toString());
+    } else {
+      params.delete('page');
+    }
+    setSearchParams(params);
+  }, [state.searchTerm, currentPage, setSearchParams, searchParams]);
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      const newParams = new URLSearchParams();
+      if (state.searchTerm) {
+        newParams.set('q', state.searchTerm);
+      }
+      if (page > 1) {
+        newParams.set('page', page.toString());
+      }
+      window.history.pushState({}, '', `/results?${newParams.toString()}`);
+      setSearchParams(newParams);
+    },
+    [state.searchTerm, setSearchParams]
+  );
+
+  useEffect(() => {
+    const searchCharacters = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetchCharacters(state.searchTerm, currentPage);
+        setCharacters(response.results);
+        console.log(response.results);
+        setPaginationInfo(response.info);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to fetch characters'
+        );
+        setCharacters([]);
+        setPaginationInfo(null);
+      } finally {
+        setIsLoading(false);
+      }
     };
-  }
 
-  componentDidMount() {
-    this.fetchData();
-  }
+    searchCharacters();
+  }, [state.searchTerm, currentPage]);
 
-  updateSearchTerm = (newTerm: string) => {
-    this.setState({ searchTerm: newTerm }, () => {
-      this.fetchData();
-    });
+  useEffect(() => {
+    if (currentPage > 1) {
+      handlePageChange(1);
+    }
+  }, [state.searchTerm, currentPage, handlePageChange]);
+
+  const getCharacterDescription = (character: Character): string => {
+    const statusEmoji =
+      character.status === 'Alive'
+        ? '🟢'
+        : character.status === 'Dead'
+          ? '🔴'
+          : '❓';
+    const origin =
+      character.origin.name === 'unknown'
+        ? 'an unknown location'
+        : character.origin.name;
+    const location =
+      character.location.name === 'unknown'
+        ? 'an unknown location'
+        : character.location.name;
+    return `${statusEmoji} ${character.status} ${character.species} from ${origin}. Currently at: ${location}`;
   };
 
-  fetchData = () => {
-    this.setState({ loading: true, error: null });
-    const { searchTerm } = this.state;
+  if (isLoading) {
+    return <Loader />;
+  }
 
-    fetchCharacters(searchTerm, 1)
-      .then((data) => {
-        this.setState({ results: data.results, loading: false });
-      })
-      .catch(() => {
-        this.setState({ error: 'Unable to load characters', loading: false });
-      });
-  };
-
-  render() {
-    const { loading, error, results } = this.state;
-
-    if (loading)
-      return (
-        <Loader
-          variant="spinner"
-          size="large"
-          text="Loading Rick and Morty characters..."
-        />
-      );
-    if (error) return <div className="error">Error: {error}</div>;
-
+  if (error) {
     return (
-      <div className="results">
-        <h2>Rick and Morty Characters</h2>
-        {results.length === 0 ? (
-          <p>No characters found.</p>
-        ) : (
-          results.map((character) => (
-            <Card
-              key={character.id}
-              name={character.name}
-              description={`${character.species} from ${character.origin.name}. Status: ${character.status}. Currently at: ${character.location.name}`}
-            />
-          ))
-        )}
+      <div className="error-message">
+        <p>Error: {error}</p>
       </div>
     );
   }
-}
+
+  if (characters.length === 0 && !isLoading && !error) {
+    return (
+      <div className="no-results">
+        <p>No characters found.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="results">
+      {isLoading && <Loader />}
+      {characters.length === 0 ? (
+        <NotFoundPage />
+      ) : (
+        <div className="results-grid">
+          {characters.map((character) => (
+            <Card
+              key={character.id}
+              name={character.name}
+              description={getCharacterDescription(character)}
+              image={character.image}
+              onClick={() => onCharacterSelect?.(character.id)}
+            />
+          ))}
+        </div>
+      )}
+      {paginationInfo && paginationInfo.pages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={paginationInfo.pages}
+          onPageChange={handlePageChange}
+          hasNextPage={!!paginationInfo.next}
+          hasPrevPage={!!paginationInfo.prev}
+          isLoading={isLoading}
+        />
+      )}
+    </div>
+  );
+};
+
+export default Results;
