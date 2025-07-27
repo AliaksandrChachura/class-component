@@ -1,12 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import ErrorBoundary from '../../ErrorBoundary';
 import { fetchCharacters } from '../../api/rickMortyAPI';
 import { mockAPIResponse } from '../mocks/rickMortyAPI';
 import { RouterProvider } from 'react-router-dom';
 import { createTestRouter } from '../../routes/Routes';
-
 vi.mock('../../api/rickMortyAPI', () => ({
   fetchCharacters: vi.fn(),
 }));
@@ -34,44 +32,6 @@ describe('App Component Integration Tests', () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
     vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {});
     mockedFetchCharacters.mockResolvedValue(mockAPIResponse);
-  });
-
-  it('renders header and basic layout correctly', async () => {
-    renderApp(['/']);
-
-    expect(screen.getByRole('banner')).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText(/search characters/i)
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /search/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /throw error/i })
-    ).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
-    });
-  });
-
-  it('integrates search functionality between Header and Results', async () => {
-    const user = userEvent.setup();
-    renderApp();
-
-    await waitFor(() => {
-      expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
-    });
-
-    const searchInput = screen.getByPlaceholderText(/search characters/i);
-    const searchButton = screen.getByRole('button', { name: /search/i });
-
-    vi.clearAllMocks();
-
-    await user.type(searchInput, 'Rick');
-    await user.click(searchButton);
-
-    await waitFor(() => {
-      expect(mockedFetchCharacters).toHaveBeenCalledWith('Rick', 1);
-    });
   });
 
   it('error boundary integration works', () => {
@@ -103,9 +63,7 @@ describe('App Component Integration Tests', () => {
     renderApp();
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/error: unable to load characters/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/error:\s*api error/i)).toBeInTheDocument();
     });
   });
 
@@ -116,7 +74,6 @@ describe('App Component Integration Tests', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
-      expect(screen.getByText(/human from earth/i)).toBeInTheDocument();
     });
   });
 

@@ -1,20 +1,92 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useSearch } from '../hooks/useSearch';
-import Loader from './Loader';
-import Card from './Card';
 import { fetchCharacters } from '../api/rickMortyAPI';
-import type { Character } from '../api/rickMortyAPI';
+import type { Character, RickMortyResponse } from '../api/rickMortyAPI';
+import Card from './Card';
+import Loader from './Loader';
+import Pagination from './Pagination';
+import NotFoundPage from './NotFoundPage';
 
 interface ResultsProps {
-  onCharacterSelect: (characterId: number) => void;
+  onCharacterSelect?: (characterId: number) => void;
 }
 
 const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
-  const { state, setLoading, setError } = useSearch();
-  const [results, setResults] = useState<Character[]>([]);
+  const { state } = useSearch();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const navigate = useNavigate();
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [paginationInfo, setPaginationInfo] = useState<
+    RickMortyResponse['info'] | null
+  >(null);
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+
+  useEffect(() => {
+    const isCharacterDetailsRoute = /\/results\/\d+/.test(
+      window.location.pathname
+    );
+    if (isCharacterDetailsRoute) return;
+
+    const params = new URLSearchParams(searchParams);
+    if (state.searchTerm) {
+      params.set('q', state.searchTerm);
+    } else {
+      params.delete('q');
+    }
+    if (currentPage > 1) {
+      params.set('page', currentPage.toString());
+    } else {
+      params.delete('page');
+    }
+    setSearchParams(params);
+  }, [state.searchTerm, currentPage, setSearchParams, searchParams]);
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      const newParams = new URLSearchParams();
+      if (state.searchTerm) {
+        newParams.set('q', state.searchTerm);
+      }
+      if (page > 1) {
+        newParams.set('page', page.toString());
+      }
+      window.history.pushState({}, '', `/results?${newParams.toString()}`);
+      setSearchParams(newParams);
+    },
+    [state.searchTerm, setSearchParams]
+  );
+
+  useEffect(() => {
+    const searchCharacters = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetchCharacters(state.searchTerm, currentPage);
+        setCharacters(response.results);
+        console.log(response.results);
+        setPaginationInfo(response.info);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to fetch characters'
+        );
+        setCharacters([]);
+        setPaginationInfo(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    searchCharacters();
+  }, [state.searchTerm, currentPage]);
+
+  useEffect(() => {
+    if (currentPage > 1) {
+      handlePageChange(1);
+    }
+  }, [state.searchTerm, currentPage, handlePageChange]);
 
   const getCharacterDescription = (character: Character): string => {
     const statusEmoji =
@@ -34,69 +106,53 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
     return `${statusEmoji} ${character.status} ${character.species} from ${origin}. Currently at: ${location}`;
   };
 
-  const handleCharacterClick = (character: Character) => {
-    onCharacterSelect(character.id);
-    navigate(`/Results/${character.id}`);
-  };
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const data = !state.searchTerm.trim()
-        ? await fetchCharacters('', 1)
-        : await fetchCharacters(state.searchTerm, 1);
-      setResults(data.results);
-    } catch {
-      setError('Unable to load characters');
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [state.searchTerm, setLoading, setError]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  if (state.isLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (state.error) {
-    return <div className="error">Error: {state.error}</div>;
+  if (error) {
+    return (
+      <div className="error-message">
+        <p>Error: {error}</p>
+      </div>
+    );
+  }
+
+  if (characters.length === 0 && !isLoading && !error) {
+    return (
+      <div className="no-results">
+        <p>No characters found.</p>
+      </div>
+    );
   }
 
   return (
     <div className="results">
-      <h2>Rick and Morty Characters</h2>
-
-      {results.length === 0 ? (
-        <div className="no-results">
-          <p>No characters found.</p>
-          <p>
-            Try searching for &ldquo;Rick&rdquo;, &ldquo;Morty&rdquo;, or
-            another character name!
-          </p>
-        </div>
+      {isLoading && <Loader />}
+      {characters.length === 0 ? (
+        <NotFoundPage />
       ) : (
-        <>
-          <p className="results-count">
-            Found {results.length} character{results.length === 1 ? '' : 's'}
-          </p>
-          <div className="results-container">
-            {results.map((character) => (
-              <Card
-                key={character.id}
-                name={character.name}
-                description={getCharacterDescription(character)}
-                image={character.image}
-                onClick={() => handleCharacterClick(character)}
-              />
-            ))}
-          </div>
-        </>
+        <div className="results-grid">
+          {characters.map((character) => (
+            <Card
+              key={character.id}
+              name={character.name}
+              description={getCharacterDescription(character)}
+              image={character.image}
+              onClick={() => onCharacterSelect?.(character.id)}
+            />
+          ))}
+        </div>
+      )}
+      {paginationInfo && paginationInfo.pages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={paginationInfo.pages}
+          onPageChange={handlePageChange}
+          hasNextPage={!!paginationInfo.next}
+          hasPrevPage={!!paginationInfo.prev}
+          isLoading={isLoading}
+        />
       )}
     </div>
   );

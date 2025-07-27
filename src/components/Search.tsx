@@ -33,7 +33,6 @@ const Search: React.FC = () => {
         placeholder="Search characters (e.g. Rick, Morty)..."
       />
       <button onClick={handleSearch}>Search</button>
-      {state.isLoading && <span className="search-loading">Searching...</span>}
     </div>
   );
 };

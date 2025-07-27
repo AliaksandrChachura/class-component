@@ -71,6 +71,10 @@ export async function fetchCharacters(
       throw new Error('API request failed');
     }
 
+    if (response.status === 404) {
+      throw new Error(response.statusText);
+    }
+
     const data: RickMortyResponse = await response.json();
     return data;
   } catch (error) {

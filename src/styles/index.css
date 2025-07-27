@@ -5,6 +5,10 @@
 @import './Card.scss';
 @import './Loader.scss';
 @import './CharacterDetails.scss';
+@import './SearchStatus.scss';
+@import './NotFoundPage.scss';
+@import '../components/Pagination.scss';
+@import '../features/Search/SearchPage.scss';
 
 .app {
   background-color: hsl(83, 85%, 5%);

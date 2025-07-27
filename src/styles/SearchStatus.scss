@@ -1,0 +1,154 @@
+.search-status {
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 245, 255, 0.08) 0%,
+    rgba(255, 0, 128, 0.08) 100%
+  );
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+
+  &.loading {
+    border-color: rgba(255, 165, 0, 0.3);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 165, 0, 0.08) 0%,
+      rgba(255, 69, 0, 0.08) 100%
+    );
+
+    .loading-status {
+      color: #ffa500;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &::before {
+        content: '';
+        width: 16px;
+        height: 16px;
+        border: 2px solid transparent;
+        border-top: 2px solid #ffa500;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+
+  p {
+    margin: 0;
+    color: #f5f5f5;
+    font-size: 1rem;
+    line-height: 1.5;
+
+    strong {
+      color: #00f5ff;
+      font-weight: 600;
+    }
+
+    em {
+      color: #ff0080;
+      font-style: normal;
+      font-weight: 500;
+      padding: 0.2rem 0.5rem;
+      background: rgba(255, 0, 128, 0.1);
+      border-radius: 6px;
+      margin: 0 0.25rem;
+    }
+  }
+
+  .pagination-info {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+  }
+
+  .reset-btn {
+    background: linear-gradient(45deg, #ff0080, #ff4081);
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-left: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 0, 128, 0.3);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 0, 128, 0.4);
+      background: linear-gradient(45deg, #ff4081, #ff0080);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .error-status {
+    color: #ff6b6b;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &::before {
+      content: '⚠️';
+      font-size: 1.1rem;
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+
+    p {
+      font-size: 0.9rem;
+    }
+
+    .reset-btn {
+      padding: 0.3rem 0.8rem;
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .reset-btn {
+      display: block;
+      margin: 0.5rem 0 0 0;
+      width: fit-content;
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Animation for when search status appears
+.search-status {
+  animation: slideInDown 0.4s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

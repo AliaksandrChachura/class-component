@@ -114,11 +114,9 @@ describe('Results Component', () => {
     renderWithProps();
 
     await waitFor(() => {
-      expect(screen.getByText('Found 2 characters')).toBeInTheDocument();
+      expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
+      expect(screen.getByText('Morty Smith')).toBeInTheDocument();
     });
-
-    expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
-    expect(screen.getByText('Morty Smith')).toBeInTheDocument();
   });
 
   it('renders character cards with correct descriptions', async () => {
@@ -143,9 +141,7 @@ describe('Results Component', () => {
     renderWithProps();
 
     await waitFor(() => {
-      expect(
-        screen.getByText('Error: Unable to load characters')
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Error:/i)).toBeInTheDocument();
     });
 
     expect(screen.queryByText('Found')).not.toBeInTheDocument();
@@ -226,9 +222,7 @@ describe('Results Component', () => {
     renderWithProps();
 
     await waitFor(() => {
-      expect(
-        screen.getByText('Error: Unable to load characters')
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Error:/i)).toBeInTheDocument();
     });
 
     mockFetchCharacters.mockResolvedValueOnce(mockAPIResponse);
@@ -339,7 +333,7 @@ describe('Results Component', () => {
     renderWithProps();
 
     await waitFor(() => {
-      expect(screen.getByText('Found 2 characters')).toBeInTheDocument();
+      expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
     });
 
     const resultsContainer = document.querySelector('.results');

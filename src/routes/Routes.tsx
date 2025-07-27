@@ -8,8 +8,9 @@ import AboutPage from '../features/About/AboutPage';
 import SearchPage from '../features/Search/SearchPage';
 import CharacterDetails from '../components/CharacterDetails';
 import { fetchCharacterDetails } from '../api/rickMortyAPI';
+import NotFoundPage from '../components/NotFoundPage';
 
-export const router: RouteObject[] = [
+export const routeConfig: RouteObject[] = [
   {
     path: '/',
     Component: App,
@@ -37,10 +38,15 @@ export const router: RouteObject[] = [
           },
         ],
       },
+      {
+        path: '*',
+        element: <NotFoundPage />,
+        errorElement: <NotFoundPage />,
+      },
     ],
   },
 ];
 
-export const routes = createBrowserRouter(router); // for real app
+export const routes = createBrowserRouter(routeConfig); // for real app
 export const createTestRouter = (initialEntries = ['/']) =>
-  createMemoryRouter(router, { initialEntries });
+  createMemoryRouter(routeConfig, { initialEntries });

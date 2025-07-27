@@ -15,6 +15,10 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = () => {
     navigate('/results');
   };
 
+  const handlePanelClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+  };
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'alive':
@@ -35,8 +39,8 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = () => {
   };
 
   return (
-    <div className="character-details-container">
-      <div className="character-details-panel">
+    <div className="character-details-container" onClick={handleClose}>
+      <div className="character-details-panel" onClick={handlePanelClick}>
         <div className="character-details-header">
           <h2>Character Details</h2>
           <button
