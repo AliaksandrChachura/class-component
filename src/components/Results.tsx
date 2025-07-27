@@ -5,7 +5,11 @@ import Card from './Card';
 import { fetchCharacters } from '../api/rickMortyAPI';
 import type { Character } from '../api/rickMortyAPI';
 
-const Results: React.FC = () => {
+interface ResultsProps {
+  onCharacterSelect: (characterId: number) => void;
+}
+
+const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   const { state, setLoading, setError } = useSearch();
   const [results, setResults] = useState<Character[]>([]);
 
@@ -25,6 +29,10 @@ const Results: React.FC = () => {
         ? 'an unknown location'
         : character.location.name;
     return `${statusEmoji} ${character.status} ${character.species} from ${origin}. Currently at: ${location}`;
+  };
+
+  const handleCharacterClick = (character: Character) => {
+    onCharacterSelect(character.id);
   };
 
   const fetchData = useCallback(async () => {
@@ -49,7 +57,7 @@ const Results: React.FC = () => {
   }, [fetchData]);
 
   if (state.isLoading) {
-    return <Loader size="large" text="Loading Rick and Morty characters..." />;
+    return <Loader />;
   }
 
   if (state.error) {
@@ -80,6 +88,7 @@ const Results: React.FC = () => {
                 name={character.name}
                 description={getCharacterDescription(character)}
                 image={character.image}
+                onClick={() => handleCharacterClick(character)}
               />
             ))}
           </div>

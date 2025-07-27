@@ -23,7 +23,6 @@ export default defineConfig({
         'src/routes/**/**',
         'src/hooks/**/**',
         'src/test/**/**',
-        'src/test/**/**',
         'src/types/**',
       ],
       thresholds: {

@@ -6,13 +6,17 @@ interface Props {
   name: string;
   description: string;
   image?: string;
+  onClick?: () => void;
 }
 
-const Card: React.FC<Props> = ({ name, description, image }) => {
+const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
   const { setItem } = useLocalStorageOperations();
 
   const handleSelectedCharacter = () => {
     setItem('selectedCharacter', { name, description, image });
+    if (onClick) {
+      onClick();
+    }
   };
 
   return (

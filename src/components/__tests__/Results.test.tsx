@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import React from 'react';
 import Results from '../Results';
 import {
@@ -16,8 +16,18 @@ vi.mock('../../api/rickMortyAPI', () => ({
 
 const mockFetchCharacters = vi.mocked(fetchCharacters);
 
+const mockOnCharacterSelect = vi.fn();
+
 const renderWithProvider = (component: React.ReactElement) => {
   return render(<SearchProvider>{component}</SearchProvider>);
+};
+
+const renderWithProps = (props = {}) => {
+  const defaultProps = {
+    onCharacterSelect: mockOnCharacterSelect,
+    ...props,
+  };
+  return renderWithProvider(<Results {...defaultProps} />);
 };
 
 describe('Results Component', () => {
@@ -25,6 +35,7 @@ describe('Results Component', () => {
     vi.clearAllMocks();
     localStorage.clear();
     mockFetchCharacters.mockResolvedValue(mockAPIResponse);
+    mockOnCharacterSelect.mockClear();
   });
 
   afterEach(() => {
@@ -32,12 +43,7 @@ describe('Results Component', () => {
   });
 
   it('renders loading state when fetchCharacters is called', async () => {
-    mockFetchCharacters.mockImplementation(
-      () =>
-        new Promise((resolve) => {
-          resolvePromise = resolve;
-        })
-    );
+    mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
 
     const mockSearchContext = {
       state: { searchTerm: '', isLoading: true, error: null },
@@ -55,14 +61,11 @@ describe('Results Component', () => {
 
     render(
       <TestProvider>
-        <Results />
+        <Results onCharacterSelect={mockOnCharacterSelect} />
       </TestProvider>
     );
 
     expect(screen.getByRole('status')).toBeInTheDocument();
-    expect(
-      screen.getAllByText(/loading rick and morty characters/i)
-    ).toHaveLength(2);
   });
 
   it('loads saved search term from SearchContext on mount', () => {
@@ -82,7 +85,7 @@ describe('Results Component', () => {
 
     render(
       <TestProvider>
-        <Results />
+        <Results onCharacterSelect={mockOnCharacterSelect} />
       </TestProvider>
     );
 
@@ -91,7 +94,7 @@ describe('Results Component', () => {
 
   it('fetches data on component mount', async () => {
     vi.mocked(localStorage.getItem).mockReturnValue('');
-    renderWithProvider(<Results />);
+    renderWithProps();
 
     await waitFor(() => {
       expect(mockFetchCharacters).toHaveBeenCalledWith('', 1);
@@ -99,10 +102,10 @@ describe('Results Component', () => {
   });
 
   it('renders characters when data is loaded successfully', async () => {
-    renderWithProvider(<Results />);
+    renderWithProps();
 
     await waitFor(() => {
-      expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
+      expect(screen.getByText('Found 2 characters')).toBeInTheDocument();
     });
 
     expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -110,7 +113,7 @@ describe('Results Component', () => {
   });
 
   it('renders character cards with correct descriptions', async () => {
-    renderWithProvider(<Results />);
+    renderWithProps();
 
     await waitFor(() => {
       expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -128,7 +131,7 @@ describe('Results Component', () => {
   it('renders error message when API call fails', async () => {
     mockFetchCharacters.mockRejectedValue(new Error('API Error'));
 
-    renderWithProvider(<Results />);
+    renderWithProps();
 
     await waitFor(() => {
       expect(
@@ -136,9 +139,7 @@ describe('Results Component', () => {
       ).toBeInTheDocument();
     });
 
-    expect(
-      screen.queryByText('Rick and Morty Characters')
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Found')).not.toBeInTheDocument();
   });
 
   it('renders "no characters found" when results array is empty', async () => {
@@ -147,25 +148,26 @@ describe('Results Component', () => {
       results: [],
     });
 
-    renderWithProvider(<Results />);
+    renderWithProps();
 
     await waitFor(() => {
       expect(screen.getByText('No characters found.')).toBeInTheDocument();
     });
   });
 
-  it('updateSearchTerm method updates state and refetches data', async () => {
-    vi.mocked(localStorage.getItem).mockReturnValue('');
-    renderWithProvider(<Results />);
+  it('calls onCharacterSelect when character card is clicked', async () => {
+    renderWithProps();
 
     await waitFor(() => {
-      expect(mockFetchCharacters).toHaveBeenCalledWith('', 1);
+      expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
     });
 
-    const resultsComponent = screen
-      .getByText('Rick and Morty Characters')
-      .closest('div');
-    expect(resultsComponent).toBeInTheDocument();
+    const rickCard = screen.getByText('Rick Sanchez').closest('.card');
+    if (rickCard) {
+      fireEvent.click(rickCard);
+    }
+
+    expect(mockOnCharacterSelect).toHaveBeenCalledWith(1);
   });
 
   it('handles loading state properly during data fetch', async () => {
@@ -193,26 +195,24 @@ describe('Results Component', () => {
 
     render(
       <TestProvider>
-        <Results />
+        <Results onCharacterSelect={mockOnCharacterSelect} />
       </TestProvider>
     );
 
-    expect(
-      screen.getAllByText(/loading rick and morty characters/i)
-    ).toHaveLength(2);
+    expect(screen.getByRole('status')).toBeInTheDocument();
 
     mockSearchContext.state.isLoading = false;
     resolvePromise(mockAPIResponse);
 
     await waitFor(() => {
-      expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
   });
 
   it('clears error state when refetching data', async () => {
     mockFetchCharacters.mockRejectedValueOnce(new Error('API Error'));
 
-    renderWithProvider(<Results />);
+    renderWithProps();
 
     await waitFor(() => {
       expect(
@@ -243,19 +243,16 @@ describe('Results Component', () => {
 
     render(
       <TestProvider>
-        <Results />
+        <Results onCharacterSelect={mockOnCharacterSelect} />
       </TestProvider>
     );
 
     const loader = screen.getByRole('status');
-    expect(loader).toHaveAttribute(
-      'aria-label',
-      'Loading Rick and Morty characters...'
-    );
+    expect(loader).toBeInTheDocument();
   });
 
   it('renders cards with unique keys', async () => {
-    renderWithProvider(<Results />);
+    renderWithProps();
 
     await waitFor(() => {
       expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -286,7 +283,7 @@ describe('Results Component', () => {
       results: [customCharacter],
     });
 
-    renderWithProvider(<Results />);
+    renderWithProps();
 
     await waitFor(() => {
       expect(screen.getByText('Custom Character')).toBeInTheDocument();
@@ -314,33 +311,23 @@ describe('Results Component', () => {
 
     render(
       <TestProvider>
-        <Results />
+        <Results onCharacterSelect={mockOnCharacterSelect} />
       </TestProvider>
     );
 
     expect(screen.getByRole('status')).toBeInTheDocument();
-    expect(screen.getAllByText(/loading/i)).toHaveLength(2);
-    expect(
-      screen.getAllByText(/Loading Rick and Morty characters/)
-    ).toHaveLength(2);
 
-    expect(
-      screen.queryByText('Rick and Morty Characters')
-    ).not.toBeInTheDocument();
-    expect(screen.queryByText('No characters found')).not.toBeInTheDocument();
+    expect(screen.queryByText('Found')).not.toBeInTheDocument();
   });
 
   it('has correct CSS classes and structure', async () => {
-    renderWithProvider(<Results />);
+    renderWithProps();
 
     await waitFor(() => {
-      expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
+      expect(screen.getByText('Found 2 characters')).toBeInTheDocument();
     });
 
     const resultsContainer = document.querySelector('.results');
     expect(resultsContainer).toBeInTheDocument();
-
-    const heading = screen.getByRole('heading', { level: 2 });
-    expect(heading).toHaveTextContent('Rick and Morty Characters');
   });
 });

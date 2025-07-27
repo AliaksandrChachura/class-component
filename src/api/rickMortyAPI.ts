@@ -81,3 +81,34 @@ export async function fetchCharacters(
     throw error;
   }
 }
+
+export async function fetchCharacterDetails(
+  characterId: number
+): Promise<Character> {
+  const url = `${baseURL}/character/${characterId}`;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch character details');
+    }
+
+    const character: Character = await response.json();
+    return character;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request timeout - please try again');
+    }
+    throw error;
+  }
+}
