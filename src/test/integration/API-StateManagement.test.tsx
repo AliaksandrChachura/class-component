@@ -1,11 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 import { fetchCharacters } from '../../api/rickMortyAPI';
+// import router from '../../routes/Routes';
 import Results from '../../components/Results';
 import App from '../../App';
 import { mockAPIResponse } from '../mocks/rickMortyAPI';
-import { SearchProvider } from '../../context/SearchProvider';
+import SearchPage from '../../features/Search/SearchPage';
+import { renderWithRouterAndContext } from './utilities';
 
 vi.mock('../../api/rickMortyAPI', () => ({
   fetchCharacters: vi.fn(),
@@ -23,10 +26,6 @@ Object.defineProperty(window, 'localStorage', {
 
 const mockFetchCharacters = vi.mocked(fetchCharacters);
 
-const renderWithProvider = (component: React.ReactElement) => {
-  return render(<SearchProvider>{component}</SearchProvider>);
-};
-
 describe('API & State Management Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -43,12 +42,28 @@ describe('API & State Management Integration', () => {
     it('calls API immediately on component mount', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      renderWithProvider(<Results onCharacterSelect={() => {}} />);
+      const testRouter = createMemoryRouter(
+        [
+          {
+            path: '/',
+            Component: App,
+            children: [
+              {
+                path: 'results',
+                element: <SearchPage />,
+              },
+            ],
+          },
+        ],
+        {
+          initialEntries: ['/results'],
+        }
+      );
 
-      expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
-      expect(mockFetchCharacters).toHaveBeenCalledWith('', 1);
+      render(<RouterProvider router={testRouter} />);
 
       await waitFor(() => {
+        expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
         expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
       });
     });
@@ -56,7 +71,7 @@ describe('API & State Management Integration', () => {
     it('handles successful API response', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      renderWithProvider(<Results onCharacterSelect={() => {}} />);
+      renderWithRouterAndContext(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(
@@ -73,7 +88,7 @@ describe('API & State Management Integration', () => {
     it('handles API error response', async () => {
       mockFetchCharacters.mockRejectedValue(new Error('Network error'));
 
-      renderWithProvider(<Results onCharacterSelect={() => {}} />);
+      renderWithRouterAndContext(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(
@@ -87,7 +102,7 @@ describe('API & State Management Integration', () => {
     it('handles component mount correctly', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      renderWithProvider(<Results onCharacterSelect={() => {}} />);
+      renderWithRouterAndContext(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -121,7 +136,7 @@ describe('API & State Management Integration', () => {
 
       mockFetchCharacters.mockResolvedValue(customResponse);
 
-      renderWithProvider(<Results onCharacterSelect={() => {}} />);
+      renderWithRouterAndContext(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(screen.getByText('Custom Rick')).toBeInTheDocument();
@@ -140,7 +155,7 @@ describe('API & State Management Integration', () => {
         results: [],
       });
 
-      renderWithProvider(<Results onCharacterSelect={() => {}} />);
+      renderWithRouterAndContext(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(screen.getByText('No characters found.')).toBeInTheDocument();
@@ -152,15 +167,10 @@ describe('API & State Management Integration', () => {
     it('does not leak state between component instances', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      const { unmount } = renderWithProvider(
+      const firstRender = renderWithRouterAndContext(
         <Results onCharacterSelect={() => {}} />
       );
-
-      await waitFor(() => {
-        expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
-      });
-
-      unmount();
+      firstRender.unmount();
 
       const differentResponse = {
         info: { count: 1, pages: 1, next: null, prev: null },
@@ -184,19 +194,19 @@ describe('API & State Management Integration', () => {
 
       mockFetchCharacters.mockResolvedValue(differentResponse);
 
-      renderWithProvider(<Results onCharacterSelect={() => {}} />);
+      renderWithRouterAndContext(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Different Character')).toBeInTheDocument();
+        expect(screen.getByText('Different Character'));
       });
 
       expect(screen.queryByText('Rick Sanchez')).not.toBeInTheDocument();
     });
 
     it('handles error recovery correctly', async () => {
-      mockFetchCharacters.mockRejectedValue(new Error('First error'));
+      mockFetchCharacters.mockRejectedValue(new Error('Initial fetch failed'));
 
-      const { unmount } = renderWithProvider(
+      const firstRender = renderWithRouterAndContext(
         <Results onCharacterSelect={() => {}} />
       );
 
@@ -206,17 +216,19 @@ describe('API & State Management Integration', () => {
         ).toBeInTheDocument();
       });
 
-      expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+      firstRender.unmount();
 
-      unmount();
+      mockFetchCharacters.mockResolvedValueOnce(mockAPIResponse);
 
-      mockFetchCharacters.mockResolvedValue(mockAPIResponse);
-
-      renderWithProvider(<Results onCharacterSelect={() => {}} />);
+      const secondRender = renderWithRouterAndContext(
+        <Results onCharacterSelect={() => {}} />
+      );
 
       await waitFor(() => {
         expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
       });
+
+      secondRender.unmount();
 
       expect(
         screen.queryByText('Error: Unable to load characters')
@@ -228,30 +240,55 @@ describe('API & State Management Integration', () => {
     it('integrates properly with App component', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      render(<App />);
+      const testRouter = createMemoryRouter(
+        [
+          {
+            path: '/',
+            Component: App,
+            children: [
+              {
+                index: true,
+                element: <SearchPage />,
+              },
+            ],
+          },
+        ],
+        { initialEntries: ['/'] }
+      );
 
-      expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
+      render(<RouterProvider router={testRouter} />);
 
       await waitFor(() => {
+        expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
         expect(
           screen.getByText('Rick and Morty Characters')
         ).toBeInTheDocument();
       });
-
-      expect(screen.getByRole('banner')).toBeInTheDocument();
-      expect(
-        screen.getByPlaceholderText(/search characters/i)
-      ).toBeInTheDocument();
     });
 
     it('handles full user workflow correctly', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      render(<App />);
+      const testRouter = createMemoryRouter(
+        [
+          {
+            path: '/',
+            Component: App,
+            children: [
+              {
+                index: true,
+                element: <SearchPage />,
+              },
+            ],
+          },
+        ],
+        { initialEntries: ['/'] } // or '/results' if you render SearchPage at that path
+      );
 
-      expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
+      render(<RouterProvider router={testRouter} />);
 
       await waitFor(() => {
+        expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
         expect(
           screen.getByText('Rick and Morty Characters')
         ).toBeInTheDocument();

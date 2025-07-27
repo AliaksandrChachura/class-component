@@ -1,10 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import Header from '../Header';
 import { SearchProvider } from '../../context/SearchProvider';
 
 const renderWithProvider = (component: React.ReactElement) => {
-  return render(<SearchProvider>{component}</SearchProvider>);
+  return render(
+    <MemoryRouter>
+      <SearchProvider>{component}</SearchProvider>
+    </MemoryRouter>
+  );
 };
 
 describe('Header Component', () => {

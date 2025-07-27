@@ -1,15 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import CharacterDetails from '../CharacterDetails';
-import { fetchCharacterDetails, type Character } from '../../api/rickMortyAPI';
+import type { Character } from '../../api/rickMortyAPI';
 
-vi.mock('../../api/rickMortyAPI', () => ({
-  fetchCharacterDetails: vi.fn(),
+// Mock React Router hooks
+const mockNavigate = vi.fn();
+const mockUseLoaderData = vi.fn();
+
+vi.mock('react-router-dom', () => ({
+  useLoaderData: () => mockUseLoaderData(),
+  useNavigate: () => mockNavigate,
 }));
 
-const mockFetchCharacterDetails = vi.mocked(fetchCharacterDetails);
-
-const mockCharacter = {
+const mockCharacter: Character = {
   id: 1,
   name: 'Rick Sanchez',
   status: 'Alive',
@@ -33,228 +36,129 @@ const mockCharacter = {
   created: '2017-11-04T18:48:46.250Z',
 };
 
-const mockOnClose = vi.fn();
-
 describe('CharacterDetails Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseLoaderData.mockReturnValue({ character: mockCharacter });
   });
 
-  it('renders nothing when isOpen is false', () => {
-    render(
-      <CharacterDetails characterId={1} isOpen={false} onClose={mockOnClose} />
-    );
-
-    expect(screen.queryByText('Character Details')).not.toBeInTheDocument();
-  });
-
-  it('shows loading state when fetching character details', async () => {
-    let resolvePromise: (value: Character) => void = () => {};
-    const promise = new Promise<Character>((resolve) => {
-      resolvePromise = resolve;
-    });
-    mockFetchCharacterDetails.mockReturnValue(promise);
-
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
+  it('renders character details correctly', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
     expect(screen.getByText('Character Details')).toBeInTheDocument();
-    expect(
-      screen.getByText('Loading character details...')
-    ).toBeInTheDocument();
-    expect(screen.getByRole('status')).toBeInTheDocument();
-
-    if (resolvePromise) {
-      resolvePromise(mockCharacter);
-    }
-  });
-
-  it('displays character information after successful fetch', async () => {
-    mockFetchCharacterDetails.mockResolvedValue(mockCharacter);
-
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
-    });
-
+    expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
     expect(screen.getByText('Alive - Human')).toBeInTheDocument();
     expect(screen.getByText('Male')).toBeInTheDocument();
     expect(screen.getByText('Earth (C-137)')).toBeInTheDocument();
     expect(screen.getByText('Citadel of Ricks')).toBeInTheDocument();
   });
 
-  it('displays character image with correct attributes', async () => {
-    mockFetchCharacterDetails.mockResolvedValue(mockCharacter);
+  it('displays character image with correct attributes', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
+    const image = screen.getByAltText('Rick Sanchez');
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute(
+      'src',
+      'https://rickandmortyapi.com/api/character/avatar/1.jpeg'
     );
-
-    await waitFor(() => {
-      const image = screen.getByAltText('Rick Sanchez');
-      expect(image).toBeInTheDocument();
-      expect(image).toHaveAttribute(
-        'src',
-        'https://rickandmortyapi.com/api/character/avatar/1.jpeg'
-      );
-    });
   });
 
-  it('calls onClose when close button is clicked', () => {
-    mockFetchCharacterDetails.mockResolvedValue(mockCharacter);
-
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
+  it('navigates back to results when close button is clicked', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
     const closeButton = screen.getByLabelText('Close details panel');
     fireEvent.click(closeButton);
 
-    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith('/results');
   });
 
-  it('handles API error gracefully', async () => {
-    const errorMessage = 'Failed to fetch character';
-    mockFetchCharacterDetails.mockRejectedValue(new Error(errorMessage));
+  it('displays correct status color for alive character', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
+    expect(screen.getByText('Alive - Human')).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.getByText(`Error: ${errorMessage}`)).toBeInTheDocument();
-    });
-
-    expect(
-      screen.queryByText('Loading character details...')
-    ).not.toBeInTheDocument();
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    const statusDot = document.querySelector('.status-dot');
+    expect(statusDot).toHaveStyle('background-color: #55cc44');
   });
 
-  it('does not fetch when characterId is null', () => {
-    render(
-      <CharacterDetails
-        characterId={null}
-        isOpen={true}
-        onClose={mockOnClose}
-      />
-    );
-
-    expect(mockFetchCharacterDetails).not.toHaveBeenCalled();
-  });
-
-  it('fetches new character when characterId changes', async () => {
-    const { rerender } = render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
-
-    await waitFor(() => {
-      expect(mockFetchCharacterDetails).toHaveBeenCalledWith(1);
-    });
-
-    rerender(
-      <CharacterDetails characterId={2} isOpen={true} onClose={mockOnClose} />
-    );
-
-    expect(mockFetchCharacterDetails).toHaveBeenCalledWith(2);
-  });
-
-  it('displays correct status color for alive character', async () => {
-    mockFetchCharacterDetails.mockResolvedValue(mockCharacter);
-
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Alive - Human')).toBeInTheDocument();
-    });
-  });
-
-  it('displays correct status color for dead character', async () => {
+  it('displays correct status color for dead character', () => {
     const deadCharacter = {
       ...mockCharacter,
       status: 'Dead',
     };
-    mockFetchCharacterDetails.mockResolvedValue(deadCharacter);
+    mockUseLoaderData.mockReturnValue({ character: deadCharacter });
 
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
-    await waitFor(() => {
-      expect(screen.getByText('Dead - Human')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Dead - Human')).toBeInTheDocument();
+
+    const statusDot = document.querySelector('.status-dot');
+    expect(statusDot).toHaveStyle('background-color: #d63d2e');
   });
 
-  it('displays correct status color for unknown status', async () => {
+  it('displays correct status color for unknown status', () => {
     const unknownCharacter = {
       ...mockCharacter,
       status: 'unknown',
     };
-    mockFetchCharacterDetails.mockResolvedValue(unknownCharacter);
+    mockUseLoaderData.mockReturnValue({ character: unknownCharacter });
 
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
-    await waitFor(() => {
-      expect(screen.getByText('unknown - Human')).toBeInTheDocument();
-    });
+    expect(screen.getByText('unknown - Human')).toBeInTheDocument();
+
+    const statusDot = document.querySelector('.status-dot');
+    expect(statusDot).toHaveStyle('background-color: #9e9e9e');
   });
 
-  it('formats creation date correctly', async () => {
-    mockFetchCharacterDetails.mockResolvedValue(mockCharacter);
+  it('formats creation date correctly', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('November 4, 2017')).toBeInTheDocument();
-    });
+    expect(screen.getByText('November 4, 2017')).toBeInTheDocument();
   });
 
-  it('handles character with type field', async () => {
+  it('displays episode count correctly', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+
+    expect(
+      screen.getByText(
+        (content) =>
+          content.includes('Appeared in') && content.includes('episodes')
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('handles character with type field', () => {
     const characterWithType = {
       ...mockCharacter,
       type: 'Scientist',
     };
-    mockFetchCharacterDetails.mockResolvedValue(characterWithType);
+    mockUseLoaderData.mockReturnValue({ character: characterWithType });
 
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
-    await waitFor(() => {
-      expect(screen.getByText('Scientist')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Scientist')).toBeInTheDocument();
+  });
+
+  it('does not display type field when empty', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+
+    expect(screen.queryByText('Type:')).not.toBeInTheDocument();
   });
 
   it('has correct accessibility attributes', () => {
-    mockFetchCharacterDetails.mockResolvedValue(mockCharacter);
-
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
     const closeButton = screen.getByLabelText('Close details panel');
     expect(closeButton).toHaveAttribute('aria-label', 'Close details panel');
   });
 
-  it('has correct CSS classes for styling', async () => {
-    mockFetchCharacterDetails.mockResolvedValue(mockCharacter);
-
-    render(
-      <CharacterDetails characterId={1} isOpen={true} onClose={mockOnClose} />
-    );
+  it('has correct CSS classes for styling', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
 
     expect(
-      document.querySelector('.character-details-overlay')
+      document.querySelector('.character-details-container')
     ).toBeInTheDocument();
     expect(
       document.querySelector('.character-details-panel')
@@ -265,5 +169,33 @@ describe('CharacterDetails Component', () => {
     expect(
       document.querySelector('.character-details-content')
     ).toBeInTheDocument();
+  });
+
+  it('displays all required character information sections', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+
+    expect(screen.getByText('Personal Information')).toBeInTheDocument();
+    expect(screen.getByText('Location Information')).toBeInTheDocument();
+    expect(screen.getByText('Episodes')).toBeInTheDocument();
+  });
+
+  it('displays gender information', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+
+    expect(screen.getByText('Gender:')).toBeInTheDocument();
+    expect(screen.getByText('Male')).toBeInTheDocument();
+  });
+
+  it('displays origin and location information', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+
+    expect(screen.getByText('Origin:')).toBeInTheDocument();
+    expect(screen.getByText('Last Known Location:')).toBeInTheDocument();
+  });
+
+  it('displays created date label', () => {
+    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+
+    expect(screen.getByText('Created:')).toBeInTheDocument();
   });
 });

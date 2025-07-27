@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSearch } from '../hooks/useSearch';
 import Loader from './Loader';
 import Card from './Card';
@@ -12,6 +13,8 @@ interface ResultsProps {
 const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   const { state, setLoading, setError } = useSearch();
   const [results, setResults] = useState<Character[]>([]);
+
+  const navigate = useNavigate();
 
   const getCharacterDescription = (character: Character): string => {
     const statusEmoji =
@@ -33,6 +36,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
 
   const handleCharacterClick = (character: Character) => {
     onCharacterSelect(character.id);
+    navigate(`/Results/${character.id}`);
   };
 
   const fetchData = useCallback(async () => {

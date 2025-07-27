@@ -1,11 +1,21 @@
 import React from 'react';
 import './AboutPage.scss';
+import { useNavigate } from 'react-router-dom';
 
 const AboutPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate('/');
+  };
+
   return (
     <div className="about-page">
       <div className="about-container">
         <div className="about-header">
+          <button className="home-button" onClick={handleHomeClick}>
+            🏠 Home
+          </button>
           <h1>About This Project</h1>
           <p className="subtitle">Rick and Morty Character Explorer</p>
         </div>
@@ -15,9 +25,9 @@ const AboutPage: React.FC = () => {
             <h2>Project Overview</h2>
             <p>
               This is a React application that allows users to explore
-              characters from the popular animated series &ldquo;Rick and
-              Morty&rdquo;. The app features character search, detailed
-              character information, and a responsive design.
+              characters from the popular animated series &ldquo; Rick and Morty
+              &rdquo;. The app features character search, detailed character
+              information, and a responsive design.
             </p>
 
             <div className="features-list">

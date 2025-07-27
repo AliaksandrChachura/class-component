@@ -1,51 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { fetchCharacterDetails } from '../api/rickMortyAPI';
+import React from 'react';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import type { Character } from '../api/rickMortyAPI';
-import Loader from './Loader';
 
 interface CharacterDetailsProps {
-  characterId: number | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const CharacterDetails: React.FC<CharacterDetailsProps> = ({
-  characterId,
-  isOpen,
-  onClose,
-}) => {
-  const [character, setCharacter] = useState<Character | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const CharacterDetails: React.FC<CharacterDetailsProps> = () => {
+  const { character } = useLoaderData() as { character: Character };
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const loadCharacterDetails = async () => {
-      if (!characterId) return;
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        const characterData = await fetchCharacterDetails(characterId);
-        setCharacter(characterData);
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : 'Failed to load character details'
-        );
-        setCharacter(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (isOpen && characterId) {
-      loadCharacterDetails();
-    }
-  }, [characterId, isOpen]);
-
-  if (!isOpen) return null;
+  const handleClose = () => {
+    navigate('/results');
+  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -67,13 +35,13 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   };
 
   return (
-    <div className="character-details-overlay">
+    <div className="character-details-container">
       <div className="character-details-panel">
         <div className="character-details-header">
           <h2>Character Details</h2>
           <button
             className="close-button"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Close details panel"
           >
             ×
@@ -81,23 +49,7 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
         </div>
 
         <div className="character-details-content">
-          {loading && (
-            <div className="details-loader">
-              <Loader />
-              <p>Loading character details...</p>
-            </div>
-          )}
-
-          {error && (
-            <div className="details-error">
-              <p>Error: {error}</p>
-              <button onClick={onClose} className="retry-button">
-                Close
-              </button>
-            </div>
-          )}
-
-          {character && !loading && (
+          {character && (
             <div className="character-info">
               <div className="character-image-section">
                 <img

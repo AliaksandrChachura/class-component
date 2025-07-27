@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from '../../App';
 
 vi.mock('react-dom/client', () => ({
   createRoot: vi.fn(),
@@ -9,6 +8,12 @@ vi.mock('react-dom/client', () => ({
 
 vi.mock('../../App', () => ({
   default: vi.fn(() => null),
+}));
+
+const mockRouterProviderComponent = vi.fn(() => null);
+
+vi.mock('../../routes/RouterProvider.tsx', () => ({
+  default: mockRouterProviderComponent,
 }));
 
 vi.mock('../../styles/index.css', () => ({}));
@@ -60,7 +65,7 @@ describe('Main Entry Point', () => {
 
     const renderCall = mockRender.mock.calls[0][0];
     expect(renderCall.type).toBe(StrictMode);
-    expect(renderCall.props.children.type).toBe(App);
+    expect(renderCall.props.children.type).toBe(mockRouterProviderComponent);
   });
 
   it('uses correct root element selector', async () => {
@@ -80,6 +85,6 @@ describe('Main Entry Point', () => {
 
     expect(renderCall.type).toBe(StrictMode);
 
-    expect(renderCall.props.children.type).toBe(App);
+    expect(renderCall.props.children.type).toBe(mockRouterProviderComponent);
   });
 });

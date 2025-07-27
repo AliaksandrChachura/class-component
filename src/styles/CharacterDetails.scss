@@ -1,3 +1,16 @@
+.character-details-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.3s ease-out;
+}
+
 .character-details-overlay {
   position: fixed;
   top: 0;
@@ -12,6 +25,7 @@
 }
 
 .character-details-panel {
+  position: fixed;
   width: 450px;
   height: 100vh;
   background-color: #ffffff;
@@ -124,14 +138,14 @@
 
     h3 {
       margin: 0 0 0.5rem 0;
-      color: #333;
+      color: #f5f5f5;
       font-size: 1.5rem;
     }
 
     .status-indicator {
       display: flex;
       align-items: center;
-      color: #666;
+      color: #f5f5f5;
       font-size: 0.95rem;
 
       .status-dot {
@@ -153,7 +167,7 @@
 .detail-section {
   h4 {
     margin: 0 0 1rem 0;
-    color: #333;
+    color: #f5f5f5;
     font-size: 1.1rem;
     border-bottom: 2px solid #007bff;
     padding-bottom: 0.5rem;
@@ -174,12 +188,12 @@
 
   .label {
     font-weight: 600;
-    color: #555;
+    color: #f5f5f5;
     min-width: 120px;
   }
 
   .value {
-    color: #333;
+    color: #f5f5f5;
     text-align: right;
     flex: 1;
   }

@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from '../../App';
 import ErrorBoundary from '../../ErrorBoundary';
 import { fetchCharacters } from '../../api/rickMortyAPI';
 import { mockAPIResponse } from '../mocks/rickMortyAPI';
+import { RouterProvider } from 'react-router-dom';
+import { createTestRouter } from '../../routes/Routes';
 
 vi.mock('../../api/rickMortyAPI', () => ({
   fetchCharacters: vi.fn(),
@@ -20,6 +21,9 @@ Object.defineProperty(window, 'localStorage', {
   writable: true,
 });
 
+const renderApp = (initialEntries = ['/']) =>
+  render(<RouterProvider router={createTestRouter(initialEntries)} />);
+
 const mockedFetchCharacters = vi.mocked(fetchCharacters);
 
 describe('App Component Integration Tests', () => {
@@ -33,7 +37,7 @@ describe('App Component Integration Tests', () => {
   });
 
   it('renders header and basic layout correctly', async () => {
-    render(<App />);
+    renderApp(['/']);
 
     expect(screen.getByRole('banner')).toBeInTheDocument();
     expect(
@@ -51,7 +55,7 @@ describe('App Component Integration Tests', () => {
 
   it('integrates search functionality between Header and Results', async () => {
     const user = userEvent.setup();
-    render(<App />);
+    renderApp();
 
     await waitFor(() => {
       expect(screen.getByText('Rick and Morty Characters')).toBeInTheDocument();
@@ -96,7 +100,7 @@ describe('App Component Integration Tests', () => {
   it('handles API errors gracefully', async () => {
     mockedFetchCharacters.mockRejectedValue(new Error('API Error'));
 
-    render(<App />);
+    renderApp();
 
     await waitFor(() => {
       expect(
@@ -106,7 +110,9 @@ describe('App Component Integration Tests', () => {
   });
 
   it('displays character data correctly', async () => {
-    render(<App />);
+    mockedFetchCharacters.mockResolvedValue(mockAPIResponse);
+
+    renderApp();
 
     await waitFor(() => {
       expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -120,10 +126,18 @@ describe('App Component Integration Tests', () => {
       results: [],
     });
 
-    render(<App />);
+    renderApp(['/']);
 
     await waitFor(() => {
-      expect(screen.getByText(/no characters found/i)).toBeInTheDocument();
+      expect(mockedFetchCharacters).toHaveBeenCalled();
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText((text) =>
+          text.toLowerCase().includes('no characters found.')
+        )
+      ).toBeInTheDocument();
     });
   });
 });

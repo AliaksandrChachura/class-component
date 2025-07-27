@@ -1,0 +1,101 @@
+.search-page {
+  min-height: 100vh;
+  background: #1a1a2e;
+
+  .search-layout {
+    display: flex;
+    min-height: calc(100vh - 80px); // Account for header height
+    transition: all 0.3s ease;
+
+    &.split-view {
+      .search-content {
+        width: 60%;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .details-content {
+        width: 40%;
+        background: rgba(0, 0, 0, 0.3);
+        overflow-y: auto;
+      }
+    }
+
+    .search-content {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+
+      @media (max-width: 768px) {
+        padding: 0.5rem;
+      }
+    }
+
+    .details-content {
+      position: relative;
+
+      // Override the character details styles when in split view
+      .character-details-container {
+        position: static;
+        background: transparent;
+        height: 100%;
+
+        .character-details-panel {
+          position: fixed;
+          transform: none;
+          max-width: none;
+          height: 100%;
+          border-radius: 0;
+          box-shadow: none;
+          background: rgba(255, 255, 255, 0.05);
+          overflow-y: auto;
+        }
+      }
+
+      @media (max-width: 768px) {
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        background: #1a1a2e;
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+
+      &.split-view {
+        .search-content {
+          display: none; // Hide search on mobile when details are open
+        }
+
+        .details-content {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+// Mobile responsive adjustments
+@media (max-width: 768px) {
+  .search-page {
+    .search-layout.split-view {
+      .search-content {
+        display: none;
+      }
+
+      .details-content {
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+      }
+    }
+  }
+}
