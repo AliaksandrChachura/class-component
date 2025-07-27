@@ -9,9 +9,12 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <Search />
-      <button className="error-button" onClick={throwError}>
-        Throw Error
-      </button>
+      <div className="actions-section">
+        <button className="about-button">About</button>
+        <button className="error-button" onClick={throwError}>
+          Throw Error
+        </button>
+      </div>
     </header>
   );
 };

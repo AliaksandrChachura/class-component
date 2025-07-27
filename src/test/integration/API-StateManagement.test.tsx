@@ -43,7 +43,7 @@ describe('API & State Management Integration', () => {
     it('calls API immediately on component mount', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      renderWithProvider(<Results />);
+      renderWithProvider(<Results onCharacterSelect={() => {}} />);
 
       expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
       expect(mockFetchCharacters).toHaveBeenCalledWith('', 1);
@@ -56,7 +56,7 @@ describe('API & State Management Integration', () => {
     it('handles successful API response', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      renderWithProvider(<Results />);
+      renderWithProvider(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(
@@ -73,7 +73,7 @@ describe('API & State Management Integration', () => {
     it('handles API error response', async () => {
       mockFetchCharacters.mockRejectedValue(new Error('Network error'));
 
-      renderWithProvider(<Results />);
+      renderWithProvider(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(
@@ -87,7 +87,7 @@ describe('API & State Management Integration', () => {
     it('handles component mount correctly', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      renderWithProvider(<Results />);
+      renderWithProvider(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -121,7 +121,7 @@ describe('API & State Management Integration', () => {
 
       mockFetchCharacters.mockResolvedValue(customResponse);
 
-      renderWithProvider(<Results />);
+      renderWithProvider(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(screen.getByText('Custom Rick')).toBeInTheDocument();
@@ -140,7 +140,7 @@ describe('API & State Management Integration', () => {
         results: [],
       });
 
-      renderWithProvider(<Results />);
+      renderWithProvider(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(screen.getByText('No characters found.')).toBeInTheDocument();
@@ -152,7 +152,9 @@ describe('API & State Management Integration', () => {
     it('does not leak state between component instances', async () => {
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      const { unmount } = renderWithProvider(<Results />);
+      const { unmount } = renderWithProvider(
+        <Results onCharacterSelect={() => {}} />
+      );
 
       await waitFor(() => {
         expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -182,7 +184,7 @@ describe('API & State Management Integration', () => {
 
       mockFetchCharacters.mockResolvedValue(differentResponse);
 
-      renderWithProvider(<Results />);
+      renderWithProvider(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(screen.getByText('Different Character')).toBeInTheDocument();
@@ -194,7 +196,9 @@ describe('API & State Management Integration', () => {
     it('handles error recovery correctly', async () => {
       mockFetchCharacters.mockRejectedValue(new Error('First error'));
 
-      const { unmount } = renderWithProvider(<Results />);
+      const { unmount } = renderWithProvider(
+        <Results onCharacterSelect={() => {}} />
+      );
 
       await waitFor(() => {
         expect(
@@ -208,7 +212,7 @@ describe('API & State Management Integration', () => {
 
       mockFetchCharacters.mockResolvedValue(mockAPIResponse);
 
-      renderWithProvider(<Results />);
+      renderWithProvider(<Results onCharacterSelect={() => {}} />);
 
       await waitFor(() => {
         expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
