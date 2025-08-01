@@ -1,7 +1,28 @@
+@use '../../styles/ThemeConsts.scss' as *;
+
+:root {
+  --light-text: #{$light-text};
+  --dark-text: #{$dark-text};
+  --light-background: #{$light-background};
+  --dark-background: #{$dark-background};
+}
+
+.light {
+  --text-color: var(--light-text);
+  --background-color: var(--light-background);
+  --border-color: var(--light-border);
+}
+
+.dark {
+  --text-color: var(--dark-text);
+  --background-color: var(--dark-background);
+  --border-color: var(--dark-border);
+}
+
 .about-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
-  color: #fff;
+  background: var(--background-color);
+  color: var(--text-color);
   padding: 2rem 0;
 
   .about-container {
@@ -70,7 +91,7 @@
     }
 
     section {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--background-color);
       backdrop-filter: blur(10px);
       border-radius: 15px;
       padding: 2.5rem;

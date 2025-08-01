@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from './testUtils';
 import Card from '../Card';
+import { SearchProvider } from '../../context/SearchProvider';
 
 describe('Card Component', () => {
   const mockProps = {
@@ -9,7 +10,7 @@ describe('Card Component', () => {
   };
 
   it('renders card with name and description', () => {
-    render(<Card {...mockProps} />);
+    render(<Card {...mockProps} />, { wrapper: SearchProvider });
 
     expect(screen.getByText('Test Character')).toBeInTheDocument();
     expect(
@@ -18,7 +19,7 @@ describe('Card Component', () => {
   });
 
   it('renders with correct HTML structure', () => {
-    render(<Card {...mockProps} />);
+    render(<Card {...mockProps} />, { wrapper: SearchProvider });
 
     const cardElement = screen.getByText('Test Character').closest('.card');
     expect(cardElement).toBeInTheDocument();
@@ -28,7 +29,7 @@ describe('Card Component', () => {
   });
 
   it('handles empty strings gracefully', () => {
-    render(<Card name="" description="" />);
+    render(<Card name="" description="" />, { wrapper: SearchProvider });
 
     const heading = screen.getByRole('heading', { level: 3 });
     expect(heading).toHaveTextContent('');
@@ -43,7 +44,7 @@ describe('Card Component', () => {
       description: 'Contains special chars: <>&"\'',
     };
 
-    render(<Card {...specialProps} />);
+    render(<Card {...specialProps} />, { wrapper: SearchProvider });
 
     expect(screen.getByText('Rick & Morty™')).toBeInTheDocument();
     expect(
@@ -57,7 +58,7 @@ describe('Card Component', () => {
       description: 'B'.repeat(500),
     };
 
-    render(<Card {...longProps} />);
+    render(<Card {...longProps} />, { wrapper: SearchProvider });
 
     expect(screen.getByText('A'.repeat(100))).toBeInTheDocument();
     expect(screen.getByText('B'.repeat(500))).toBeInTheDocument();
@@ -65,7 +66,9 @@ describe('Card Component', () => {
 
   it('calls onClick when card is clicked', () => {
     const mockOnClick = vi.fn();
-    render(<Card {...mockProps} onClick={mockOnClick} />);
+    render(<Card {...mockProps} onClick={mockOnClick} />, {
+      wrapper: SearchProvider,
+    });
 
     const cardElement = screen.getByText('Test Character').closest('.card');
     if (cardElement) {
@@ -77,7 +80,9 @@ describe('Card Component', () => {
 
   it('handles keyboard events', () => {
     const mockOnClick = vi.fn();
-    render(<Card {...mockProps} onClick={mockOnClick} />);
+    render(<Card {...mockProps} onClick={mockOnClick} />, {
+      wrapper: SearchProvider,
+    });
 
     const cardElement = screen.getByText('Test Character').closest('.card');
     if (cardElement) {
@@ -95,7 +100,7 @@ describe('Card Component', () => {
       image: 'https://example.com/image.jpg',
     };
 
-    render(<Card {...propsWithImage} />);
+    render(<Card {...propsWithImage} />, { wrapper: SearchProvider });
 
     const image = screen.getByAltText('Test Character');
     expect(image).toBeInTheDocument();
@@ -103,7 +108,7 @@ describe('Card Component', () => {
   });
 
   it('does not call onClick when none is provided', () => {
-    render(<Card {...mockProps} />);
+    render(<Card {...mockProps} />, { wrapper: SearchProvider });
 
     const cardElement = screen.getByText('Test Character').closest('.card');
     expect(() => {

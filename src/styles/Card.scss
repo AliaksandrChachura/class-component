@@ -1,7 +1,28 @@
+@use './ThemeConsts.scss' as *;
+
+:root {
+  --light-text: #{$light-text};
+  --dark-text: #{$dark-text};
+  --light-background: #{$light-background};
+  --dark-background: #{$dark-background};
+}
+
+.light {
+  --text-color: var(--light-text);
+  --background-color: var(--light-background);
+  --border-color: var(--light-border);
+}
+
+.dark {
+  --text-color: var(--dark-text);
+  --background-color: var(--dark-background);
+  --border-color: var(--dark-border);
+}
+
 .card {
   max-width: 30rem;
   margin: 1rem auto;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
@@ -40,12 +61,12 @@
   h3 {
     margin: 0 0 0.5rem 0;
     font-size: 1.2rem;
-    color: #333;
+    color: var(--text-color);
   }
 
   p {
     margin: 0;
-    color: #666;
+    color: var(--text-color);
     font-size: 0.9rem;
     line-height: 1.4;
   }

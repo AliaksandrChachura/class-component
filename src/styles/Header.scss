@@ -1,10 +1,61 @@
+@use './ThemeConsts.scss' as *;
+
+:root {
+  --light-text: #{$light-text};
+  --dark-text: #{$dark-text};
+  --light-background: #{$light-background};
+  --dark-background: #{$dark-background};
+  --light-border: #{$light-border};
+  --dark-border: #{$dark-border};
+  --light-button-background: #{$light-button-background};
+  --dark-button-background: #{$dark-button-background};
+  --light-button-text: #{$light-button-text};
+  --dark-button-text: #{$dark-button-text};
+  --light-button-hover-background: #{$light-button-hover-background};
+  --dark-button-hover-background: #{$dark-button-hover-background};
+  --light-theme-button-background: #{$light-theme-button-background};
+  --dark-theme-button-background: #{$dark-theme-button-background};
+  --light-theme-button-text: #{$light-theme-button-text};
+  --dark-theme-button-text: #{$dark-theme-button-text};
+  --light-theme-button-hover-background: #{$light-theme-button-hover-background};
+  --dark-theme-button-hover-background: #{$dark-theme-button-hover-background};
+  --light-input-background: #{$light-input-background};
+  --dark-input-background: #{$dark-input-background};
+}
+
+.light {
+  --text-color: var(--light-text);
+  --background-color: var(--light-background);
+  --border-color: var(--light-border);
+  --button-background: var(--light-button-background);
+  --button-text: var(--light-button-text);
+  --button-hover-background: var(--light-button-hover-background);
+  --theme-button-background: var(--light-theme-button-background);
+  --theme-button-text: var(--light-theme-button-text);
+  --theme-button-hover-background: var(--light-theme-button-hover-background);
+  --input-background: var(--light-input-background);
+}
+
+.dark {
+  --text-color: var(--dark-text);
+  --background-color: var(--dark-background);
+  --border-color: var(--dark-border);
+  --button-background: var(--dark-button-background);
+  --button-text: var(--dark-button-text);
+  --button-hover-background: var(--dark-button-hover-background);
+  --theme-button-background: var(--dark-theme-button-background);
+  --theme-button-text: var(--dark-theme-button-text);
+  --theme-button-hover-background: var(--dark-theme-button-hover-background);
+  --input-background: var(--dark-input-background);
+}
+
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #ccc;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -13,6 +64,8 @@
   width: 100%;
   max-width: 73rem;
   margin: 1rem auto;
+  z-index: 1000;
+  opacity: 0.8;
 }
 
 .error-button {
@@ -46,5 +99,22 @@
 
   &:hover {
     background-color: #0056b3;
+  }
+}
+
+.theme-button {
+  background-color: var(--theme-button-background);
+  color: var(--theme-button-text);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: var(--theme-button-hover-background);
   }
 }

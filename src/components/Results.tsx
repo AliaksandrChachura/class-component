@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSearch } from '../hooks/useSearch';
 import { fetchCharacters } from '../api/rickMortyAPI';
 import type { Character, RickMortyResponse } from '../api/rickMortyAPI';
@@ -15,7 +15,7 @@ interface ResultsProps {
 const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   const { state } = useSearch();
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const navigate = useNavigate();
   const [characters, setCharacters] = useState<Character[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,10 +53,9 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
       if (page > 1) {
         newParams.set('page', page.toString());
       }
-      window.history.pushState({}, '', `/results?${newParams.toString()}`);
-      setSearchParams(newParams);
+      navigate(`/results?${newParams.toString()}`, { replace: false });
     },
-    [state.searchTerm, setSearchParams]
+    [state.searchTerm, navigate]
   );
 
   useEffect(() => {
@@ -66,7 +65,6 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
         setError(null);
         const response = await fetchCharacters(state.searchTerm, currentPage);
         setCharacters(response.results);
-        console.log(response.results);
         setPaginationInfo(response.info);
       } catch (err) {
         setError(
@@ -81,12 +79,6 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
 
     searchCharacters();
   }, [state.searchTerm, currentPage]);
-
-  useEffect(() => {
-    if (currentPage > 1) {
-      handlePageChange(1);
-    }
-  }, [state.searchTerm, currentPage, handlePageChange]);
 
   const getCharacterDescription = (character: Character): string => {
     const statusEmoji =
