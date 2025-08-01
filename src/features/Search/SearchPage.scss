@@ -1,6 +1,23 @@
+@use '../../styles/ThemeConsts.scss' as *;
+
+:root {
+  --light-text: #{$light-text};
+  --dark-text: #{$dark-text};
+  --light-background: #{$light-background};
+  --dark-background: #{$dark-background};
+}
+
+.light {
+  --background-color: var(--light-background);
+}
+
+.dark {
+  --background-color: var(--dark-background);
+}
+
 .search-page {
   min-height: 100vh;
-  background: #1a1a2e;
+  background: var(--background-color);
 
   h1 {
     text-align: center;
@@ -46,17 +63,19 @@
     .search-content {
       flex: 1;
       padding: 1rem;
+      padding-bottom: 200px;
       overflow-y: auto;
 
       @media (max-width: 768px) {
         padding: 0.5rem;
+        padding-bottom: 180px;
       }
     }
 
     .details-content {
       position: relative;
+      z-index: 1001;
 
-      // Override the character details styles when in split view
       .character-details-container {
         position: static;
         background: transparent;

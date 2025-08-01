@@ -1,6 +1,6 @@
 import React from 'react';
 import useLocalStorageOperations from '../hooks/useLocalStorageOperations';
-import '../styles/Card.scss';
+import { useSearchContext } from '../context/SearchContext';
 
 interface Props {
   name: string;
@@ -11,17 +11,18 @@ interface Props {
 
 const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
   const { setItem } = useLocalStorageOperations();
-
+  const { state } = useSearchContext();
   const handleSelectedCharacter = () => {
     setItem('selectedCharacter', { name, description, image });
     if (onClick) {
       onClick();
     }
   };
+  const cardClass = `card ${state.theme}`;
 
   return (
     <div
-      className="card"
+      className={cardClass}
       role="button"
       tabIndex={0}
       onClick={handleSelectedCharacter}

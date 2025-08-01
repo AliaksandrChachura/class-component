@@ -51,11 +51,12 @@ describe('Results Component', () => {
     mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
 
     const mockSearchContext = {
-      state: { searchTerm: '', isLoading: true, error: null },
+      state: { theme: 'light', searchTerm: '', isLoading: true, error: null },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
+      setTheme: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
@@ -77,11 +78,17 @@ describe('Results Component', () => {
 
   it('loads saved search term from SearchContext on mount', () => {
     const mockSearchContext = {
-      state: { searchTerm: 'Rick', isLoading: false, error: null },
+      state: {
+        theme: 'light',
+        searchTerm: 'Rick',
+        isLoading: false,
+        error: null,
+      },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
+      setTheme: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
@@ -185,11 +192,12 @@ describe('Results Component', () => {
 
     // Mock SearchContext to have loading state
     const mockSearchContext = {
-      state: { searchTerm: '', isLoading: true, error: null },
+      state: { theme: 'light', searchTerm: '', isLoading: true, error: null },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
+      setTheme: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
@@ -233,11 +241,12 @@ describe('Results Component', () => {
 
     // Mock SearchContext to have loading state
     const mockSearchContext = {
-      state: { searchTerm: '', isLoading: true, error: null },
+      state: { theme: 'light', searchTerm: '', isLoading: true, error: null },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
+      setTheme: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
@@ -303,11 +312,17 @@ describe('Results Component', () => {
 
   it('maintains loading state during the entire fetch process', () => {
     const mockSearchContext = {
-      state: { searchTerm: 'test', isLoading: true, error: null },
+      state: {
+        theme: 'light',
+        searchTerm: 'test',
+        isLoading: true,
+        error: null,
+      },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
+      setTheme: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (

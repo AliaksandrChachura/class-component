@@ -47,6 +47,6 @@ export const routeConfig: RouteObject[] = [
   },
 ];
 
-export const routes = createBrowserRouter(routeConfig); // for real app
+export const routes = createBrowserRouter(routeConfig);
 export const createTestRouter = (initialEntries = ['/']) =>
   createMemoryRouter(routeConfig, { initialEntries });
