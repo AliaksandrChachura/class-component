@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
+import { SearchProvider } from '../../context/SearchProvider';
 import { fetchCharacters } from '../../api/rickMortyAPI';
 import Results from '../../components/Results';
 import App from '../../App';
@@ -58,7 +61,11 @@ describe('API & State Management Integration', () => {
         }
       );
 
-      render(<RouterProvider router={testRouter} />);
+      render(
+        <Provider store={store}>
+          <RouterProvider router={testRouter} />
+        </Provider>
+      );
 
       await waitFor(() => {
         expect(mockFetchCharacters).toHaveBeenCalledTimes(1);
@@ -250,7 +257,13 @@ describe('API & State Management Integration', () => {
         { initialEntries: ['/'] }
       );
 
-      render(<RouterProvider router={testRouter} />);
+      render(
+        <Provider store={store}>
+          <SearchProvider>
+            <RouterProvider router={testRouter} />
+          </SearchProvider>
+        </Provider>
+      );
 
       await waitFor(() => {
         expect(mockFetchCharacters).toHaveBeenCalledTimes(1);

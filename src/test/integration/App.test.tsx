@@ -1,10 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
+import { SearchProvider } from '../../context/SearchProvider';
 import ErrorBoundary from '../../ErrorBoundary';
 import { fetchCharacters } from '../../api/rickMortyAPI';
 import { mockAPIResponse } from '../mocks/rickMortyAPI';
 import { RouterProvider } from 'react-router-dom';
 import { createTestRouter } from '../../routes/Routes';
+
 vi.mock('../../api/rickMortyAPI', () => ({
   fetchCharacters: vi.fn(),
 }));
@@ -20,7 +24,13 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 const renderApp = (initialEntries = ['/']) =>
-  render(<RouterProvider router={createTestRouter(initialEntries)} />);
+  render(
+    <Provider store={store}>
+      <SearchProvider>
+        <RouterProvider router={createTestRouter(initialEntries)} />
+      </SearchProvider>
+    </Provider>
+  );
 
 const mockedFetchCharacters = vi.mocked(fetchCharacters);
 

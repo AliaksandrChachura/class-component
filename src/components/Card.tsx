@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import useLocalStorageOperations from '../hooks/useLocalStorageOperations';
-import '../styles/Card.scss';
+import { useSearchContext } from '../context/SearchContext';
+import { toggleSelectedItem } from '../store/slices/cardsSlicer';
+import type { RootState } from '../store';
 
 interface Props {
   name: string;
@@ -11,6 +14,11 @@ interface Props {
 
 const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
   const { setItem } = useLocalStorageOperations();
+  const { state } = useSearchContext();
+  const dispatch = useDispatch();
+  const selectedCards = useSelector(
+    (state: RootState) => state.selectedItems.selectedCards
+  );
 
   const handleSelectedCharacter = () => {
     setItem('selectedCharacter', { name, description, image });
@@ -18,10 +26,22 @@ const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
       onClick();
     }
   };
+  const [checked, setChecked] = useState(false);
+
+  const handleCheckCharacter = () => {
+    setChecked(!checked);
+    dispatch(
+      toggleSelectedItem({ id: name, name, description, image: image || '' })
+    );
+  };
+
+  const isSelected = selectedCards.some((card) => card.id === name);
+
+  const cardClass = `card ${state.theme}`;
 
   return (
     <div
-      className="card"
+      className={cardClass}
       role="button"
       tabIndex={0}
       onClick={handleSelectedCharacter}
@@ -38,8 +58,20 @@ const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
           </div>
         )}
         <div className="card-content">
-          <h3>{name}</h3>
-          <p>{description}</p>
+          <div
+            className="card-content-checkbox"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={handleCheckCharacter}
+            />
+          </div>
+          <div className="card-content-header">
+            <h3>{name}</h3>
+            <p>{description}</p>
+          </div>
         </div>
       </div>
     </div>

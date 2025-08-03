@@ -10,7 +10,10 @@ vi.mock('../../App', () => ({
   default: vi.fn(() => null),
 }));
 
-const mockRouterProviderComponent = vi.fn(() => null);
+const mockRouterProviderComponent = vi.fn(() => null) as React.FC<{
+  children: React.ReactNode;
+}>;
+mockRouterProviderComponent.displayName = 'RouterProviderComponent';
 
 vi.mock('../../routes/RouterProvider.tsx', () => ({
   default: mockRouterProviderComponent,
@@ -65,7 +68,10 @@ describe('Main Entry Point', () => {
 
     const renderCall = mockRender.mock.calls[0][0];
     expect(renderCall.type).toBe(StrictMode);
-    expect(renderCall.props.children.type).toBe(mockRouterProviderComponent);
+    expect(renderCall.props.children.type.name).toBe('Provider');
+    expect(renderCall.props.children.props.children.type).toBe(
+      mockRouterProviderComponent
+    );
   });
 
   it('uses correct root element selector', async () => {
@@ -85,6 +91,10 @@ describe('Main Entry Point', () => {
 
     expect(renderCall.type).toBe(StrictMode);
 
-    expect(renderCall.props.children.type).toBe(mockRouterProviderComponent);
+    const provider = renderCall.props.children;
+    const router = provider.props.children;
+
+    expect(provider.type.name).toBe('Provider');
+    expect(router.type).toBe(mockRouterProviderComponent);
   });
 });

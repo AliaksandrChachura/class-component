@@ -1,0 +1,132 @@
+@use './ThemeConsts.scss' as *;
+
+:root {
+  --light-text: #{$light-text};
+  --dark-text: #{$dark-text};
+  --light-background: #{$light-background};
+  --dark-background: #{$dark-background};
+  --light-border: #{$light-border};
+  --dark-border: #{$dark-border};
+  --light-button-background: #{$light-button-background};
+  --dark-button-background: #{$dark-button-background};
+  --light-button-text: #{$light-button-text};
+  --dark-button-text: #{$dark-button-text};
+  --light-button-hover-background: #{$light-button-hover-background};
+  --dark-button-hover-background: #{$dark-button-hover-background};
+  --light-theme-button-background: #{$light-theme-button-background};
+  --dark-theme-button-background: #{$dark-theme-button-background};
+  --light-theme-button-text: #{$light-theme-button-text};
+  --dark-theme-button-text: #{$dark-theme-button-text};
+  --light-theme-button-hover-background: #{$light-theme-button-hover-background};
+  --dark-theme-button-hover-background: #{$dark-theme-button-hover-background};
+  --light-input-background: #{$light-input-background};
+  --dark-input-background: #{$dark-input-background};
+}
+
+.light {
+  --text-color: var(--light-text);
+  --background-color: var(--light-background);
+  --border-color: var(--light-border);
+  --button-background: var(--light-button-background);
+  --button-text: var(--light-button-text);
+  --button-hover-background: var(--light-button-hover-background);
+  --theme-button-background: var(--light-theme-button-background);
+  --theme-button-text: var(--light-theme-button-text);
+  --theme-button-hover-background: var(--light-theme-button-hover-background);
+}
+
+.dark {
+  --text-color: var(--dark-text);
+  --background-color: var(--dark-background);
+  --border-color: var(--dark-border);
+  --button-background: var(--dark-button-background);
+  --button-text: var(--dark-button-text);
+  --button-hover-background: var(--dark-button-hover-background);
+  --theme-button-background: var(--dark-theme-button-background);
+  --theme-button-text: var(--dark-theme-button-text);
+  --theme-button-hover-background: var(--dark-theme-button-hover-background);
+}
+.selected-cards-wrapper {
+  margin-bottom: 3rem;
+
+  .selected-cards-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    .clear-selected-cards-button,
+    .download-selected-cards-button {
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .clear-selected-cards-button {
+      background-color: #ff0000;
+
+      &:hover {
+        background-color: #cc0000;
+      }
+    }
+
+    .download-selected-cards-button {
+      background-color: #008000;
+
+      &:hover {
+        background-color: #006400;
+      }
+    }
+  }
+
+  .selected-cards-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+  }
+
+  .selected-cards-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    scroll-snap-type: x mandatory;
+
+    & > .card {
+      flex: 0 0 18.75rem;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 30px 0 rgba(0, 0, 0, 0.25);
+        max-width: 22rem;
+        overflow: visible;
+        position: relative;
+        background: var(--background-color);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+}

@@ -1,8 +1,46 @@
+@use './ThemeConsts.scss' as *;
+
+:root {
+  --light-text: #{$light-text};
+  --dark-text: #{$dark-text};
+  --light-background: #{$light-background};
+  --dark-background: #{$dark-background};
+  --light-border: #{$light-border};
+  --dark-border: #{$dark-border};
+  --light-button-background: #{$light-button-background};
+  --dark-button-background: #{$dark-button-background};
+  --light-button-text: #{$light-button-text};
+  --dark-button-text: #{$dark-button-text};
+  --light-button-hover-background: #{$light-button-hover-background};
+  --dark-button-hover-background: #{$dark-button-hover-background};
+  --light-theme-button-background: #{$light-theme-button-background};
+  --dark-theme-button-background: #{$dark-theme-button-background};
+  --light-theme-button-text: #{$light-theme-button-text};
+  --dark-theme-button-text: #{$dark-theme-button-text};
+  --light-theme-button-hover-background: #{$light-theme-button-hover-background};
+  --dark-theme-button-hover-background: #{$dark-theme-button-hover-background};
+  --light-input-background: #{$light-input-background};
+  --dark-input-background: #{$dark-input-background};
+}
+
+.light {
+  --text-color: var(--light-text);
+  --background-color: var(--light-background);
+  --border-color: var(--light-border);
+}
+
+.dark {
+  --text-color: var(--dark-text);
+  --background-color: var(--dark-background);
+  --border-color: var(--dark-border);
+}
+
 .results {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem;
+  padding-bottom: 200px;
 
   h2 {
     text-align: center;
@@ -44,7 +82,6 @@
     }
   }
 
-  // Loading state
   &.loading {
     .results-grid {
       opacity: 0.6;
@@ -53,7 +90,6 @@
     }
   }
 
-  // Empty state styling
   .no-results {
     text-align: center;
     padding: 4rem 2rem;
@@ -88,7 +124,6 @@
     }
   }
 
-  // Error state styling
   .error-message {
     background: linear-gradient(
       135deg,
@@ -127,7 +162,6 @@
   }
 }
 
-// Results container (legacy support)
 .results-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -144,7 +178,6 @@
   }
 }
 
-// Global error styling
 .error {
   background: linear-gradient(
     135deg,
@@ -176,7 +209,6 @@
   }
 }
 
-// Animation for results appearing
 .results-grid > * {
   animation: fadeInUp 0.6s ease-out;
   animation-fill-mode: both;
@@ -199,7 +231,6 @@
   }
 }
 
-// Results count styling
 .results-count {
   text-align: center;
   color: rgba(255, 255, 255, 0.8);
@@ -208,7 +239,6 @@
   font-weight: 500;
 }
 
-// Scroll behavior for mobile
 @media (max-width: 768px) {
   .results {
     padding: 1rem;

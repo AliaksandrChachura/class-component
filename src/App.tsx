@@ -2,6 +2,7 @@ import React from 'react';
 import { SearchProvider } from './context/SearchProvider';
 import { Outlet } from 'react-router-dom';
 import ErrorBoundary from './ErrorBoundary';
+import { useSearchContext } from './context/SearchContext';
 
 const App: React.FC = () => {
   const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
@@ -12,11 +13,19 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary onError={handleError}>
       <SearchProvider>
-        <div className="app">
-          <Outlet />
-        </div>
+        <AppContent />
       </SearchProvider>
     </ErrorBoundary>
+  );
+};
+
+const AppContent: React.FC = () => {
+  const { state } = useSearchContext();
+
+  return (
+    <div className={`app ${state.theme}`}>
+      <Outlet />
+    </div>
   );
 };
 

@@ -6,9 +6,9 @@ import {
 import App from '../App';
 import AboutPage from '../features/About/AboutPage';
 import SearchPage from '../features/Search/SearchPage';
-import CharacterDetails from '../components/CharacterDetails';
 import { fetchCharacterDetails } from '../api/rickMortyAPI';
 import NotFoundPage from '../components/NotFoundPage';
+import CharacterDetailsPage from './CharacterDetailsPage';
 
 export const routeConfig: RouteObject[] = [
   {
@@ -32,9 +32,12 @@ export const routeConfig: RouteObject[] = [
             loader: async ({ params }) => {
               const characterId = Number(params.id);
               const character = await fetchCharacterDetails(characterId);
+              if (!character) {
+                throw new Response('Character not found', { status: 404 });
+              }
               return { character };
             },
-            element: <CharacterDetails isOpen={true} onClose={() => {}} />,
+            element: <CharacterDetailsPage />,
           },
         ],
       },
@@ -47,6 +50,6 @@ export const routeConfig: RouteObject[] = [
   },
 ];
 
-export const routes = createBrowserRouter(routeConfig); // for real app
+export const routes = createBrowserRouter(routeConfig);
 export const createTestRouter = (initialEntries = ['/']) =>
   createMemoryRouter(routeConfig, { initialEntries });

@@ -1,8 +1,10 @@
 import { useReducer, useMemo, useCallback, type ReactNode } from 'react';
 import { SearchContext } from './SearchContext';
 import type { RickMortyResponse } from '../api/rickMortyAPI';
+import useLocalStorageOperations from '../hooks/useLocalStorageOperations';
 
 interface SearchState {
+  theme: string;
   searchTerm: string;
   currentPage: number;
   isLoading: boolean;
@@ -16,18 +18,29 @@ type SearchAction =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'SET_SEARCH_RESULTS'; payload: RickMortyResponse | null }
-  | { type: 'RESET_SEARCH' };
+  | { type: 'RESET_SEARCH' }
+  | { type: 'SET_THEME'; payload: string };
 
 const getInitialSearchTerm = (): string => {
   try {
     const saved = localStorage.getItem('searchTerm');
-    return saved ? JSON.parse(saved) : '';
+    return saved && saved.length > 0 ? JSON.parse(saved) : '';
   } catch {
     return '';
   }
 };
 
+const getInitialTheme = (): string => {
+  try {
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark' ? 'dark' : 'light';
+  } catch {
+    return 'light';
+  }
+};
+
 const initialState: SearchState = {
+  theme: getInitialTheme(),
   searchTerm: getInitialSearchTerm(),
   currentPage: 1,
   isLoading: false,
@@ -38,15 +51,10 @@ const initialState: SearchState = {
 function searchReducer(state: SearchState, action: SearchAction): SearchState {
   switch (action.type) {
     case 'SET_SEARCH_TERM':
-      try {
-        localStorage.setItem('searchTerm', JSON.stringify(action.payload));
-      } catch {
-        // Ignore localStorage errors
-      }
       return {
         ...state,
         searchTerm: action.payload,
-        currentPage: 1, // Reset to page 1 when search term changes
+        currentPage: 1,
         error: null,
       };
     case 'SET_CURRENT_PAGE':
@@ -74,16 +82,16 @@ function searchReducer(state: SearchState, action: SearchAction): SearchState {
         error: null,
       };
     case 'RESET_SEARCH':
-      try {
-        localStorage.removeItem('searchTerm');
-      } catch {
-        // Ignore localStorage errors
-      }
       return {
         ...initialState,
         searchTerm: '',
         currentPage: 1,
         searchResults: null,
+      };
+    case 'SET_THEME':
+      return {
+        ...state,
+        theme: action.payload,
       };
     default:
       return state;
@@ -95,15 +103,19 @@ interface SearchProviderProps {
 }
 
 export function SearchProvider({ children }: SearchProviderProps) {
+  const { setItem, removeItem } = useLocalStorageOperations();
   const [state, dispatch] = useReducer(searchReducer, initialState);
 
-  const setSearchTerm = useCallback((term: string) => {
-    dispatch({ type: 'SET_SEARCH_TERM', payload: term.trim() });
-  }, []);
+  const setSearchTerm = useCallback(
+    (term: string) => {
+      const trimmedTerm = term.trim();
 
-  // const setCurrentPage = useCallback((page: number) => {
-  //   dispatch({ type: 'SET_CURRENT_PAGE', payload: page });
-  // }, []);
+      setItem('searchTerm', trimmedTerm);
+
+      dispatch({ type: 'SET_SEARCH_TERM', payload: trimmedTerm });
+    },
+    [setItem]
+  );
 
   const setLoading = useCallback((loading: boolean) => {
     dispatch({ type: 'SET_LOADING', payload: loading });
@@ -113,13 +125,20 @@ export function SearchProvider({ children }: SearchProviderProps) {
     dispatch({ type: 'SET_ERROR', payload: error });
   }, []);
 
-  // const setSearchResults = useCallback((results: RickMortyResponse | null) => {
-  //   dispatch({ type: 'SET_SEARCH_RESULTS', payload: results });
-  // }, []);
-
   const resetSearch = useCallback(() => {
+    removeItem('searchTerm');
+
     dispatch({ type: 'RESET_SEARCH' });
-  }, []);
+  }, [removeItem]);
+
+  const setTheme = useCallback(
+    (theme: string) => {
+      setItem('theme', theme);
+
+      dispatch({ type: 'SET_THEME', payload: theme });
+    },
+    [setItem]
+  );
 
   const value = useMemo(
     () => ({
@@ -128,8 +147,9 @@ export function SearchProvider({ children }: SearchProviderProps) {
       setLoading,
       setError,
       resetSearch,
+      setTheme,
     }),
-    [state, setSearchTerm, setLoading, setError, resetSearch]
+    [state, setSearchTerm, setLoading, setError, resetSearch, setTheme]
   );
 
   return (

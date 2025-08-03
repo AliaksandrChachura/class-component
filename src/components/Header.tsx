@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Search from './Search';
+import { useSearchContext } from '../context/SearchContext';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const { state, setTheme } = useSearchContext();
 
   const throwError = () => {
     throw new Error('Test error triggered!');
@@ -12,11 +14,17 @@ const Header: React.FC = () => {
   const handleAboutClick = () => {
     navigate('/about');
   };
+  const handleThemeClick = () => {
+    setTheme(state.theme === 'dark' ? 'light' : 'dark');
+  };
 
   return (
-    <header className="header">
+    <header className={'header'}>
       <Search />
       <div className="actions-section">
+        <button className={'theme-button'} onClick={handleThemeClick}>
+          {state.theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+        </button>
         <button className="about-button" onClick={handleAboutClick}>
           About
         </button>
