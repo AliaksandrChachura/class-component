@@ -1,5 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { store } from './store';
 import RouterProviderComponent from './routes/RouterProvider.tsx';
 import './styles/index.css';
 
@@ -10,6 +12,8 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <RouterProviderComponent />
+    <Provider store={store}>
+      <RouterProviderComponent />
+    </Provider>
   </StrictMode>
 );

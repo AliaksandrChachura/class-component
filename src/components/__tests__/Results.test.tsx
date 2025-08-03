@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
 import Results from '../Results';
 import {
   fetchCharacters,
@@ -21,9 +23,11 @@ const mockOnCharacterSelect = vi.fn();
 
 const renderWithProvider = (component: React.ReactElement) => {
   return render(
-    <MemoryRouter>
-      <SearchProvider>{component}</SearchProvider>
-    </MemoryRouter>
+    <Provider store={store}>
+      <SearchProvider>
+        <MemoryRouter>{component}</MemoryRouter>
+      </SearchProvider>
+    </Provider>
   );
 };
 
@@ -60,11 +64,13 @@ describe('Results Component', () => {
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
-      <MemoryRouter>
-        <SearchContext.Provider value={mockSearchContext}>
-          {children}
-        </SearchContext.Provider>
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <SearchContext.Provider value={mockSearchContext}>
+            {children}
+          </SearchContext.Provider>
+        </MemoryRouter>
+      </Provider>
     );
 
     render(
@@ -92,11 +98,13 @@ describe('Results Component', () => {
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
-      <MemoryRouter>
-        <SearchContext.Provider value={mockSearchContext}>
-          {children}
-        </SearchContext.Provider>
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <SearchContext.Provider value={mockSearchContext}>
+            {children}
+          </SearchContext.Provider>
+        </MemoryRouter>
+      </Provider>
     );
 
     render(
@@ -201,11 +209,13 @@ describe('Results Component', () => {
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
-      <MemoryRouter>
-        <SearchContext.Provider value={mockSearchContext}>
-          {children}
-        </SearchContext.Provider>
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <SearchContext.Provider value={mockSearchContext}>
+            {children}
+          </SearchContext.Provider>
+        </MemoryRouter>
+      </Provider>
     );
 
     render(
@@ -250,11 +260,13 @@ describe('Results Component', () => {
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
-      <MemoryRouter>
-        <SearchContext.Provider value={mockSearchContext}>
-          {children}
-        </SearchContext.Provider>
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <SearchContext.Provider value={mockSearchContext}>
+            {children}
+          </SearchContext.Provider>
+        </MemoryRouter>
+      </Provider>
     );
 
     render(
@@ -326,11 +338,13 @@ describe('Results Component', () => {
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
-      <MemoryRouter>
-        <SearchContext.Provider value={mockSearchContext}>
-          {children}
-        </SearchContext.Provider>
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <SearchContext.Provider value={mockSearchContext}>
+            {children}
+          </SearchContext.Provider>
+        </MemoryRouter>
+      </Provider>
     );
 
     render(
