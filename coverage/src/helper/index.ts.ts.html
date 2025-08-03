@@ -23,27 +23,27 @@
         </h1>
         <div class="clearfix">
           <div class="fl pad1y space-right2">
-            <span class="strong">0% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Statements</span>
-            <span class="fraction">0/15</span>
+            <span class="fraction">15/15</span>
           </div>
 
           <div class="fl pad1y space-right2">
             <span class="strong">100% </span>
             <span class="quiet">Branches</span>
-            <span class="fraction">0/0</span>
+            <span class="fraction">4/4</span>
           </div>
 
           <div class="fl pad1y space-right2">
-            <span class="strong">0% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Functions</span>
-            <span class="fraction">0/2</span>
+            <span class="fraction">2/2</span>
           </div>
 
           <div class="fl pad1y space-right2">
-            <span class="strong">0% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Lines</span>
-            <span class="fraction">0/15</span>
+            <span class="fraction">15/15</span>
           </div>
         </div>
         <p class="quiet">
@@ -57,7 +57,7 @@
           </div>
         </template>
       </div>
-      <div class="status-line low"></div>
+      <div class="status-line high"></div>
       <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -80,41 +80,41 @@
 <a name='L19'></a><a href='#L19'>19</a>
 <a name='L20'></a><a href='#L20'>20</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type { Card } from '../types';
 &nbsp;
-<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function isCardInSelectedCards(cards: Card[], card: Card) {</span></span>
-<span class="cstat-no" title="statement not covered" >  return cards.some((c) =&gt; c.id === card.id);</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+function isCardInSelectedCards(cards: Card[], card: Card) {
+  return cards.some((c) =&gt; c.id === card.id);
+}
 &nbsp;
-<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function downloadCsv(cards: Card[]) {</span></span>
-<span class="cstat-no" title="statement not covered" >  const csvContent = cards</span>
-<span class="cstat-no" title="statement not covered" >    .map((card) =&gt; `${card.name},${card.description},${card.image}`)</span>
-<span class="cstat-no" title="statement not covered" >    .join('\n');</span>
-<span class="cstat-no" title="statement not covered" >  const blob = new Blob([csvContent], { type: 'text/csv' });</span>
-<span class="cstat-no" title="statement not covered" >  const url = URL.createObjectURL(blob);</span>
-<span class="cstat-no" title="statement not covered" >  const a = document.createElement('a');</span>
-<span class="cstat-no" title="statement not covered" >  a.href = url;</span>
-<span class="cstat-no" title="statement not covered" >  a.download = `${cards.length}_items.csv`;</span>
-<span class="cstat-no" title="statement not covered" >  a.click();</span>
-<span class="cstat-no" title="statement not covered" >  URL.revokeObjectURL(url);</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+function downloadCsv(cards: Card[]) {
+  const csvContent = cards
+    .map((card) =&gt; `${card.name},${card.description},${card.image}`)
+    .join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${cards.length}_items.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 export { isCardInSelectedCards, downloadCsv };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -130,7 +130,7 @@ export { isCardInSelectedCards, downloadCsv };
         rel="noopener noreferrer"
         >istanbul</a
       >
-      at 2025-08-03T12:29:20.105Z
+      at 2025-08-03T20:17:03.108Z
     </div>
     <script src="../../prettify.js"></script>
     <script>
