@@ -5,13 +5,12 @@ import SearchStatus from '../../components/SearchStatus';
 import Results from '../../components/Results';
 import Loader from '../../components/Loader';
 import { useSearchContext } from '../../context/SearchContext';
-import './SearchPage.scss'; // Added for split view styling
 
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useSearchContext();
-  const isDetailsOpen = /\/results\/\d+/i.test(location.pathname); // check if details are open
+  const isDetailsOpen = /\/results\/\d+/i.test(location.pathname);
 
   const { isLoading } = state;
 

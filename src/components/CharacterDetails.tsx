@@ -2,11 +2,6 @@ import React from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import type { Character } from '../api/rickMortyAPI';
 
-// interface CharacterDetailsProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-// }
-
 const CharacterDetails: React.FC = () => {
   const { character } = useLoaderData() as { character: Character };
   const navigate = useNavigate();

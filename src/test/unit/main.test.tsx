@@ -21,16 +21,6 @@ vi.mock('../../routes/RouterProvider.tsx', () => ({
 
 vi.mock('../../styles/index.css', () => ({}));
 
-// vi.mock('react-redux', () => {
-//   const ActualReactRedux = vi.importActual('react-redux');
-//   return {
-//     ...ActualReactRedux,
-//     Provider: vi.fn(({ children }) => (
-//       <div data-testid="mock-provider">{children}</div>
-//     )),
-//   };
-// });
-
 describe('Main Entry Point', () => {
   let mockRootElement: HTMLElement;
   let mockCreateRoot: ReturnType<typeof vi.fn>;

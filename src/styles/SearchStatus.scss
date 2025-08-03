@@ -103,7 +103,6 @@
     }
   }
 
-  // Responsive design
   @media (max-width: 768px) {
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
@@ -137,7 +136,6 @@
   }
 }
 
-// Animation for when search status appears
 .search-status {
   animation: slideInDown 0.4s ease-out;
 }

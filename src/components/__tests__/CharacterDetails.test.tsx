@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import CharacterDetails from '../CharacterDetails';
 import type { Character } from '../../api/rickMortyAPI';
 
-// Mock React Router hooks
 const mockNavigate = vi.fn();
 const mockUseLoaderData = vi.fn();
 
@@ -43,7 +42,7 @@ describe('CharacterDetails Component', () => {
   });
 
   it('renders character details correctly', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('Character Details')).toBeInTheDocument();
     expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -54,7 +53,7 @@ describe('CharacterDetails Component', () => {
   });
 
   it('displays character image with correct attributes', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     const image = screen.getByAltText('Rick Sanchez');
     expect(image).toBeInTheDocument();
@@ -65,7 +64,7 @@ describe('CharacterDetails Component', () => {
   });
 
   it('navigates back to results when close button is clicked', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     const closeButton = screen.getByLabelText('Close details panel');
     fireEvent.click(closeButton);
@@ -74,7 +73,7 @@ describe('CharacterDetails Component', () => {
   });
 
   it('displays correct status color for alive character', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('Alive - Human')).toBeInTheDocument();
 
@@ -89,7 +88,7 @@ describe('CharacterDetails Component', () => {
     };
     mockUseLoaderData.mockReturnValue({ character: deadCharacter });
 
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('Dead - Human')).toBeInTheDocument();
 
@@ -104,7 +103,7 @@ describe('CharacterDetails Component', () => {
     };
     mockUseLoaderData.mockReturnValue({ character: unknownCharacter });
 
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('unknown - Human')).toBeInTheDocument();
 
@@ -113,13 +112,13 @@ describe('CharacterDetails Component', () => {
   });
 
   it('formats creation date correctly', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('November 4, 2017')).toBeInTheDocument();
   });
 
   it('displays episode count correctly', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(
       screen.getByText(
@@ -136,26 +135,26 @@ describe('CharacterDetails Component', () => {
     };
     mockUseLoaderData.mockReturnValue({ character: characterWithType });
 
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('Scientist')).toBeInTheDocument();
   });
 
   it('does not display type field when empty', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.queryByText('Type:')).not.toBeInTheDocument();
   });
 
   it('has correct accessibility attributes', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     const closeButton = screen.getByLabelText('Close details panel');
     expect(closeButton).toHaveAttribute('aria-label', 'Close details panel');
   });
 
   it('has correct CSS classes for styling', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(
       document.querySelector('.character-details-container')
@@ -172,7 +171,7 @@ describe('CharacterDetails Component', () => {
   });
 
   it('displays all required character information sections', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('Personal Information')).toBeInTheDocument();
     expect(screen.getByText('Location Information')).toBeInTheDocument();
@@ -180,21 +179,21 @@ describe('CharacterDetails Component', () => {
   });
 
   it('displays gender information', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('Gender:')).toBeInTheDocument();
     expect(screen.getByText('Male')).toBeInTheDocument();
   });
 
   it('displays origin and location information', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('Origin:')).toBeInTheDocument();
     expect(screen.getByText('Last Known Location:')).toBeInTheDocument();
   });
 
   it('displays created date label', () => {
-    render(<CharacterDetails isOpen={true} onClose={() => {}} />);
+    render(<CharacterDetails />);
 
     expect(screen.getByText('Created:')).toBeInTheDocument();
   });

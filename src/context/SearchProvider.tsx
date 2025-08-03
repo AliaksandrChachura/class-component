@@ -54,7 +54,7 @@ function searchReducer(state: SearchState, action: SearchAction): SearchState {
       return {
         ...state,
         searchTerm: action.payload,
-        currentPage: 1, // Reset to page 1 when search term changes
+        currentPage: 1,
         error: null,
       };
     case 'SET_CURRENT_PAGE':
@@ -109,19 +109,13 @@ export function SearchProvider({ children }: SearchProviderProps) {
   const setSearchTerm = useCallback(
     (term: string) => {
       const trimmedTerm = term.trim();
-      try {
-        setItem('searchTerm', trimmedTerm);
-      } catch {
-        // Ignore localStorage errors
-      }
+
+      setItem('searchTerm', trimmedTerm);
+
       dispatch({ type: 'SET_SEARCH_TERM', payload: trimmedTerm });
     },
     [setItem]
   );
-
-  // const setCurrentPage = useCallback((page: number) => {
-  //   dispatch({ type: 'SET_CURRENT_PAGE', payload: page });
-  // }, []);
 
   const setLoading = useCallback((loading: boolean) => {
     dispatch({ type: 'SET_LOADING', payload: loading });
@@ -131,26 +125,16 @@ export function SearchProvider({ children }: SearchProviderProps) {
     dispatch({ type: 'SET_ERROR', payload: error });
   }, []);
 
-  // const setSearchResults = useCallback((results: RickMortyResponse | null) => {
-  //   dispatch({ type: 'SET_SEARCH_RESULTS', payload: results });
-  // }, []);
-
   const resetSearch = useCallback(() => {
-    try {
-      removeItem('searchTerm');
-    } catch {
-      // Ignore localStorage errors
-    }
+    removeItem('searchTerm');
+
     dispatch({ type: 'RESET_SEARCH' });
   }, [removeItem]);
 
   const setTheme = useCallback(
     (theme: string) => {
-      try {
-        setItem('theme', theme);
-      } catch {
-        // Ignore localStorage errors
-      }
+      setItem('theme', theme);
+
       dispatch({ type: 'SET_THEME', payload: theme });
     },
     [setItem]

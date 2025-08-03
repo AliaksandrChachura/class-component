@@ -40,7 +40,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem;
-  padding-bottom: 200px; // Add space for fixed pagination
+  padding-bottom: 200px;
 
   h2 {
     text-align: center;
@@ -82,7 +82,6 @@
     }
   }
 
-  // Loading state
   &.loading {
     .results-grid {
       opacity: 0.6;
@@ -91,7 +90,6 @@
     }
   }
 
-  // Empty state styling
   .no-results {
     text-align: center;
     padding: 4rem 2rem;
@@ -126,7 +124,6 @@
     }
   }
 
-  // Error state styling
   .error-message {
     background: linear-gradient(
       135deg,
@@ -165,7 +162,6 @@
   }
 }
 
-// Results container (legacy support)
 .results-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -182,7 +178,6 @@
   }
 }
 
-// Global error styling
 .error {
   background: linear-gradient(
     135deg,
@@ -214,7 +209,6 @@
   }
 }
 
-// Animation for results appearing
 .results-grid > * {
   animation: fadeInUp 0.6s ease-out;
   animation-fill-mode: both;
@@ -237,7 +231,6 @@
   }
 }
 
-// Results count styling
 .results-count {
   text-align: center;
   color: rgba(255, 255, 255, 0.8);
@@ -246,7 +239,6 @@
   font-weight: 500;
 }
 
-// Scroll behavior for mobile
 @media (max-width: 768px) {
   .results {
     padding: 1rem;

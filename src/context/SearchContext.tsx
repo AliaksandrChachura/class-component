@@ -20,7 +20,6 @@ export const SearchContext = createContext<SearchContextType | undefined>(
   undefined
 );
 
-// Custom hook to use the search context with proper error handling
 export const useSearchContext = (): SearchContextType => {
   const context = useContext(SearchContext);
   if (!context) {

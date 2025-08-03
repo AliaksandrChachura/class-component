@@ -198,7 +198,6 @@ describe('Results Component', () => {
 
     mockFetchCharacters.mockReturnValue(promise);
 
-    // Mock SearchContext to have loading state
     const mockSearchContext = {
       state: { theme: 'light', searchTerm: '', isLoading: true, error: null },
       setSearchTerm: vi.fn(),
@@ -249,7 +248,6 @@ describe('Results Component', () => {
   it('passes correct props to Loader component', () => {
     mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
 
-    // Mock SearchContext to have loading state
     const mockSearchContext = {
       state: { theme: 'light', searchTerm: '', isLoading: true, error: null },
       setSearchTerm: vi.fn(),

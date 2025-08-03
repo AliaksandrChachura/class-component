@@ -7,6 +7,7 @@ import Card from './Card';
 import Loader from './Loader';
 import Pagination from './Pagination';
 import NotFoundPage from './NotFoundPage';
+import SelectedCardsWrapper from './SelectedCardsWrapper';
 
 interface ResultsProps {
   onCharacterSelect?: (characterId: number) => void;
@@ -136,6 +137,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
           ))}
         </div>
       )}
+      <SelectedCardsWrapper />
       {paginationInfo && paginationInfo.pages > 1 && (
         <Pagination
           currentPage={currentPage}
