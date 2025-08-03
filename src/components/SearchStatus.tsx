@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSearch } from '../hooks/useSearch';
 
 const SearchStatus: React.FC = () => {
   const { state, resetSearch } = useSearch();
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     resetSearch();
-  };
+  }, [resetSearch]);
 
   if (!state.searchTerm && !state.isLoading && !state.error) {
     return null;
