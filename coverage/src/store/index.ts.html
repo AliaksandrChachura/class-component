@@ -23,27 +23,27 @@
         </h1>
         <div class="clearfix">
           <div class="fl pad1y space-right2">
-            <span class="strong">0% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Statements</span>
-            <span class="fraction">0/6</span>
+            <span class="fraction">6/6</span>
           </div>
 
           <div class="fl pad1y space-right2">
-            <span class="strong">0% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Branches</span>
-            <span class="fraction">0/1</span>
+            <span class="fraction">0/0</span>
           </div>
 
           <div class="fl pad1y space-right2">
-            <span class="strong">0% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Functions</span>
-            <span class="fraction">0/1</span>
+            <span class="fraction">0/0</span>
           </div>
 
           <div class="fl pad1y space-right2">
-            <span class="strong">0% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Lines</span>
-            <span class="fraction">0/6</span>
+            <span class="fraction">6/6</span>
           </div>
         </div>
         <p class="quiet">
@@ -57,7 +57,7 @@
           </div>
         </template>
       </div>
-      <div class="status-line low"></div>
+      <div class="status-line high"></div>
       <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -70,25 +70,25 @@
 <a name='L9'></a><a href='#L9'>9</a>
 <a name='L10'></a><a href='#L10'>10</a>
 <a name='L11'></a><a href='#L11'>11</a>
-<a name='L12'></a><a href='#L12'>12</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L12'></a><a href='#L12'>12</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import { configureStore } from '@reduxjs/toolkit';</span></span></span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { configureStore } from '@reduxjs/toolkit';
 import selectedItemsSlice from './slices/cardsSlicer';
 &nbsp;
-<span class="cstat-no" title="statement not covered" >export const store = configureStore({</span>
-<span class="cstat-no" title="statement not covered" >  reducer: {</span>
-<span class="cstat-no" title="statement not covered" >    selectedItems: selectedItemsSlice,</span>
-<span class="cstat-no" title="statement not covered" >  },</span>
-<span class="cstat-no" title="statement not covered" >});</span>
+export const store = configureStore({
+  reducer: {
+    selectedItems: selectedItemsSlice,
+  },
+});
 &nbsp;
 export type RootState = ReturnType&lt;typeof store.getState&gt;;
 export type AppDispatch = typeof store.dispatch;
@@ -106,7 +106,7 @@ export type AppDispatch = typeof store.dispatch;
         rel="noopener noreferrer"
         >istanbul</a
       >
-      at 2025-08-03T20:17:03.108Z
+      at 2025-08-06T17:51:03.494Z
     </div>
     <script src="../../prettify.js"></script>
     <script>
