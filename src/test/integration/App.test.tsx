@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { store } from '../../store';
 import { SearchProvider } from '../../context/SearchProvider';
 import ErrorBoundary from '../../ErrorBoundary';
-import { fetchCharacters } from '../../api/rickMortyAPI';
+import { useGetCharactersQuery } from '../../api/endpoints/charactersApi';
 import { mockAPIResponse } from '../mocks/rickMortyAPI';
 import { RouterProvider } from 'react-router-dom';
 import { createTestRouter } from '../../routes/Routes';
@@ -32,7 +32,7 @@ const renderApp = (initialEntries = ['/']) =>
     </Provider>
   );
 
-const mockedFetchCharacters = vi.mocked(fetchCharacters);
+const mockedFetchCharacters = vi.mocked(useGetCharactersQuery);
 
 describe('App Component Integration Tests', () => {
   beforeEach(() => {

@@ -6,7 +6,7 @@ import {
 import App from '../App';
 import AboutPage from '../features/About/AboutPage';
 import SearchPage from '../features/Search/SearchPage';
-import { fetchCharacterDetails } from '../api/rickMortyAPI';
+// import { fetchCharacterDetails } from '../api/rickMortyAPI';
 import NotFoundPage from '../components/NotFoundPage';
 import CharacterDetailsPage from './CharacterDetailsPage';
 
@@ -29,14 +29,6 @@ export const routeConfig: RouteObject[] = [
         children: [
           {
             path: ':id',
-            loader: async ({ params }) => {
-              const characterId = Number(params.id);
-              const character = await fetchCharacterDetails(characterId);
-              if (!character) {
-                throw new Response('Character not found', { status: 404 });
-              }
-              return { character };
-            },
             element: <CharacterDetailsPage />,
           },
         ],

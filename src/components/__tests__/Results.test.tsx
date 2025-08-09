@@ -4,10 +4,8 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
 import Results from '../Results';
-import {
-  fetchCharacters,
-  type RickMortyResponse,
-} from '../../api/rickMortyAPI';
+import { useGetCharactersQuery } from '../../api/endpoints/charactersApi';
+import { type RickMortyResponse } from '../../api/types/index';
 import { mockAPIResponse } from '../../test/mocks/rickMortyAPI';
 import { SearchProvider } from '../../context/SearchProvider';
 import { SearchContext } from '../../context/SearchContext';
@@ -17,7 +15,7 @@ vi.mock('../../api/rickMortyAPI', () => ({
   fetchCharacters: vi.fn(),
 }));
 
-const mockFetchCharacters = vi.mocked(fetchCharacters);
+const mockFetchCharacters = vi.mocked(useGetCharactersQuery);
 
 const mockOnCharacterSelect = vi.fn();
 

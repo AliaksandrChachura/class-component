@@ -1,6 +1,6 @@
 import { useReducer, useMemo, useCallback, type ReactNode } from 'react';
 import { SearchContext } from './SearchContext';
-import type { RickMortyResponse } from '../api/rickMortyAPI';
+import type { RickMortyResponse } from '../api/types/index';
 import useLocalStorageOperations from '../hooks/useLocalStorageOperations';
 
 interface SearchState {
@@ -131,6 +131,10 @@ export function SearchProvider({ children }: SearchProviderProps) {
     dispatch({ type: 'RESET_SEARCH' });
   }, [removeItem]);
 
+  const setCurrentPage = useCallback((page: number) => {
+    dispatch({ type: 'SET_CURRENT_PAGE', payload: page });
+  }, []);
+
   const setTheme = useCallback(
     (theme: string) => {
       setItem('theme', theme);
@@ -148,8 +152,17 @@ export function SearchProvider({ children }: SearchProviderProps) {
       setError,
       resetSearch,
       setTheme,
+      setCurrentPage,
     }),
-    [state, setSearchTerm, setLoading, setError, resetSearch, setTheme]
+    [
+      state,
+      setSearchTerm,
+      setLoading,
+      setError,
+      resetSearch,
+      setTheme,
+      setCurrentPage,
+    ]
   );
 
   return (

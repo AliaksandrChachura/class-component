@@ -1,9 +1,11 @@
 import React from 'react';
-import { useLoaderData, useNavigate } from 'react-router-dom';
-import type { Character } from '../api/rickMortyAPI';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useGetCharacterQuery } from '../api/endpoints/characterApi';
 
 const CharacterDetails: React.FC = () => {
-  const { character } = useLoaderData() as { character: Character };
+  const params = useParams();
+  const id = Number(params.id);
+  const { data: character, isLoading, error } = useGetCharacterQuery({ id });
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -32,6 +34,9 @@ const CharacterDetails: React.FC = () => {
       day: 'numeric',
     });
   };
+
+  if (isLoading) return null;
+  if (error || !character) return null;
 
   return (
     <div className="character-details-container" onClick={handleClose}>
