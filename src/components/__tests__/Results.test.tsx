@@ -189,7 +189,7 @@ describe('Results Component', () => {
     expect(screen.getByText(mortyDescription)).toBeInTheDocument();
   });
 
-  it('renders error message when API call fails', async () => {
+  it('renders error toast when API call fails', async () => {
     mockUseGetCharactersQuery.mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -211,8 +211,20 @@ describe('Results Component', () => {
     renderWithProps();
 
     await waitFor(() => {
-      expect(screen.getByText(/Error:/i)).toBeInTheDocument();
+      expect(screen.getByText('API Error')).toBeInTheDocument();
     });
+
+    // Check that the error toast is displayed
+    const errorToast = screen.getByText('API Error').closest('.error-toast');
+    expect(errorToast).toBeInTheDocument();
+
+    // Check that the error icon is present
+    expect(screen.getByText('⚠️')).toBeInTheDocument();
+
+    // Check that the close button is present
+    expect(
+      screen.getByRole('button', { name: /close error message/i })
+    ).toBeInTheDocument();
 
     expect(screen.queryByText('Found')).not.toBeInTheDocument();
   });
@@ -338,7 +350,7 @@ describe('Results Component', () => {
     renderWithProps();
 
     await waitFor(() => {
-      expect(screen.getByText(/Error:/i)).toBeInTheDocument();
+      expect(screen.getByText('API Error')).toBeInTheDocument();
     });
 
     mockUseGetCharactersQuery.mockReturnValue({
@@ -358,6 +370,78 @@ describe('Results Component', () => {
       isError: false,
       isUninitialized: false,
     });
+  });
+
+  it('allows user to close error toast manually', async () => {
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      error: { status: 500, data: 'API Error' },
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'rejected',
+      isSuccess: false,
+      isError: true,
+      isUninitialized: false,
+    });
+
+    renderWithProps();
+
+    await waitFor(() => {
+      expect(screen.getByText('API Error')).toBeInTheDocument();
+    });
+
+    const closeButton = screen.getByRole('button', {
+      name: /close error message/i,
+    });
+    fireEvent.click(closeButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText('API Error')).not.toBeInTheDocument();
+    });
+  });
+
+  it('auto-hides error toast after 5 seconds', async () => {
+    vi.useFakeTimers();
+
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      error: { status: 500, data: 'API Error' },
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'rejected',
+      isSuccess: false,
+      isError: true,
+      isUninitialized: false,
+    });
+
+    renderWithProps();
+
+    await waitFor(() => {
+      expect(screen.getByText('API Error')).toBeInTheDocument();
+    });
+
+    // Fast-forward time by 5 seconds
+    vi.advanceTimersByTime(5000);
+
+    await waitFor(() => {
+      expect(screen.queryByText('API Error')).not.toBeInTheDocument();
+    });
+
+    vi.useRealTimers();
   });
 
   it('passes correct props to Loader component', () => {

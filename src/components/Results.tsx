@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -21,6 +21,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { setCurrentPage } = useSearchContext();
+  const [showError, setShowError] = useState(false);
 
   const currentPage = useMemo(
     () => parseInt(searchParams.get('page') || '1', 10),
@@ -55,14 +56,24 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
     error: queryError,
     isLoading,
     isFetching,
-  } = useGetCharactersQuery(
-    {
-      pageNumber: currentPage,
-      pageSize: 20,
-      name: searchTerm || undefined,
+  } = useGetCharactersQuery({
+    pageNumber: currentPage,
+    pageSize: 20,
+    name: searchTerm || undefined,
+  });
+
+  useEffect(() => {
+    if (queryError) {
+      setShowError(true);
+      // Auto-hide error after 5 seconds
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowError(false);
     }
-    // { skip: !searchTerm }
-  );
+  }, [queryError]);
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -136,14 +147,6 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
     return <Loader />;
   }
 
-  if (queryError) {
-    return (
-      <div className="error-message">
-        <p>Error: {getErrorMessage(queryError)}</p>
-      </div>
-    );
-  }
-
   if (characters.length === 0 && !isLoading && !queryError) {
     return (
       <div className="no-results">
@@ -154,6 +157,23 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
 
   return (
     <div className="results">
+      {/* Error Toast - Top Right Corner */}
+      {showError && queryError && (
+        <div className="error-toast">
+          <div className="error-toast-content">
+            <span className="error-icon">⚠️</span>
+            <span className="error-text">{getErrorMessage(queryError)}</span>
+            <button
+              className="error-close-btn"
+              onClick={() => setShowError(false)}
+              aria-label="Close error message"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       {isLoading && <Loader />}
       {isFetching && <Loader />}
       {characters.length === 0 ? (
