@@ -9,8 +9,8 @@ import { mockAPIResponse } from '../mocks/rickMortyAPI';
 import { RouterProvider } from 'react-router-dom';
 import { createTestRouter } from '../../routes/Routes';
 
-vi.mock('../../api/rickMortyAPI', () => ({
-  fetchCharacters: vi.fn(),
+vi.mock('../../api/endpoints/charactersApi', () => ({
+  useGetCharactersQuery: vi.fn(),
 }));
 
 Object.defineProperty(window, 'localStorage', {
@@ -32,7 +32,7 @@ const renderApp = (initialEntries = ['/']) =>
     </Provider>
   );
 
-const mockedFetchCharacters = vi.mocked(useGetCharactersQuery);
+const mockedUseGetCharactersQuery = vi.mocked(useGetCharactersQuery);
 
 describe('App Component Integration Tests', () => {
   beforeEach(() => {
@@ -41,7 +41,12 @@ describe('App Component Integration Tests', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => null);
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
     vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {});
-    mockedFetchCharacters.mockResolvedValue(mockAPIResponse);
+    mockedUseGetCharactersQuery.mockReturnValue({
+      data: mockAPIResponse,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+    });
   });
 
   it('error boundary integration works', () => {
@@ -68,7 +73,12 @@ describe('App Component Integration Tests', () => {
   });
 
   it('handles API errors gracefully', async () => {
-    mockedFetchCharacters.mockRejectedValue(new Error('API Error'));
+    mockedUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      error: { status: 500, data: 'API Error' },
+    });
 
     renderApp();
 
@@ -78,7 +88,12 @@ describe('App Component Integration Tests', () => {
   });
 
   it('displays character data correctly', async () => {
-    mockedFetchCharacters.mockResolvedValue(mockAPIResponse);
+    mockedUseGetCharactersQuery.mockReturnValue({
+      data: mockAPIResponse,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+    });
 
     renderApp();
 
@@ -88,15 +103,20 @@ describe('App Component Integration Tests', () => {
   });
 
   it('handles empty search results', async () => {
-    mockedFetchCharacters.mockResolvedValue({
-      ...mockAPIResponse,
-      results: [],
+    mockedUseGetCharactersQuery.mockReturnValue({
+      data: {
+        ...mockAPIResponse,
+        results: [],
+      },
+      isLoading: false,
+      isFetching: false,
+      error: null,
     });
 
     renderApp(['/']);
 
     await waitFor(() => {
-      expect(mockedFetchCharacters).toHaveBeenCalled();
+      expect(mockedUseGetCharactersQuery).toHaveBeenCalled();
     });
 
     await waitFor(() => {

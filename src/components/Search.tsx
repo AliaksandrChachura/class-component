@@ -11,6 +11,7 @@ const Search: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+    console.log('inputValue', inputValue);
   };
 
   const handleSearch = () => {

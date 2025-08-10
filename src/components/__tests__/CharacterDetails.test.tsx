@@ -1,14 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { render } from './testUtils';
 import CharacterDetails from '../CharacterDetails';
-import type { Character } from '../../api/rickMortyAPI';
+import type { Character } from '../../api/types';
+import * as characterApi from '../../api/endpoints/characterApi';
 
 const mockNavigate = vi.fn();
-const mockUseLoaderData = vi.fn();
 
 vi.mock('react-router-dom', () => ({
-  useLoaderData: () => mockUseLoaderData(),
+  useParams: () => ({ id: '1' }),
   useNavigate: () => mockNavigate,
+  MemoryRouter: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+vi.mock('../../api/endpoints/characterApi', () => ({
+  useGetCharacterQuery: vi.fn(),
 }));
 
 const mockCharacter: Character = {
@@ -35,14 +42,39 @@ const mockCharacter: Character = {
   created: '2017-11-04T18:48:46.250Z',
 };
 
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(<MemoryRouter>{component}</MemoryRouter>, {});
+};
+
 describe('CharacterDetails Component', () => {
+  let mockUseGetCharacterQuery: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseLoaderData.mockReturnValue({ character: mockCharacter });
+
+    // Get the mocked function
+    mockUseGetCharacterQuery = vi.mocked(characterApi.useGetCharacterQuery);
+
+    mockUseGetCharacterQuery.mockReturnValue({
+      data: mockCharacter,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: mockCharacter,
+      endpointName: 'getCharacter',
+      originalArgs: { id: 1 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
+    });
   });
 
   it('renders character details correctly', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('Character Details')).toBeInTheDocument();
     expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
@@ -53,7 +85,7 @@ describe('CharacterDetails Component', () => {
   });
 
   it('displays character image with correct attributes', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     const image = screen.getByAltText('Rick Sanchez');
     expect(image).toBeInTheDocument();
@@ -64,7 +96,7 @@ describe('CharacterDetails Component', () => {
   });
 
   it('navigates back to results when close button is clicked', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     const closeButton = screen.getByLabelText('Close details panel');
     fireEvent.click(closeButton);
@@ -73,7 +105,7 @@ describe('CharacterDetails Component', () => {
   });
 
   it('displays correct status color for alive character', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('Alive - Human')).toBeInTheDocument();
 
@@ -86,9 +118,13 @@ describe('CharacterDetails Component', () => {
       ...mockCharacter,
       status: 'Dead',
     };
-    mockUseLoaderData.mockReturnValue({ character: deadCharacter });
+    mockUseGetCharacterQuery.mockReturnValue({
+      data: deadCharacter,
+      isLoading: false,
+      error: null,
+    });
 
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('Dead - Human')).toBeInTheDocument();
 
@@ -101,9 +137,13 @@ describe('CharacterDetails Component', () => {
       ...mockCharacter,
       status: 'unknown',
     };
-    mockUseLoaderData.mockReturnValue({ character: unknownCharacter });
+    mockUseGetCharacterQuery.mockReturnValue({
+      data: unknownCharacter,
+      isLoading: false,
+      error: null,
+    });
 
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('unknown - Human')).toBeInTheDocument();
 
@@ -112,13 +152,13 @@ describe('CharacterDetails Component', () => {
   });
 
   it('formats creation date correctly', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('November 4, 2017')).toBeInTheDocument();
   });
 
   it('displays episode count correctly', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(
       screen.getByText(
@@ -133,28 +173,43 @@ describe('CharacterDetails Component', () => {
       ...mockCharacter,
       type: 'Scientist',
     };
-    mockUseLoaderData.mockReturnValue({ character: characterWithType });
+    mockUseGetCharacterQuery.mockReturnValue({
+      data: characterWithType,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: characterWithType,
+      endpointName: 'getCharacter',
+      originalArgs: { id: 1 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
+    });
 
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('Scientist')).toBeInTheDocument();
   });
 
   it('does not display type field when empty', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.queryByText('Type:')).not.toBeInTheDocument();
   });
 
   it('has correct accessibility attributes', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     const closeButton = screen.getByLabelText('Close details panel');
     expect(closeButton).toHaveAttribute('aria-label', 'Close details panel');
   });
 
   it('has correct CSS classes for styling', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(
       document.querySelector('.character-details-container')
@@ -171,7 +226,7 @@ describe('CharacterDetails Component', () => {
   });
 
   it('displays all required character information sections', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('Personal Information')).toBeInTheDocument();
     expect(screen.getByText('Location Information')).toBeInTheDocument();
@@ -179,22 +234,155 @@ describe('CharacterDetails Component', () => {
   });
 
   it('displays gender information', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('Gender:')).toBeInTheDocument();
     expect(screen.getByText('Male')).toBeInTheDocument();
   });
 
   it('displays origin and location information', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('Origin:')).toBeInTheDocument();
     expect(screen.getByText('Last Known Location:')).toBeInTheDocument();
   });
 
   it('displays created date label', () => {
-    render(<CharacterDetails />);
+    renderWithRouter(<CharacterDetails />);
 
     expect(screen.getByText('Created:')).toBeInTheDocument();
+  });
+
+  it('shows loading state when fetching character data', () => {
+    mockUseGetCharacterQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacter',
+      originalArgs: { id: 1 },
+      requestId: 'test-request-id',
+      status: 'pending',
+      isSuccess: false,
+      isError: false,
+      isUninitialized: false,
+    });
+
+    renderWithRouter(<CharacterDetails />);
+
+    expect(screen.getByText('Character Details')).toBeInTheDocument();
+    expect(
+      screen.getByText('Loading character details...')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Close details panel' })
+    ).toBeInTheDocument();
+  });
+
+  it('shows error state when API call fails', () => {
+    mockUseGetCharacterQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: { status: 500, data: 'API Error' },
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacter',
+      originalArgs: { id: 1 },
+      requestId: 'test-request-id',
+      status: 'rejected',
+      isSuccess: false,
+      isError: true,
+      isUninitialized: false,
+    });
+
+    renderWithRouter(<CharacterDetails />);
+
+    expect(screen.getByText('Character Details')).toBeInTheDocument();
+    expect(
+      screen.getByText('Error loading character details. Please try again.')
+    ).toBeInTheDocument();
+    expect(screen.getByText('Close')).toBeInTheDocument();
+  });
+
+  it('shows no character found state when character data is null', () => {
+    mockUseGetCharacterQuery.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: null,
+      endpointName: 'getCharacter',
+      originalArgs: { id: 1 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
+    });
+
+    renderWithRouter(<CharacterDetails />);
+
+    expect(screen.getByText('Character Details')).toBeInTheDocument();
+    expect(screen.getByText('Character not found.')).toBeInTheDocument();
+    expect(screen.getByText('Close')).toBeInTheDocument();
+  });
+
+  it('navigates back when close button is clicked in error state', () => {
+    mockUseGetCharacterQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: { status: 500, data: 'API Error' },
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacter',
+      originalArgs: { id: 1 },
+      requestId: 'test-request-id',
+      status: 'rejected',
+      isSuccess: false,
+      isError: true,
+      isUninitialized: false,
+    });
+
+    renderWithRouter(<CharacterDetails />);
+
+    const closeButton = screen.getByText('Close');
+    fireEvent.click(closeButton);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/results');
+  });
+
+  it('navigates back when close button is clicked in no character state', () => {
+    mockUseGetCharacterQuery.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: null,
+      endpointName: 'getCharacter',
+      originalArgs: { id: 1 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
+    });
+
+    renderWithRouter(<CharacterDetails />);
+
+    const closeButton = screen.getByText('Close');
+    fireEvent.click(closeButton);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/results');
   });
 });

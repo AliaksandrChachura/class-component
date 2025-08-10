@@ -4,6 +4,7 @@ import type { RickMortyResponse, CharacterSearchPayload } from '../types';
 const charactersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCharacters: builder.query<RickMortyResponse, CharacterSearchPayload>({
+      keepUnusedDataFor: 600,
       query: ({ pageNumber = 1, name = '', pageSize = 20 }) => {
         return {
           url: '/character',
@@ -14,6 +15,20 @@ const charactersApi = baseApi.injectEndpoints({
             pageSize,
           },
         };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              { type: 'Characters' as const, id: 'LIST' as const },
+              ...result.results.map(({ id }) => ({
+                type: 'Character' as const,
+                id,
+              })),
+            ]
+          : [{ type: 'Characters' as const, id: 'LIST' as const }],
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        const { pageNumber, name } = queryArgs;
+        return `${endpointName}-${pageNumber}-${name ?? ''}`;
       },
     }),
   }),

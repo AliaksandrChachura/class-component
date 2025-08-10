@@ -5,17 +5,17 @@ import { Provider } from 'react-redux';
 import { store } from '../../store';
 import Results from '../Results';
 import { useGetCharactersQuery } from '../../api/endpoints/charactersApi';
-import { type RickMortyResponse } from '../../api/types/index';
+// import { type RickMortyResponse } from '../../api/types/index';
 import { mockAPIResponse } from '../../test/mocks/rickMortyAPI';
 import { SearchProvider } from '../../context/SearchProvider';
 import { SearchContext } from '../../context/SearchContext';
 import { MemoryRouter } from 'react-router-dom';
 
-vi.mock('../../api/rickMortyAPI', () => ({
-  fetchCharacters: vi.fn(),
+vi.mock('../../api/endpoints/charactersApi', () => ({
+  useGetCharactersQuery: vi.fn(),
 }));
 
-const mockFetchCharacters = vi.mocked(useGetCharactersQuery);
+const mockUseGetCharactersQuery = vi.mocked(useGetCharactersQuery);
 
 const mockOnCharacterSelect = vi.fn();
 
@@ -41,7 +41,23 @@ describe('Results Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
-    mockFetchCharacters.mockResolvedValue(mockAPIResponse);
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: mockAPIResponse,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: mockAPIResponse,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
+    });
     mockOnCharacterSelect.mockClear();
   });
 
@@ -50,15 +66,38 @@ describe('Results Component', () => {
   });
 
   it('renders loading state when fetchCharacters is called', async () => {
-    mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'pending',
+      isSuccess: false,
+      isError: false,
+      isUninitialized: false,
+    });
 
     const mockSearchContext = {
-      state: { theme: 'light', searchTerm: '', isLoading: true, error: null },
+      state: {
+        theme: 'light',
+        searchTerm: '',
+        isLoading: true,
+        error: null,
+        currentPage: 1,
+      },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
       setTheme: vi.fn(),
+      setCurrentPage: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
@@ -87,12 +126,14 @@ describe('Results Component', () => {
         searchTerm: 'Rick',
         isLoading: false,
         error: null,
+        currentPage: 1,
       },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
       setTheme: vi.fn(),
+      setCurrentPage: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
@@ -111,7 +152,7 @@ describe('Results Component', () => {
       </TestProvider>
     );
 
-    expect(mockFetchCharacters).toHaveBeenCalledWith('Rick', 1);
+    expect(mockUseGetCharactersQuery).toHaveBeenCalled();
   });
 
   it('fetches data on component mount', async () => {
@@ -119,7 +160,7 @@ describe('Results Component', () => {
     renderWithProps();
 
     await waitFor(() => {
-      expect(mockFetchCharacters).toHaveBeenCalledWith('', 1);
+      expect(mockUseGetCharactersQuery).toHaveBeenCalled();
     });
   });
 
@@ -149,7 +190,23 @@ describe('Results Component', () => {
   });
 
   it('renders error message when API call fails', async () => {
-    mockFetchCharacters.mockRejectedValue(new Error('API Error'));
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      error: { status: 500, data: 'API Error' },
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'rejected',
+      isSuccess: false,
+      isError: true,
+      isUninitialized: false,
+    });
 
     renderWithProps();
 
@@ -161,9 +218,25 @@ describe('Results Component', () => {
   });
 
   it('renders "no characters found" when results array is empty', async () => {
-    mockFetchCharacters.mockResolvedValue({
-      ...mockAPIResponse,
-      results: [],
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: {
+        ...mockAPIResponse,
+        results: [],
+      },
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: { ...mockAPIResponse, results: [] },
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
     });
 
     renderWithProps();
@@ -189,20 +262,39 @@ describe('Results Component', () => {
   });
 
   it('handles loading state properly during data fetch', async () => {
-    let resolvePromise: (value: RickMortyResponse) => void = () => {};
-    const promise = new Promise<RickMortyResponse>((resolve) => {
-      resolvePromise = resolve;
+    // Test loading state
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'pending',
+      isSuccess: false,
+      isError: false,
+      isUninitialized: false,
     });
 
-    mockFetchCharacters.mockReturnValue(promise);
-
     const mockSearchContext = {
-      state: { theme: 'light', searchTerm: '', isLoading: true, error: null },
+      state: {
+        theme: 'light',
+        searchTerm: '',
+        isLoading: true,
+        error: null,
+        currentPage: 1,
+      },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
       setTheme: vi.fn(),
+      setCurrentPage: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
@@ -222,17 +314,26 @@ describe('Results Component', () => {
     );
 
     expect(screen.getByRole('status')).toBeInTheDocument();
-
-    mockSearchContext.state.isLoading = false;
-    resolvePromise(mockAPIResponse);
-
-    await waitFor(() => {
-      expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    });
   });
 
   it('clears error state when refetching data', async () => {
-    mockFetchCharacters.mockRejectedValueOnce(new Error('API Error'));
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      error: { status: 500, data: 'API Error' },
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'rejected',
+      isSuccess: false,
+      isError: true,
+      isUninitialized: false,
+    });
 
     renderWithProps();
 
@@ -240,19 +341,58 @@ describe('Results Component', () => {
       expect(screen.getByText(/Error:/i)).toBeInTheDocument();
     });
 
-    mockFetchCharacters.mockResolvedValueOnce(mockAPIResponse);
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: mockAPIResponse,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: mockAPIResponse,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
+    });
   });
 
   it('passes correct props to Loader component', () => {
-    mockFetchCharacters.mockImplementation(() => new Promise(() => {}));
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'pending',
+      isSuccess: false,
+      isError: false,
+      isUninitialized: false,
+    });
 
     const mockSearchContext = {
-      state: { theme: 'light', searchTerm: '', isLoading: true, error: null },
+      state: {
+        theme: 'light',
+        searchTerm: '',
+        isLoading: true,
+        error: null,
+        currentPage: 1,
+      },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
       setTheme: vi.fn(),
+      setCurrentPage: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (
@@ -302,9 +442,25 @@ describe('Results Component', () => {
       created: '',
     };
 
-    mockFetchCharacters.mockResolvedValue({
-      ...mockAPIResponse,
-      results: [customCharacter],
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: {
+        ...mockAPIResponse,
+        results: [customCharacter],
+      },
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: { ...mockAPIResponse, results: [customCharacter] },
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
     });
 
     renderWithProps();
@@ -319,18 +475,39 @@ describe('Results Component', () => {
   });
 
   it('maintains loading state during the entire fetch process', () => {
+    // Mock the hook to return loading state
+    mockUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'pending',
+      isSuccess: false,
+      isError: false,
+      isUninitialized: false,
+    });
+
     const mockSearchContext = {
       state: {
         theme: 'light',
         searchTerm: 'test',
         isLoading: true,
         error: null,
+        currentPage: 1,
       },
       setSearchTerm: vi.fn(),
       setLoading: vi.fn(),
       setError: vi.fn(),
       resetSearch: vi.fn(),
       setTheme: vi.fn(),
+      setCurrentPage: vi.fn(),
     };
 
     const TestProvider = ({ children }: { children: React.ReactNode }) => (

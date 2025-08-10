@@ -20,8 +20,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   const { state } = useSearch();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  // pagination info is derived from query data
-  const { setCurrentPage, setSearchTerm } = useSearchContext();
+  const { setCurrentPage } = useSearchContext();
 
   const currentPage = useMemo(
     () => parseInt(searchParams.get('page') || '1', 10),
@@ -29,23 +28,6 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   );
 
   const searchTerm = state.searchTerm || searchParams.get('q') || '';
-
-  const {
-    data,
-    error: queryError,
-    isLoading,
-  } = useGetCharactersQuery({
-    pageNumber: currentPage,
-    pageSize: 20,
-    name: searchTerm || undefined,
-  });
-
-  useEffect(() => {
-    const q = searchParams.get('q') || '';
-    if (!state.searchTerm && q) {
-      setSearchTerm(q);
-    }
-  }, [state.searchTerm, searchParams, setSearchTerm]);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -68,6 +50,20 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
     }
   }, [searchTerm, currentPage, setSearchParams, navigate, searchParams]);
 
+  const {
+    data,
+    error: queryError,
+    isLoading,
+    isFetching,
+  } = useGetCharactersQuery(
+    {
+      pageNumber: currentPage,
+      pageSize: 20,
+      name: searchTerm || undefined,
+    }
+    // { skip: !searchTerm }
+  );
+
   const handlePageChange = useCallback(
     (page: number) => {
       setCurrentPage(page);
@@ -81,7 +77,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
       if (page > 1) {
         updatedParams.set('page', page.toString());
       } else {
-        updatedParams.delete('q');
+        updatedParams.delete('page');
       }
 
       navigate(`/results?${updatedParams.toString()}`, { replace: false });
@@ -159,6 +155,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   return (
     <div className="results">
       {isLoading && <Loader />}
+      {isFetching && <Loader />}
       {characters.length === 0 ? (
         <NotFoundPage />
       ) : (

@@ -109,7 +109,6 @@ export function SearchProvider({ children }: SearchProviderProps) {
   const setSearchTerm = useCallback(
     (term: string) => {
       const trimmedTerm = term.trim();
-
       setItem('searchTerm', trimmedTerm);
 
       dispatch({ type: 'SET_SEARCH_TERM', payload: trimmedTerm });
@@ -127,7 +126,6 @@ export function SearchProvider({ children }: SearchProviderProps) {
 
   const resetSearch = useCallback(() => {
     removeItem('searchTerm');
-
     dispatch({ type: 'RESET_SEARCH' });
   }, [removeItem]);
 
