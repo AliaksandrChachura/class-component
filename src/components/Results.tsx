@@ -1,8 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import type { SerializedError } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSearch } from '../hooks/useSearch';
-import { fetchCharacters } from '../api/rickMortyAPI';
-import type { Character, RickMortyResponse } from '../api/rickMortyAPI';
+import { useGetCharactersQuery } from '../api/endpoints/charactersApi';
+import type { Character, RickMortyResponse } from '../api/types';
+import { useSearchContext } from '../context/SearchContext';
 import Card from './Card';
 import Loader from './Loader';
 import Pagination from './Pagination';
@@ -17,69 +20,110 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   const { state } = useSearch();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [paginationInfo, setPaginationInfo] = useState<
-    RickMortyResponse['info'] | null
-  >(null);
-  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const { setCurrentPage } = useSearchContext();
+  const [showError, setShowError] = useState(false);
+
+  const currentPage = useMemo(
+    () => parseInt(searchParams.get('page') || '1', 10),
+    [searchParams]
+  );
+
+  const searchTerm = state.searchTerm || searchParams.get('q') || '';
 
   useEffect(() => {
-    const isCharacterDetailsRoute = /\/results\/\d+/.test(
-      window.location.pathname
-    );
-    if (isCharacterDetailsRoute) return;
+    const params = new URLSearchParams();
 
-    const params = new URLSearchParams(searchParams);
-    if (state.searchTerm) {
-      params.set('q', state.searchTerm);
+    if (searchTerm) {
+      params.set('q', searchTerm);
     } else {
       params.delete('q');
     }
+
     if (currentPage > 1) {
       params.set('page', currentPage.toString());
     } else {
       params.delete('page');
     }
-    setSearchParams(params);
-  }, [state.searchTerm, currentPage, setSearchParams, searchParams]);
+
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params);
+      navigate(`/results?${params.toString()}`, { replace: false });
+    }
+  }, [searchTerm, currentPage, setSearchParams, navigate, searchParams]);
+
+  const {
+    data,
+    error: queryError,
+    isLoading,
+    isFetching,
+  } = useGetCharactersQuery({
+    pageNumber: currentPage,
+    pageSize: 20,
+    name: searchTerm || undefined,
+  });
+
+  useEffect(() => {
+    if (queryError) {
+      setShowError(true);
+      // Auto-hide error after 5 seconds
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowError(false);
+    }
+  }, [queryError]);
 
   const handlePageChange = useCallback(
     (page: number) => {
-      const newParams = new URLSearchParams();
+      setCurrentPage(page);
+
+      const updatedParams = new URLSearchParams(searchParams);
+
       if (state.searchTerm) {
-        newParams.set('q', state.searchTerm);
+        updatedParams.set('q', state.searchTerm);
       }
+
       if (page > 1) {
-        newParams.set('page', page.toString());
+        updatedParams.set('page', page.toString());
+      } else {
+        updatedParams.delete('page');
       }
-      navigate(`/results?${newParams.toString()}`, { replace: false });
+
+      navigate(`/results?${updatedParams.toString()}`, { replace: false });
     },
-    [state.searchTerm, navigate]
+    [state.searchTerm, navigate, searchParams, setCurrentPage]
   );
 
-  useEffect(() => {
-    const searchCharacters = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetchCharacters(state.searchTerm, currentPage);
-        setCharacters(response.results);
-        setPaginationInfo(response.info);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'Failed to fetch characters'
-        );
-        setCharacters([]);
-        setPaginationInfo(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const characters: Character[] = data?.results ?? [];
+  const paginationInfo: RickMortyResponse['info'] | null = data?.info ?? null;
 
-    searchCharacters();
-  }, [state.searchTerm, currentPage]);
+  const isFetchBaseQueryError = (
+    error: unknown
+  ): error is FetchBaseQueryError =>
+    typeof error === 'object' && error !== null && 'status' in error;
+
+  const isSerializedError = (error: unknown): error is SerializedError =>
+    typeof error === 'object' && error !== null && 'message' in error;
+
+  const getErrorMessage = (error: unknown): string => {
+    if (isFetchBaseQueryError(error)) {
+      const dataField = (error as FetchBaseQueryError).data;
+      if (typeof dataField === 'string') return dataField;
+      if (
+        dataField &&
+        typeof (dataField as { message?: string }).message === 'string'
+      ) {
+        return (dataField as { message?: string }).message as string;
+      }
+      return 'Unknown error';
+    }
+    if (isSerializedError(error)) {
+      return error.message ?? 'Unknown error';
+    }
+    return 'Unknown error';
+  };
 
   const getCharacterDescription = (character: Character): string => {
     const statusEmoji =
@@ -103,15 +147,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
     return <Loader />;
   }
 
-  if (error) {
-    return (
-      <div className="error-message">
-        <p>Error: {error}</p>
-      </div>
-    );
-  }
-
-  if (characters.length === 0 && !isLoading && !error) {
+  if (characters.length === 0 && !isLoading && !queryError) {
     return (
       <div className="no-results">
         <p>No characters found.</p>
@@ -121,7 +157,25 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
 
   return (
     <div className="results">
+      {/* Error Toast - Top Right Corner */}
+      {showError && queryError && (
+        <div className="error-toast">
+          <div className="error-toast-content">
+            <span className="error-icon">⚠️</span>
+            <span className="error-text">{getErrorMessage(queryError)}</span>
+            <button
+              className="error-close-btn"
+              onClick={() => setShowError(false)}
+              aria-label="Close error message"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       {isLoading && <Loader />}
+      {isFetching && <Loader />}
       {characters.length === 0 ? (
         <NotFoundPage />
       ) : (

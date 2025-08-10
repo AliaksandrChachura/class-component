@@ -3,12 +3,16 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Header from '../Header';
 import { SearchProvider } from '../../context/SearchProvider';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
 
 const renderWithProvider = (component: React.ReactElement) => {
   return render(
-    <MemoryRouter>
-      <SearchProvider>{component}</SearchProvider>
-    </MemoryRouter>
+    <Provider store={store}>
+      <MemoryRouter>
+        <SearchProvider>{component}</SearchProvider>
+      </MemoryRouter>
+    </Provider>
   );
 };
 

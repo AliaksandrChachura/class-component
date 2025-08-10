@@ -5,6 +5,7 @@ interface SearchState {
   searchTerm: string;
   isLoading: boolean;
   error: string | null;
+  currentPage: number;
 }
 
 interface SearchContextType {
@@ -14,6 +15,7 @@ interface SearchContextType {
   setError: (error: string | null) => void;
   resetSearch: () => void;
   setTheme: (theme: string) => void;
+  setCurrentPage: (page: number) => void;
 }
 
 export const SearchContext = createContext<SearchContextType | undefined>(

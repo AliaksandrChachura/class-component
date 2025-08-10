@@ -4,13 +4,13 @@ import { Provider } from 'react-redux';
 import { store } from '../../store';
 import { SearchProvider } from '../../context/SearchProvider';
 import ErrorBoundary from '../../ErrorBoundary';
-import { fetchCharacters } from '../../api/rickMortyAPI';
+import { useGetCharactersQuery } from '../../api/endpoints/charactersApi';
 import { mockAPIResponse } from '../mocks/rickMortyAPI';
 import { RouterProvider } from 'react-router-dom';
 import { createTestRouter } from '../../routes/Routes';
 
-vi.mock('../../api/rickMortyAPI', () => ({
-  fetchCharacters: vi.fn(),
+vi.mock('../../api/endpoints/charactersApi', () => ({
+  useGetCharactersQuery: vi.fn(),
 }));
 
 Object.defineProperty(window, 'localStorage', {
@@ -32,7 +32,7 @@ const renderApp = (initialEntries = ['/']) =>
     </Provider>
   );
 
-const mockedFetchCharacters = vi.mocked(fetchCharacters);
+const mockedUseGetCharactersQuery = vi.mocked(useGetCharactersQuery);
 
 describe('App Component Integration Tests', () => {
   beforeEach(() => {
@@ -41,7 +41,23 @@ describe('App Component Integration Tests', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => null);
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
     vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {});
-    mockedFetchCharacters.mockResolvedValue(mockAPIResponse);
+    mockedUseGetCharactersQuery.mockReturnValue({
+      data: mockAPIResponse,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: mockAPIResponse,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
+    });
   });
 
   it('error boundary integration works', () => {
@@ -68,17 +84,56 @@ describe('App Component Integration Tests', () => {
   });
 
   it('handles API errors gracefully', async () => {
-    mockedFetchCharacters.mockRejectedValue(new Error('API Error'));
+    mockedUseGetCharactersQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      error: { status: 500, data: 'API Error' },
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'rejected',
+      isSuccess: false,
+      isError: true,
+      isUninitialized: false,
+    });
 
     renderApp();
 
     await waitFor(() => {
-      expect(screen.getByText(/error:\s*api error/i)).toBeInTheDocument();
+      expect(screen.getByText('API Error')).toBeInTheDocument();
     });
+
+    // Check that the error toast is displayed
+    const errorToast = screen.getByText('API Error').closest('.error-toast');
+    expect(errorToast).toBeInTheDocument();
+
+    // Check that the error icon is present
+    expect(screen.getByText('⚠️')).toBeInTheDocument();
   });
 
   it('displays character data correctly', async () => {
-    mockedFetchCharacters.mockResolvedValue(mockAPIResponse);
+    mockedUseGetCharactersQuery.mockReturnValue({
+      data: mockAPIResponse,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: mockAPIResponse,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
+    });
 
     renderApp();
 
@@ -88,15 +143,31 @@ describe('App Component Integration Tests', () => {
   });
 
   it('handles empty search results', async () => {
-    mockedFetchCharacters.mockResolvedValue({
-      ...mockAPIResponse,
-      results: [],
+    mockedUseGetCharactersQuery.mockReturnValue({
+      data: {
+        ...mockAPIResponse,
+        results: [],
+      },
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: { ...mockAPIResponse, results: [] },
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
     });
 
     renderApp(['/']);
 
     await waitFor(() => {
-      expect(mockedFetchCharacters).toHaveBeenCalled();
+      expect(mockedUseGetCharactersQuery).toHaveBeenCalled();
     });
 
     await waitFor(() => {
