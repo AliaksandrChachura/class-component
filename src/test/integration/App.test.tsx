@@ -46,6 +46,17 @@ describe('App Component Integration Tests', () => {
       isLoading: false,
       isFetching: false,
       error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: mockAPIResponse,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
     });
   });
 
@@ -78,13 +89,31 @@ describe('App Component Integration Tests', () => {
       isLoading: false,
       isFetching: false,
       error: { status: 500, data: 'API Error' },
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: undefined,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'rejected',
+      isSuccess: false,
+      isError: true,
+      isUninitialized: false,
     });
 
     renderApp();
 
     await waitFor(() => {
-      expect(screen.getByText(/error:\s*api error/i)).toBeInTheDocument();
+      expect(screen.getByText('API Error')).toBeInTheDocument();
     });
+
+    // Check that the error toast is displayed
+    const errorToast = screen.getByText('API Error').closest('.error-toast');
+    expect(errorToast).toBeInTheDocument();
+
+    // Check that the error icon is present
+    expect(screen.getByText('⚠️')).toBeInTheDocument();
   });
 
   it('displays character data correctly', async () => {
@@ -93,6 +122,17 @@ describe('App Component Integration Tests', () => {
       isLoading: false,
       isFetching: false,
       error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: mockAPIResponse,
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
     });
 
     renderApp();
@@ -111,6 +151,17 @@ describe('App Component Integration Tests', () => {
       isLoading: false,
       isFetching: false,
       error: null,
+      refetch: vi.fn(),
+      unsubscribe: vi.fn(),
+      reset: vi.fn(),
+      currentData: { ...mockAPIResponse, results: [] },
+      endpointName: 'getCharacters',
+      originalArgs: { pageNumber: 1, name: '', pageSize: 20 },
+      requestId: 'test-request-id',
+      status: 'fulfilled',
+      isSuccess: true,
+      isError: false,
+      isUninitialized: false,
     });
 
     renderApp(['/']);
