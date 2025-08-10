@@ -4,6 +4,7 @@ import Search from './Search';
 import { useSearchContext } from '../context/SearchContext';
 import { baseApi } from '../api/baseApi';
 import { useDispatch } from 'react-redux';
+import CacheManager from './CacheManager';
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const Header: React.FC = () => {
     <header className={'header'}>
       <Search />
       <div className="actions-section">
+        <CacheManager />
         <button className={'theme-button'} onClick={handleThemeClick}>
           {state.theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
         </button>

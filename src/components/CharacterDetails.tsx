@@ -1,11 +1,11 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetCharacterQuery } from '../api/endpoints/characterApi';
+import { useCachedCharacter } from '../hooks/useCachedCharacter';
 
 const CharacterDetails: React.FC = () => {
   const params = useParams();
   const id = Number(params.id);
-  const { data: character, isLoading, error } = useGetCharacterQuery({ id });
+  const { character, isLoading, isError: error } = useCachedCharacter({ id });
   const navigate = useNavigate();
 
   const handleClose = () => {
