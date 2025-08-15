@@ -4,8 +4,8 @@ import React, { type ErrorInfo } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import { SearchProvider } from '../context/SearchProvider';
-import ErrorBoundary from '../ErrorBoundary';
 import { useSearchContext } from '../context/SearchContext';
+import ErrorBoundary from '../ErrorBoundary';
 
 function ThemedShell({ children }: { children: React.ReactNode }) {
   const { state } = useSearchContext();

@@ -10,9 +10,26 @@ globalThis.__RSC_MANIFEST['/_not-found/page'] = {
         async: false,
       },
     },
-    '(app-pages-browser)/./src/app/page.tsx': {
+    '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':
+      {
+        '*': {
+          id: '(ssr)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js',
+          name: '*',
+          chunks: [],
+          async: false,
+        },
+      },
+    '(app-pages-browser)/./src/components/LocaleProvider.tsx': {
       '*': {
-        id: '(ssr)/./src/app/page.tsx',
+        id: '(ssr)/./src/components/LocaleProvider.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
+    '(app-pages-browser)/./src/app/[locale]/page.tsx': {
+      '*': {
+        id: '(ssr)/./src/app/[locale]/page.tsx',
         name: '*',
         chunks: [],
         async: false,
@@ -108,17 +125,9 @@ globalThis.__RSC_MANIFEST['/_not-found/page'] = {
           async: false,
         },
       },
-    '(app-pages-browser)/./src/app/results/layout.tsx': {
+    '(app-pages-browser)/./src/features/Search/SearchPage.tsx': {
       '*': {
-        id: '(ssr)/./src/app/results/layout.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
-    '(app-pages-browser)/./src/app/results/[id]/page.tsx': {
-      '*': {
-        id: '(ssr)/./src/app/results/[id]/page.tsx',
+        id: '(ssr)/./src/features/Search/SearchPage.tsx',
         name: '*',
         chunks: [],
         async: false,
@@ -139,12 +148,27 @@ globalThis.__RSC_MANIFEST['/_not-found/page'] = {
       chunks: ['app/layout', 'static/chunks/app/layout.js'],
       async: false,
     },
-    '/Users/ales/Desktop/Cources/React/class-component/src/app/page.tsx': {
-      id: '(app-pages-browser)/./src/app/page.tsx',
-      name: '*',
-      chunks: ['app/page', 'static/chunks/app/page.js'],
-      async: false,
-    },
+    '/Users/ales/Desktop/Cources/React/class-component/node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':
+      {
+        id: '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    '/Users/ales/Desktop/Cources/React/class-component/src/components/LocaleProvider.tsx':
+      {
+        id: '(app-pages-browser)/./src/components/LocaleProvider.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/page.tsx':
+      {
+        id: '(app-pages-browser)/./src/app/[locale]/page.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
     '/Users/ales/Desktop/Cources/React/class-component/node_modules/next/dist/client/components/builtin/global-error.js':
       {
         id: '(app-pages-browser)/./node_modules/next/dist/client/components/builtin/global-error.js',
@@ -285,16 +309,9 @@ globalThis.__RSC_MANIFEST['/_not-found/page'] = {
         chunks: ['app-pages-internals', 'static/chunks/app-pages-internals.js'],
         async: false,
       },
-    '/Users/ales/Desktop/Cources/React/class-component/src/app/results/layout.tsx':
+    '/Users/ales/Desktop/Cources/React/class-component/src/features/Search/SearchPage.tsx':
       {
-        id: '(app-pages-browser)/./src/app/results/layout.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    '/Users/ales/Desktop/Cources/React/class-component/src/app/results/[id]/page.tsx':
-      {
-        id: '(app-pages-browser)/./src/app/results/[id]/page.tsx',
+        id: '(app-pages-browser)/./src/features/Search/SearchPage.tsx',
         name: '*',
         chunks: [],
         async: false,
@@ -305,7 +322,6 @@ globalThis.__RSC_MANIFEST['/_not-found/page'] = {
     '/Users/ales/Desktop/Cources/React/class-component/src/app/layout': [
       { inlined: false, path: 'static/css/app/layout.css' },
     ],
-    '/Users/ales/Desktop/Cources/React/class-component/src/app/page': [],
     '/Users/ales/Desktop/Cources/React/class-component/src/app/_not-found/page':
       [],
   },
@@ -326,9 +342,26 @@ globalThis.__RSC_MANIFEST['/_not-found/page'] = {
         async: false,
       },
     },
-    '(app-pages-browser)/./src/app/page.tsx': {
+    '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':
+      {
+        '*': {
+          id: '(rsc)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js',
+          name: '*',
+          chunks: [],
+          async: false,
+        },
+      },
+    '(app-pages-browser)/./src/components/LocaleProvider.tsx': {
       '*': {
-        id: '(rsc)/./src/app/page.tsx',
+        id: '(rsc)/./src/components/LocaleProvider.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
+    '(app-pages-browser)/./src/app/[locale]/page.tsx': {
+      '*': {
+        id: '(rsc)/./src/app/[locale]/page.tsx',
         name: '*',
         chunks: [],
         async: false,
@@ -424,17 +457,9 @@ globalThis.__RSC_MANIFEST['/_not-found/page'] = {
           async: false,
         },
       },
-    '(app-pages-browser)/./src/app/results/layout.tsx': {
+    '(app-pages-browser)/./src/features/Search/SearchPage.tsx': {
       '*': {
-        id: '(rsc)/./src/app/results/layout.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
-    '(app-pages-browser)/./src/app/results/[id]/page.tsx': {
-      '*': {
-        id: '(rsc)/./src/app/results/[id]/page.tsx',
+        id: '(rsc)/./src/features/Search/SearchPage.tsx',
         name: '*',
         chunks: [],
         async: false,

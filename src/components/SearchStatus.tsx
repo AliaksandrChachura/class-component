@@ -1,12 +1,16 @@
+'use client';
+
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { baseApi } from '../api/baseApi';
 import { useSearch } from '../hooks/useSearch';
 
 const SearchStatus: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const locale = useLocale();
   const { state, resetSearch } = useSearch();
   const [mounted, setMounted] = React.useState(false);
 
@@ -15,10 +19,10 @@ const SearchStatus: React.FC = () => {
   }, []);
 
   const handleReset = useCallback(() => {
-    router.replace('/results');
+    router.replace(`/${locale}/results`);
     resetSearch();
     dispatch(baseApi.util.invalidateTags([{ type: 'Characters', id: 'LIST' }]));
-  }, [resetSearch, dispatch, router]);
+  }, [resetSearch, dispatch, router, locale]);
 
   if (!mounted) {
     return null;

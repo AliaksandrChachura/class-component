@@ -1,11 +1,14 @@
 {
   "version": 4,
-  "routes": {},
-  "dynamicRoutes": {},
+  "routes": { "/en": {}, "/ru": {}, "/en/results": {}, "/ru/results": {} },
+  "dynamicRoutes": {
+    "/[locale]": { "fallback": null },
+    "/[locale]/results": { "fallback": null }
+  },
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "255b124a83dc133a5db077035e852ace",
-    "previewModeSigningKey": "84aa37086181c10d73aa38f3b4dcbad20b3bb90b4290186cbdebc11534008819",
-    "previewModeEncryptionKey": "0c0aa860a1837d622027b13ed6de656a6b5fe2d75bdf99c152bf635b701892cf"
+    "previewModeId": "74922d83f5cddaeb70883c31e48aee9d",
+    "previewModeSigningKey": "4128db6ece637605a92c8bd919b123edcfbf8bf63fc50dea62f3fc1b8b1e30e7",
+    "previewModeEncryptionKey": "a9811a01c70cf614d7c07ca9b56c3d7a265696452aa3824b6ee1484fcaab6276"
   }
 }

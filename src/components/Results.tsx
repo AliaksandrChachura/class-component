@@ -1,7 +1,9 @@
+'use client';
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { useSearch } from '../hooks/useSearch';
 import { useGetCharactersQuery } from '../api/endpoints/charactersApi';
 import type { Character, RickMortyResponse } from '../api/types';
@@ -20,6 +22,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   const { state } = useSearch();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const locale = useLocale();
   const { setCurrentPage } = useSearchContext();
   const [showError, setShowError] = useState(false);
 
@@ -47,9 +50,9 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
 
     const newParamsString = params.toString();
     if (newParamsString !== searchParams.toString()) {
-      router.push(`/results?${newParamsString}`);
+      router.push(`/${locale}/results?${newParamsString}`);
     }
-  }, [searchTerm, currentPage, router, searchParams]);
+  }, [searchTerm, currentPage, router, searchParams, locale]);
 
   const {
     data,
@@ -91,9 +94,9 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
         updatedParams.delete('page');
       }
 
-      router.push(`/results?${updatedParams.toString()}`);
+      router.push(`/${locale}/results?${updatedParams.toString()}`);
     },
-    [state.searchTerm, router, searchParams, setCurrentPage]
+    [state.searchTerm, router, searchParams, setCurrentPage, locale]
   );
 
   const characters: Character[] = data?.results ?? [];
@@ -142,10 +145,6 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
         : character.location.name;
     return `${statusEmoji} ${character.status} ${character.species} from ${origin}. Currently at: ${location}`;
   };
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   if (characters.length === 0 && !isLoading && !queryError) {
     return (

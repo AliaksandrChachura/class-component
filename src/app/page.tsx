@@ -1,17 +1,6 @@
-// import '../../styles/index.css'
-// import { ClientOnly } from './client'
+import { redirect } from 'next/navigation';
+import { defaultLocale } from '../i18n';
 
-// export function generateStaticParams() {
-//   return [{ slug: [''] }]
-// }
-
-// export default function Page() {
-//   return <ClientOnly />
-// }
-
-'use client';
-import SearchPage from '../features/Search/SearchPage';
-
-export default function HomePage() {
-  return <SearchPage />;
+export default function RootPage() {
+  redirect(`/${defaultLocale}`);
 }
