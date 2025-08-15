@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import Search from './Search';
 import { useSearchContext } from '../context/SearchContext';
 import { baseApi } from '../api/baseApi';
@@ -8,7 +8,7 @@ import CacheManager from './CacheManager';
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { state, setTheme } = useSearchContext();
 
   const throwError = () => {
@@ -16,7 +16,7 @@ const Header: React.FC = () => {
   };
 
   const handleAboutClick = () => {
-    navigate('/about');
+    router.push('/about');
   };
   const handleThemeClick = () => {
     setTheme(state.theme === 'dark' ? 'light' : 'dark');

@@ -1,26 +1,28 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { baseApi } from '../api/baseApi';
 import { useSearch } from '../hooks/useSearch';
 
 const SearchStatus: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [, setSearchParams] = useSearchParams();
+  const router = useRouter();
   const { state, resetSearch } = useSearch();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleReset = useCallback(() => {
-    // Clear URL params and navigate
-    setSearchParams(new URLSearchParams());
-    navigate('/results', { replace: true });
-    // Clear context and localStorage
-    // setSearchTerm('');
+    router.replace('/results');
     resetSearch();
-    // removeItem('searchTerm');
     dispatch(baseApi.util.invalidateTags([{ type: 'Characters', id: 'LIST' }]));
-    // navigate('/results', { replace: true });
-  }, [resetSearch, dispatch, setSearchParams, navigate]);
+  }, [resetSearch, dispatch, router]);
+
+  if (!mounted) {
+    return null;
+  }
 
   if (!state.searchTerm && !state.isLoading && !state.error) {
     return null;

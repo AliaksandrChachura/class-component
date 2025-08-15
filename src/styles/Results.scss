@@ -1,4 +1,4 @@
-@use './ThemeConsts.scss' as *;
+@import './ThemeConsts.scss';
 
 :root {
   --light-text: #{$light-text};
@@ -169,6 +169,8 @@
   margin: 0 auto;
   padding: 1.5rem;
   padding-bottom: 200px;
+  background-color: var(--background-color);
+  color: var(--text-color);
 
   h2 {
     text-align: center;
@@ -221,20 +223,21 @@
   .no-results {
     text-align: center;
     padding: 4rem 2rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 2px dashed rgba(255, 255, 255, 0.1);
+    background: var(--background-color);
+    border: 2px dashed var(--border-color);
     border-radius: 16px;
     margin: 2rem 0;
 
     p {
-      color: rgba(255, 255, 255, 0.7);
+      color: var(--text-color);
+      opacity: 0.7;
       font-size: 1.2rem;
       margin: 0.5rem 0;
 
       &:first-child {
         font-size: 1.5rem;
         font-weight: 600;
-        color: #fff;
+        color: var(--text-color);
         margin-bottom: 1rem;
       }
     }

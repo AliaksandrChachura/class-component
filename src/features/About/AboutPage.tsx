@@ -1,12 +1,12 @@
 import React from 'react';
 import './AboutPage.scss';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 const AboutPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleHomeClick = () => {
-    navigate('/');
+    router.push('/');
   };
 
   return (

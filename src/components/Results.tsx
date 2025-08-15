@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useSearch } from '../hooks/useSearch';
 import { useGetCharactersQuery } from '../api/endpoints/charactersApi';
 import type { Character, RickMortyResponse } from '../api/types';
@@ -18,8 +18,8 @@ interface ResultsProps {
 
 const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   const { state } = useSearch();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const { setCurrentPage } = useSearchContext();
   const [showError, setShowError] = useState(false);
 
@@ -45,11 +45,11 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
       params.delete('page');
     }
 
-    if (params.toString() !== searchParams.toString()) {
-      setSearchParams(params);
-      navigate(`/results?${params.toString()}`, { replace: false });
+    const newParamsString = params.toString();
+    if (newParamsString !== searchParams.toString()) {
+      router.push(`/results?${newParamsString}`);
     }
-  }, [searchTerm, currentPage, setSearchParams, navigate, searchParams]);
+  }, [searchTerm, currentPage, router, searchParams]);
 
   const {
     data,
@@ -91,9 +91,9 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
         updatedParams.delete('page');
       }
 
-      navigate(`/results?${updatedParams.toString()}`, { replace: false });
+      router.push(`/results?${updatedParams.toString()}`);
     },
-    [state.searchTerm, navigate, searchParams, setCurrentPage]
+    [state.searchTerm, router, searchParams, setCurrentPage]
   );
 
   const characters: Character[] = data?.results ?? [];

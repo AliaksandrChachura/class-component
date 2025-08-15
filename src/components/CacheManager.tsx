@@ -1,20 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCharacterCache } from '../hooks/useCharacterCache';
 
 const CacheManager: React.FC = () => {
   const { getCacheStats, clearAllCache, clearExpiredCache } =
     useCharacterCache();
-  const [cacheStats, setCacheStats] = useState(getCacheStats());
+  const [cacheStats, setCacheStats] = useState({
+    totalEntries: 0,
+    validEntries: 0,
+    expiredEntries: 0,
+    cacheSize: 0,
+  });
   const [isVisible, setIsVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const getCacheStatsRef = useRef(getCacheStats);
 
-  // Update cache stats every 5 seconds
+  // Update ref when function changes
   useEffect(() => {
+    getCacheStatsRef.current = getCacheStats;
+  }, [getCacheStats]);
+
+  useEffect(() => {
+    setMounted(true);
+    setCacheStats(getCacheStatsRef.current());
+  }, []); // Only run once on mount
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const interval = setInterval(() => {
-      setCacheStats(getCacheStats());
+      setCacheStats(getCacheStatsRef.current());
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [getCacheStats]);
+  }, [mounted]); // Only depend on mounted state
 
   const handleClearAllCache = () => {
     if (
@@ -23,13 +41,13 @@ const CacheManager: React.FC = () => {
       )
     ) {
       clearAllCache();
-      setCacheStats(getCacheStats());
+      setCacheStats(getCacheStatsRef.current());
     }
   };
 
   const handleClearExpiredCache = () => {
     clearExpiredCache();
-    setCacheStats(getCacheStats());
+    setCacheStats(getCacheStatsRef.current());
   };
 
   return (
@@ -40,7 +58,7 @@ const CacheManager: React.FC = () => {
         onClick={() => setIsVisible(!isVisible)}
         title="Cache Manager"
       >
-        💾 {cacheStats.validEntries}
+        💾 {mounted ? cacheStats.validEntries : '0'}
       </button>
 
       {/* Cache manager panel */}

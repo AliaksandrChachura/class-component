@@ -1,16 +1,17 @@
 import React from 'react';
-import { useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { useRouter, usePathname } from 'next/navigation';
 import Header from '../../components/Header';
 import SearchStatus from '../../components/SearchStatus';
 import Results from '../../components/Results';
+import SearchParamsWrapper from '../../components/SearchParamsWrapper';
 
 const SearchPage: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isDetailsOpen = /\/results\/\d+/i.test(location.pathname);
+  const router = useRouter();
+  const pathname = usePathname();
+  const isDetailsOpen = /\/results\/\d+/i.test(pathname);
 
   const handleCharacterSelect = (characterId: number) => {
-    navigate(`/results/${characterId}`);
+    router.push(`/results/${characterId}`);
   };
 
   return (
@@ -19,14 +20,15 @@ const SearchPage: React.FC = () => {
       <h1>Rick and Morty Characters</h1>
       <div className={`search-layout ${isDetailsOpen ? 'split-view' : ''}`}>
         <div className="search-content">
-          <SearchStatus />
-          <Results onCharacterSelect={handleCharacterSelect} />
+          <SearchParamsWrapper>
+            <SearchStatus />
+          </SearchParamsWrapper>
+          <SearchParamsWrapper>
+            <Results onCharacterSelect={handleCharacterSelect} />
+          </SearchParamsWrapper>
         </div>
-        {isDetailsOpen && (
-          <div className="details-content">
-            <Outlet />
-          </div>
-        )}
+        {/* Details content will be handled by Next.js routing */}
+        {/* Remove Outlet since Next.js uses file-based routing */}
       </div>
     </div>
   );

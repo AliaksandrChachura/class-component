@@ -5,14 +5,28 @@
   --dark-text: #{$dark-text};
   --light-background: #{$light-background};
   --dark-background: #{$dark-background};
+  --light-border: #{$light-border};
+  --dark-border: #{$dark-border};
 }
 
 .light {
   --background-color: var(--light-background);
+  --border-color: var(--light-border);
+  --text-color: var(--light-text);
+
+  .search-page h1 {
+    color: var(--light-text) !important;
+  }
 }
 
 .dark {
   --background-color: var(--dark-background);
+  --border-color: var(--dark-border);
+  --text-color: var(--dark-text);
+
+  .search-page h1 {
+    color: var(--dark-text) !important;
+  }
 }
 
 .search-page {
@@ -23,10 +37,7 @@
     text-align: center;
     font-size: 2.5rem;
     font-weight: 700;
-    background: linear-gradient(45deg, #00f5ff, #ff0080);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-color) !important;
     margin: 1rem 0 2rem 0;
     text-shadow: 0 0 30px rgba(0, 245, 255, 0.3);
     animation: titleGlow 3s ease-in-out infinite alternate;
@@ -50,12 +61,14 @@
     &.split-view {
       .search-content {
         width: 60%;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        border-right: 1px solid var(--border-color);
+        opacity: 0.3;
       }
 
       .details-content {
         width: 40%;
-        background: rgba(0, 0, 0, 0.3);
+        background: var(--background-color);
+        opacity: 0.95;
         overflow-y: auto;
       }
     }
@@ -88,9 +101,8 @@
           height: 100%;
           border-radius: 0;
           box-shadow: none;
-          background: rgba(255, 255, 255, 0.05);
+          background: var(--background-color);
           overflow-y: auto;
-          background: transparent;
         }
       }
 
@@ -102,7 +114,7 @@
         right: 0;
         bottom: 0;
         z-index: 1000;
-        background: #1a1a2e;
+        background: var(--background-color);
       }
     }
 

@@ -1,15 +1,20 @@
+'use client';
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useCachedCharacter } from '../hooks/useCachedCharacter';
 
 const CharacterDetails: React.FC = () => {
-  const params = useParams();
-  const id = Number(params.id);
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const id = Number(Array.isArray(params?.id) ? params.id[0] : params?.id);
+
   const { character, isLoading, isError: error } = useCachedCharacter({ id });
-  const navigate = useNavigate();
 
   const handleClose = () => {
-    navigate('/results');
+    const qs = searchParams?.toString();
+    router.push(qs ? '/results?${qs}' : '/results');
   };
 
   const handlePanelClick = (event: React.MouseEvent<HTMLDivElement>) => {
