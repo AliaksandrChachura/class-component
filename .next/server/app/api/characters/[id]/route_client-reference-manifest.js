@@ -27,6 +27,14 @@ globalThis.__RSC_MANIFEST['/api/characters/[id]/route'] = {
         async: false,
       },
     },
+    '(app-pages-browser)/./node_modules/next/dist/client/app-dir/link.js': {
+      '*': {
+        id: '(ssr)/./node_modules/next/dist/client/app-dir/link.js',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
     '(app-pages-browser)/./src/features/Search/SearchPage.tsx': {
       '*': {
         id: '(ssr)/./src/features/Search/SearchPage.tsx',
@@ -162,6 +170,20 @@ globalThis.__RSC_MANIFEST['/api/characters/[id]/route'] = {
       chunks: [],
       async: false,
     },
+    '/Users/ales/Desktop/Cources/React/class-component/node_modules/next/dist/client/app-dir/link.js':
+      {
+        id: '(app-pages-browser)/./node_modules/next/dist/client/app-dir/link.js',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    '/Users/ales/Desktop/Cources/React/class-component/node_modules/next/dist/esm/client/app-dir/link.js':
+      {
+        id: '(app-pages-browser)/./node_modules/next/dist/client/app-dir/link.js',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
     '/Users/ales/Desktop/Cources/React/class-component/src/features/Search/SearchPage.tsx':
       {
         id: '(app-pages-browser)/./src/features/Search/SearchPage.tsx',
@@ -353,6 +375,14 @@ globalThis.__RSC_MANIFEST['/api/characters/[id]/route'] = {
     '(app-pages-browser)/./src/styles/index.scss': {
       '*': {
         id: '(rsc)/./src/styles/index.scss',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
+    '(app-pages-browser)/./node_modules/next/dist/client/app-dir/link.js': {
+      '*': {
+        id: '(rsc)/./node_modules/next/dist/client/app-dir/link.js',
         name: '*',
         chunks: [],
         async: false,

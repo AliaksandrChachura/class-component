@@ -27,6 +27,14 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
         async: false,
       },
     },
+    '(app-pages-browser)/./node_modules/next/dist/client/app-dir/link.js': {
+      '*': {
+        id: '(ssr)/./node_modules/next/dist/client/app-dir/link.js',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
     '(app-pages-browser)/./src/features/Search/SearchPage.tsx': {
       '*': {
         id: '(ssr)/./src/features/Search/SearchPage.tsx',
@@ -174,6 +182,26 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
       ],
       async: false,
     },
+    '/Users/ales/Desktop/Cources/React/class-component/node_modules/next/dist/client/app-dir/link.js':
+      {
+        id: '(app-pages-browser)/./node_modules/next/dist/client/app-dir/link.js',
+        name: '*',
+        chunks: [
+          'app/[locale]/not-found',
+          'static/chunks/app/%5Blocale%5D/not-found.js',
+        ],
+        async: false,
+      },
+    '/Users/ales/Desktop/Cources/React/class-component/node_modules/next/dist/esm/client/app-dir/link.js':
+      {
+        id: '(app-pages-browser)/./node_modules/next/dist/client/app-dir/link.js',
+        name: '*',
+        chunks: [
+          'app/[locale]/not-found',
+          'static/chunks/app/%5Blocale%5D/not-found.js',
+        ],
+        async: false,
+      },
     '/Users/ales/Desktop/Cources/React/class-component/src/features/Search/SearchPage.tsx':
       {
         id: '(app-pages-browser)/./src/features/Search/SearchPage.tsx',
@@ -336,6 +364,11 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
     '/Users/ales/Desktop/Cources/React/class-component/src/': [],
     '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/layout':
       [{ inlined: false, path: 'static/css/app/[locale]/layout.css' }],
+    '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/not-found':
+      [],
+    '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/page': [
+      { inlined: false, path: 'static/css/app/[locale]/page.css' },
+    ],
     '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/results/page':
       [{ inlined: false, path: 'static/css/app/[locale]/results/page.css' }],
   },
@@ -368,6 +401,14 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
     '(app-pages-browser)/./src/styles/index.scss': {
       '*': {
         id: '(rsc)/./src/styles/index.scss',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
+    '(app-pages-browser)/./node_modules/next/dist/client/app-dir/link.js': {
+      '*': {
+        id: '(rsc)/./node_modules/next/dist/client/app-dir/link.js',
         name: '*',
         chunks: [],
         async: false,

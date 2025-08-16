@@ -45,6 +45,17 @@
     "goBack": "Go back",
     "language": "Language"
   },
+  "notFound": {
+    "title": "Page Not Found",
+    "message": "Oops! The page you're looking for doesn't exist.",
+    "description": "The page you requested could not be found. It might have been moved, deleted, or you entered the wrong URL.",
+    "goHome": "Go Home",
+    "goBack": "Go Back",
+    "helpfulLinks": "Helpful Links",
+    "homePage": "Home Page",
+    "aboutPage": "About Page",
+    "searchPage": "Search Page"
+  },
   "status": {
     "alive": "Alive",
     "dead": "Dead",

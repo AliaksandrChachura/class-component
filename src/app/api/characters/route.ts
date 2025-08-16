@@ -11,6 +11,18 @@ export async function GET(request: NextRequest) {
     const page = searchParams.get('page') || '1';
     const name = searchParams.get('name') || '';
 
+    const pageNum = parseInt(page, 10);
+    if (isNaN(pageNum) || pageNum <= 0) {
+      return NextResponse.json(
+        {
+          error: 'Invalid page number',
+          message: 'Page must be a positive number',
+          statusCode: 400,
+        },
+        { status: 400 }
+      );
+    }
+
     const cacheKey = `characters_${page}_${name}`;
 
     if (CHARACTERS_CACHE.has(cacheKey)) {
@@ -36,12 +48,41 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
+      if (response.status === 404) {
+        return NextResponse.json(
+          {
+            info: {
+              count: 0,
+              pages: 0,
+              next: null,
+              prev: null,
+            },
+            results: [],
+            message: 'No characters found matching your search criteria',
+            statusCode: 200,
+          },
+          { status: 200 }
+        );
+      }
+
+      const errorData = await response.text().catch(() => 'Unknown error');
       throw new Error(
-        `Rick and Morty API responded with status: ${response.status}`
+        `Rick and Morty API responded with status: ${response.status} - ${errorData}`
       );
     }
 
     const data = await response.json();
+
+    if (!data || !data.info || !Array.isArray(data.results)) {
+      return NextResponse.json(
+        {
+          error: 'Invalid characters data',
+          message: 'The API returned invalid characters data',
+          statusCode: 500,
+        },
+        { status: 500 }
+      );
+    }
 
     CHARACTERS_CACHE.set(cacheKey, data);
 
@@ -54,22 +95,24 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching characters:', error);
 
-    const fallbackResponse = {
-      info: {
-        count: 0,
-        pages: 0,
-        next: null,
-        prev: null,
-      },
-      results: [],
-    };
+    if (error instanceof Error) {
+      return NextResponse.json(
+        {
+          error: 'Failed to fetch characters',
+          message: error.message,
+          statusCode: 500,
+        },
+        { status: 500 }
+      );
+    }
 
-    return NextResponse.json(fallbackResponse, {
-      status: 500,
-      headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-        'X-Cache': 'ERROR',
+    return NextResponse.json(
+      {
+        error: 'Unknown error occurred',
+        message: 'An unexpected error occurred while fetching characters',
+        statusCode: 500,
       },
-    });
+      { status: 500 }
+    );
   }
 }
