@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useTranslations, useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useRouter, usePathname } from '../../components/CreateNavigation';
 import Header from '../../components/Header';
 import SearchStatus from '../../components/SearchStatus';
 import Results from '../../components/Results';
@@ -16,12 +16,14 @@ interface SearchPageProps {
 const SearchPage: React.FC<SearchPageProps> = ({ initialData }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const locale = useLocale();
   const isDetailsOpen = /\/results\/\d+/i.test(pathname);
   const t = useTranslations('search');
 
   const handleCharacterSelect = (characterId: number) => {
-    router.push(`/${locale}/results/${characterId}`);
+    router.push({
+      pathname: '/results/[id]',
+      params: { id: characterId.toString() },
+    });
   };
 
   return (
@@ -42,8 +44,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ initialData }) => {
             />
           </SearchParamsWrapper>
         </div>
-        {/* Details content will be handled by Next.js routing */}
-        {/* Remove Outlet since Next.js uses file-based routing */}
       </div>
     </div>
   );

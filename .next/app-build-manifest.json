@@ -6,22 +6,16 @@
       "static/css/app/[locale]/layout.css",
       "static/chunks/app/[locale]/layout.js"
     ],
-    "/[locale]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/[locale]/page.css",
-      "static/chunks/app/[locale]/page.js"
-    ],
-    "/api/characters/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/characters/route.js"
-    ],
     "/[locale]/results/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/[locale]/results/page.css",
       "static/chunks/app/[locale]/results/page.js"
+    ],
+    "/api/characters/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/characters/route.js"
     ],
     "/[locale]/results/[id]/page": [
       "static/chunks/webpack.js",
@@ -32,12 +26,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/characters/[id]/route.js"
-    ],
-    "/[locale]/about/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/[locale]/about/page.css",
-      "static/chunks/app/[locale]/about/page.js"
     ]
   }
 }

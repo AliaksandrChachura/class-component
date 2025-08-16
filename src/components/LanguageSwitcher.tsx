@@ -1,18 +1,37 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
 import { locales } from '../i18n';
 import { useState } from 'react';
 import '../styles/LanguageSwitcher.scss';
 
 export default function LanguageSwitcher() {
   const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
   const t = useTranslations('common');
   const [isOpen, setIsOpen] = useState(false);
+  const [pendingLocaleChange, setPendingLocaleChange] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (pendingLocaleChange && pendingLocaleChange !== locale) {
+      const currentPath = window.location.pathname;
+      let pathWithoutLocale = '';
+
+      if (currentPath.startsWith(`/${locale}/`)) {
+        pathWithoutLocale = currentPath.substring(locale.length + 1);
+      } else if (currentPath === `/${locale}`) {
+        pathWithoutLocale = '';
+      } else {
+        pathWithoutLocale = currentPath;
+      }
+
+      const newPath = `/${pendingLocaleChange}${pathWithoutLocale}`;
+      window.location.href = newPath;
+      setPendingLocaleChange(null);
+    }
+  }, [pendingLocaleChange, locale]);
 
   const handleLanguageChange = (newLocale: string) => {
     if (newLocale === locale) {
@@ -20,19 +39,7 @@ export default function LanguageSwitcher() {
     }
 
     try {
-      let pathWithoutLocale = '';
-
-      if (pathname.startsWith(`/${locale}/`)) {
-        pathWithoutLocale = pathname.substring(locale.length + 1);
-      } else if (pathname === `/${locale}`) {
-        pathWithoutLocale = '';
-      } else {
-        pathWithoutLocale = pathname;
-      }
-
-      const newPath = `/${newLocale}${pathWithoutLocale}`;
-
-      router.push(newPath);
+      setPendingLocaleChange(newLocale);
       setIsOpen(false);
     } catch (error) {
       console.error('Error changing language:', error);

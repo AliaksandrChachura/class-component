@@ -1,15 +1,14 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useRouter } from './CreateNavigation';
 import { useCachedCharacter } from '../hooks/useCachedCharacter';
 
 const CharacterDetails: React.FC = () => {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const locale = useLocale();
 
   const id = Number(Array.isArray(params?.id) ? params.id[0] : params?.id);
 
@@ -19,9 +18,15 @@ const CharacterDetails: React.FC = () => {
     const qs = searchParams?.toString();
 
     if (qs) {
-      router.push(`/${locale}/results?${qs}`);
+      // Parse the search params into a proper query object
+      const queryObj: Record<string, string> = {};
+      searchParams.forEach((value, key) => {
+        queryObj[key] = value;
+      });
+
+      router.push({ pathname: '/results', query: queryObj });
     } else {
-      router.push(`/${locale}/results`);
+      router.push('/results');
     }
   };
 

@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from './CreateNavigation';
 import { useSearch } from '../hooks/useSearch';
 import type { RickMortyResponse, Character } from '../types/api';
 import { useSearchContext } from '../context/SearchContext';
@@ -23,7 +23,6 @@ const Results: React.FC<ResultsProps> = ({
   const { state } = useSearch();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const locale = useLocale();
   const { setCurrentPage } = useSearchContext();
   const [showError, setShowError] = useState(false);
 
@@ -51,9 +50,14 @@ const Results: React.FC<ResultsProps> = ({
 
     const newParamsString = params.toString();
     if (newParamsString !== searchParams.toString()) {
-      router.push(`/${locale}/results?${newParamsString}`);
+      const queryObj: Record<string, string> = {};
+      params.forEach((value, key) => {
+        queryObj[key] = value;
+      });
+
+      router.push({ pathname: '/results', query: queryObj });
     }
-  }, [searchTerm, currentPage, router, searchParams, locale]);
+  }, [searchTerm, currentPage, router, searchParams]);
 
   const data = initialData;
   const isLoading = !data;
@@ -86,9 +90,14 @@ const Results: React.FC<ResultsProps> = ({
         updatedParams.delete('page');
       }
 
-      router.push(`/${locale}/results?${updatedParams.toString()}`);
+      const queryObj: Record<string, string> = {};
+      updatedParams.forEach((value, key) => {
+        queryObj[key] = value;
+      });
+
+      router.push({ pathname: '/results', query: queryObj });
     },
-    [state.searchTerm, router, searchParams, setCurrentPage, locale]
+    [state.searchTerm, router, searchParams, setCurrentPage]
   );
 
   const characters: Character[] = data?.results ?? [];

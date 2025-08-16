@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from './CreateNavigation';
+import { useSearchParams } from 'next/navigation';
 import SearchStatus from './SearchStatus';
 import Results from './Results';
 
@@ -15,9 +16,23 @@ export default function SearchContent({ hasDetails }: SearchContentProps) {
 
   const handleCharacterSelect = (characterId: number) => {
     const qs = searchParams.toString();
-    router.push(
-      qs ? `/results/${characterId}?${qs}` : `/results/${characterId}`
-    );
+    if (qs) {
+      const queryObj: Record<string, string> = {};
+      searchParams.forEach((value, key) => {
+        queryObj[key] = value;
+      });
+
+      router.push({
+        pathname: '/results/[id]',
+        params: { id: characterId.toString() },
+        query: queryObj,
+      });
+    } else {
+      router.push({
+        pathname: '/results/[id]',
+        params: { id: characterId.toString() },
+      });
+    }
   };
 
   return (

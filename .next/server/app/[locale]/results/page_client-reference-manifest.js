@@ -133,14 +133,6 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
         async: false,
       },
     },
-    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
-      '*': {
-        id: '(ssr)/./src/features/About/AboutPage.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
   },
   edgeSSRModuleMapping: {},
   clientModules: {
@@ -339,21 +331,11 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
         chunks: [],
         async: false,
       },
-    '/Users/ales/Desktop/Cources/React/class-component/src/features/About/AboutPage.tsx':
-      {
-        id: '(app-pages-browser)/./src/features/About/AboutPage.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
   },
   entryCSSFiles: {
     '/Users/ales/Desktop/Cources/React/class-component/src/': [],
     '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/layout':
       [{ inlined: false, path: 'static/css/app/[locale]/layout.css' }],
-    '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/page': [
-      { inlined: false, path: 'static/css/app/[locale]/page.css' },
-    ],
     '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/results/page':
       [{ inlined: false, path: 'static/css/app/[locale]/results/page.css' }],
   },
@@ -492,14 +474,6 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
     '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
       '*': {
         id: '(rsc)/./src/components/CharacterDetails.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
-    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
-      '*': {
-        id: '(rsc)/./src/features/About/AboutPage.tsx',
         name: '*',
         chunks: [],
         async: false,

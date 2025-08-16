@@ -133,14 +133,6 @@ globalThis.__RSC_MANIFEST['/api/characters/route'] = {
         async: false,
       },
     },
-    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
-      '*': {
-        id: '(ssr)/./src/features/About/AboutPage.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
   },
   edgeSSRModuleMapping: {},
   clientModules: {
@@ -324,13 +316,6 @@ globalThis.__RSC_MANIFEST['/api/characters/route'] = {
         chunks: [],
         async: false,
       },
-    '/Users/ales/Desktop/Cources/React/class-component/src/features/About/AboutPage.tsx':
-      {
-        id: '(app-pages-browser)/./src/features/About/AboutPage.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
   },
   entryCSSFiles: {
     '/Users/ales/Desktop/Cources/React/class-component/src/': [],
@@ -472,14 +457,6 @@ globalThis.__RSC_MANIFEST['/api/characters/route'] = {
     '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
       '*': {
         id: '(rsc)/./src/components/CharacterDetails.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
-    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
-      '*': {
-        id: '(rsc)/./src/features/About/AboutPage.tsx',
         name: '*',
         chunks: [],
         async: false,

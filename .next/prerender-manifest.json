@@ -1,22 +1,11 @@
 {
   "version": 4,
-  "routes": {
-    "/en": {},
-    "/ru": {},
-    "/en/results": {},
-    "/ru/results": {},
-    "/en/about": {},
-    "/ru/about": {}
-  },
-  "dynamicRoutes": {
-    "/[locale]": { "fallback": false },
-    "/[locale]/results": { "fallback": false },
-    "/[locale]/about": { "fallback": false }
-  },
+  "routes": { "/en/results": {}, "/ru/results": {} },
+  "dynamicRoutes": { "/[locale]/results": { "fallback": false } },
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "6db6ae70fbb8257f0703156b5470231f",
-    "previewModeSigningKey": "4c019be5a0b1a9eba3bcae8c1337d8a65c56e568ef112a7334669166f46b7b19",
-    "previewModeEncryptionKey": "28dfb5378535bf8c6b74ce4843773a63e6b576548c4c9112b030fea28a508b81"
+    "previewModeId": "ff3d85fcb48de7db718e3fa2b70b1fb5",
+    "previewModeSigningKey": "3c4f5444906f0f6ea38e912bacf2e36ee28aca98ad04da385f9e4eec596c8b21",
+    "previewModeEncryptionKey": "2e6805494e33022013de747dd7be4ed172cdd67d3213511c60649d7f62db82e3"
   }
 }

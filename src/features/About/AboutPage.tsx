@@ -1,16 +1,15 @@
 'use client';
 import React from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import './AboutPage.scss';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '../../components/CreateNavigation';
 
 const AboutPage: React.FC = () => {
   const router = useRouter();
-  const locale = useLocale();
   const t = useTranslations('about');
 
   const handleHomeClick = () => {
-    router.push(`/${locale}`);
+    router.push('/');
   };
 
   return (

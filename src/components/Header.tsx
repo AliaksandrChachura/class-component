@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useTranslations, useLocale } from 'next-intl';
+import { useRouter } from './CreateNavigation';
+import { useTranslations } from 'next-intl';
 import Search from './Search';
 import { useSearchContext } from '../context/SearchContext';
 import { baseApi } from '../api/baseApi';
@@ -13,7 +13,6 @@ import LanguageSwitcher from './LanguageSwitcher';
 const Header: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const locale = useLocale();
   const { state, setTheme } = useSearchContext();
   const t = useTranslations('navigation');
 
@@ -22,7 +21,7 @@ const Header: React.FC = () => {
   };
 
   const handleAboutClick = () => {
-    router.push(`/${locale}/about`);
+    router.push('/about');
   };
   const handleThemeClick = () => {
     setTheme(state.theme === 'dark' ? 'light' : 'dark');
