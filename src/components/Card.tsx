@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Image from 'next/image';
 import useLocalStorageOperations from '../hooks/useLocalStorageOperations';
 import { useSearchContext } from '../context/SearchContext';
 import { toggleSelectedItem } from '../store/slices/cardsSlicer';
@@ -54,7 +55,13 @@ const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
       <div className="card-layout">
         {image && (
           <div className="card-image">
-            <img src={image} alt={name} loading="lazy" />
+            <Image
+              src={image}
+              alt={name}
+              width={300}
+              height={300}
+              style={{ objectFit: 'cover' }}
+            />
           </div>
         )}
         <div className="card-content">

@@ -125,17 +125,17 @@ globalThis.__RSC_MANIFEST['/api/characters/[id]/route'] = {
           async: false,
         },
       },
-    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
+    '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
       '*': {
-        id: '(ssr)/./src/features/About/AboutPage.tsx',
+        id: '(ssr)/./src/components/CharacterDetails.tsx',
         name: '*',
         chunks: [],
         async: false,
       },
     },
-    '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
+    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
       '*': {
-        id: '(ssr)/./src/components/CharacterDetails.tsx',
+        id: '(ssr)/./src/features/About/AboutPage.tsx',
         name: '*',
         chunks: [],
         async: false,
@@ -317,16 +317,16 @@ globalThis.__RSC_MANIFEST['/api/characters/[id]/route'] = {
         chunks: ['app-pages-internals', 'static/chunks/app-pages-internals.js'],
         async: false,
       },
-    '/Users/ales/Desktop/Cources/React/class-component/src/features/About/AboutPage.tsx':
+    '/Users/ales/Desktop/Cources/React/class-component/src/components/CharacterDetails.tsx':
       {
-        id: '(app-pages-browser)/./src/features/About/AboutPage.tsx',
+        id: '(app-pages-browser)/./src/components/CharacterDetails.tsx',
         name: '*',
         chunks: [],
         async: false,
       },
-    '/Users/ales/Desktop/Cources/React/class-component/src/components/CharacterDetails.tsx':
+    '/Users/ales/Desktop/Cources/React/class-component/src/features/About/AboutPage.tsx':
       {
-        id: '(app-pages-browser)/./src/components/CharacterDetails.tsx',
+        id: '(app-pages-browser)/./src/features/About/AboutPage.tsx',
         name: '*',
         chunks: [],
         async: false,
@@ -471,17 +471,17 @@ globalThis.__RSC_MANIFEST['/api/characters/[id]/route'] = {
           async: false,
         },
       },
-    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
+    '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
       '*': {
-        id: '(rsc)/./src/features/About/AboutPage.tsx',
+        id: '(rsc)/./src/components/CharacterDetails.tsx',
         name: '*',
         chunks: [],
         async: false,
       },
     },
-    '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
+    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
       '*': {
-        id: '(rsc)/./src/components/CharacterDetails.tsx',
+        id: '(rsc)/./src/features/About/AboutPage.tsx',
         name: '*',
         chunks: [],
         async: false,

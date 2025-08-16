@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Image from 'next/image';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { useCachedCharacter } from '../hooks/useCachedCharacter';
@@ -151,10 +152,13 @@ const CharacterDetails: React.FC = () => {
         <div className="character-details-content">
           <div className="character-info">
             <div className="character-image-section">
-              <img
+              <Image
                 src={character.image}
                 alt={character.name}
+                width={400}
+                height={400}
                 className="character-detail-image"
+                style={{ objectFit: 'cover' }}
               />
               <div className="character-basic-info">
                 <h3>{character.name}</h3>

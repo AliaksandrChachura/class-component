@@ -9,14 +9,21 @@ export async function getCharacters(
 ): Promise<RickMortyResponse> {
   const { page = 1, name = '' } = params;
 
-  const apiUrl = new URL('/api/characters', 'http://localhost:3000');
-  apiUrl.searchParams.set('page', page.toString());
+  let apiUrl = '/api/characters';
+  const searchParams = new URLSearchParams();
+  searchParams.set('page', page.toString());
   if (name) {
-    apiUrl.searchParams.set('name', name);
+    searchParams.set('name', name);
+  }
+  if (searchParams.toString()) {
+    apiUrl += `?${searchParams.toString()}`;
   }
 
   try {
-    const response = await fetch(apiUrl.toString(), {
+    const baseUrl = process.env.VERCEL_URL || 'http://localhost:3000';
+    const fullUrl = `${baseUrl}${apiUrl}`;
+
+    const response = await fetch(fullUrl, {
       next: {
         revalidate: 60,
         tags: ['characters', `page-${page}`, name ? `search-${name}` : 'all'],
@@ -45,7 +52,8 @@ export async function getCharacters(
 
 export async function getCharacterById(id: string): Promise<Character> {
   try {
-    const response = await fetch(`http://localhost:3000/api/characters/${id}`, {
+    const baseUrl = process.env.VERCEL_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/characters/${id}`, {
       next: {
         revalidate: 300,
         tags: ['character', `id-${id}`],
