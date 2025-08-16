@@ -47,7 +47,6 @@ const CharacterDetails: React.FC = () => {
     });
   };
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="character-details-container">
@@ -73,7 +72,6 @@ const CharacterDetails: React.FC = () => {
     );
   }
 
-  // Show error state
   if (error) {
     return (
       <div className="character-details-container">
@@ -105,7 +103,6 @@ const CharacterDetails: React.FC = () => {
     );
   }
 
-  // Show no character found state
   if (!character) {
     return (
       <div className="character-details-container">
@@ -137,7 +134,6 @@ const CharacterDetails: React.FC = () => {
     );
   }
 
-  // Show character details
   return (
     <div className="character-details-container" onClick={handleClose}>
       <div className="character-details-panel" onClick={handlePanelClick}>

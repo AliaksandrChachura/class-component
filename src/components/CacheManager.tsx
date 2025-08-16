@@ -14,7 +14,6 @@ const CacheManager: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const getCacheStatsRef = useRef(getCacheStats);
 
-  // Update ref when function changes
   useEffect(() => {
     getCacheStatsRef.current = getCacheStats;
   }, [getCacheStats]);
@@ -22,7 +21,7 @@ const CacheManager: React.FC = () => {
   useEffect(() => {
     setMounted(true);
     setCacheStats(getCacheStatsRef.current());
-  }, []); // Only run once on mount
+  }, []);
 
   useEffect(() => {
     if (!mounted) return;
@@ -32,7 +31,7 @@ const CacheManager: React.FC = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [mounted]); // Only depend on mounted state
+  }, [mounted]);
 
   const handleClearAllCache = () => {
     if (
@@ -52,7 +51,6 @@ const CacheManager: React.FC = () => {
 
   return (
     <>
-      {/* Toggle button */}
       <button
         className="cache-manager-toggle"
         onClick={() => setIsVisible(!isVisible)}
@@ -61,7 +59,6 @@ const CacheManager: React.FC = () => {
         💾 {mounted ? cacheStats.validEntries : '0'}
       </button>
 
-      {/* Cache manager panel */}
       {isVisible && (
         <div className="cache-manager-panel">
           <div className="cache-manager-header">

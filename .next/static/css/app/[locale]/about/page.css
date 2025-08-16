@@ -1,0 +1,312 @@
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[11].use[5]!./src/features/About/AboutPage.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+@charset "UTF-8";
+:root {
+  --light-text: #000000;
+  --dark-text: #ffffff;
+  --light-background: #ffffff;
+  --dark-background: #000000;
+}
+
+.light {
+  --text-color: var(--light-text);
+  --background-color: var(--light-background);
+  --border-color: var(--light-border);
+}
+
+.dark {
+  --text-color: var(--dark-text);
+  --background-color: var(--dark-background);
+  --border-color: var(--dark-border);
+}
+
+.about-page {
+  min-height: 100vh;
+  background: var(--background-color);
+  color: var(--text-color);
+  padding: 2rem 0;
+}
+.about-page .about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+@media (max-width: 768px) {
+  .about-page .about-container {
+    padding: 0 1rem;
+  }
+}
+.about-page .about-container .about-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.about-page .about-container .about-header .home-button {
+  display: inline-block;
+  margin-bottom: 2rem;
+  background: linear-gradient(45deg, #00f5ff, #0080ff);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 245, 255, 0.3);
+}
+.about-page .about-container .about-header .home-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 245, 255, 0.4);
+  background: linear-gradient(45deg, #0080ff, #00f5ff);
+}
+.about-page .about-container .about-header .home-button:active {
+  transform: translateY(0);
+}
+.about-page .about-container .about-header h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #00f5ff, #ff0080);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(0, 245, 255, 0.3);
+}
+@media (max-width: 768px) {
+  .about-page .about-container .about-header h1 {
+    font-size: 2.5rem;
+  }
+}
+.about-page .about-container .about-header .subtitle {
+  font-size: 1.3rem;
+  color: #b0bec5;
+  font-weight: 300;
+}
+.about-page .about-container .about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+.about-page .about-container section {
+  background: var(--background-color);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.about-page .about-container section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+@media (max-width: 768px) {
+  .about-page .about-container section {
+    padding: 1.5rem;
+  }
+}
+.about-page .about-container section h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  color: #00f5ff;
+  position: relative;
+}
+.about-page .about-container section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(45deg, #00f5ff, #ff0080);
+  border-radius: 2px;
+}
+.about-page .about-container section h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #ff0080;
+}
+.about-page .about-container section h4 {
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+  color: #00f5ff;
+}
+.about-page .about-container section p {
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  color: #e0e0e0;
+  font-size: 1.1rem;
+}
+.about-page .about-container section ul {
+  list-style: none;
+  padding-left: 0;
+}
+.about-page .about-container section ul li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.8rem;
+  color: #e0e0e0;
+}
+.about-page .about-container section ul li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: #00f5ff;
+  font-weight: bold;
+}
+.about-page .about-container .features-list {
+  margin-top: 2rem;
+}
+.about-page .about-container .features-list h3 {
+  margin-bottom: 1.2rem;
+}
+.about-page .about-container .author-card,
+.about-page .about-container .course-card {
+  background: rgba(0, 245, 255, 0.05);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  margin-top: 1.5rem;
+}
+.about-page .about-container .course-link {
+  margin: 2rem 0;
+  text-align: center;
+}
+.about-page .about-container .course-link .rs-school-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(45deg, #00f5ff, #0080ff);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 245, 255, 0.3);
+}
+.about-page .about-container .course-link .rs-school-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 245, 255, 0.4);
+  background: linear-gradient(45deg, #0080ff, #00f5ff);
+}
+.about-page .about-container .course-link .rs-school-link .link-icon {
+  font-size: 1.3rem;
+}
+.about-page .about-container .course-link .rs-school-link .external-icon {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+.about-page .about-container .course-topics {
+  margin-top: 2rem;
+}
+.about-page .about-container .course-topics .topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-gap: 1rem;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.about-page .about-container .course-topics .topics-grid .topic {
+  background: rgba(255, 0, 128, 0.1);
+  padding: 0.8rem 1.2rem;
+  border-radius: 25px;
+  text-align: center;
+  font-weight: 500;
+  border: 1px solid rgba(255, 0, 128, 0.3);
+  transition: all 0.3s ease;
+}
+.about-page .about-container .course-topics .topics-grid .topic:hover {
+  background: rgba(255, 0, 128, 0.2);
+  transform: scale(1.05);
+}
+.about-page .about-container .tech-stack .tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-gap: 2rem;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+@media (max-width: 768px) {
+  .about-page .about-container .tech-stack .tech-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+.about-page .about-container .tech-stack .tech-item {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.8rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+.about-page .about-container .tech-stack .tech-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 245, 255, 0.3);
+}
+.about-page .about-container .tech-stack .tech-item h4 {
+  margin-bottom: 1.2rem;
+  text-align: center;
+  font-size: 1.4rem;
+}
+.about-page .about-container .tech-stack .tech-item ul li {
+  font-size: 1rem;
+  padding-left: 1.2rem;
+}
+.about-page .about-container .tech-stack .tech-item ul li::before {
+  content: '▶';
+  color: #ff0080;
+}
+@media (max-width: 768px) {
+  .about-page .about-container {
+    padding: 1rem 0;
+  }
+  .about-page .about-container .about-content {
+    gap: 2rem;
+  }
+  .about-page .about-container section h2 {
+    font-size: 1.8rem;
+  }
+  .about-page .about-container section h3 {
+    font-size: 1.4rem;
+  }
+  .about-page .about-container section p {
+    font-size: 1rem;
+  }
+  .about-page .about-container .course-link .rs-school-link {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+  .about-page .about-container .course-topics .topics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+.about-page .about-container section {
+  animation: fadeInUp 0.6s ease-out;
+}
+.about-page .about-container section:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.about-page .about-container section:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.about-page .about-container section:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.about-page .about-container section:nth-child(5) {
+  animation-delay: 0.4s;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

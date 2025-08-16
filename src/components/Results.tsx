@@ -1,12 +1,9 @@
 'use client';
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
-import type { SerializedError } from '@reduxjs/toolkit';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { useSearch } from '../hooks/useSearch';
-import { useGetCharactersQuery } from '../api/endpoints/charactersApi';
-import type { Character, RickMortyResponse } from '../api/types';
+import type { RickMortyResponse, Character } from '../types/api';
 import { useSearchContext } from '../context/SearchContext';
 import Card from './Card';
 import Loader from './Loader';
@@ -16,9 +13,13 @@ import SelectedCardsWrapper from './SelectedCardsWrapper';
 
 interface ResultsProps {
   onCharacterSelect?: (characterId: number) => void;
+  initialData?: RickMortyResponse;
 }
 
-const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
+const Results: React.FC<ResultsProps> = ({
+  onCharacterSelect,
+  initialData,
+}) => {
   const { state } = useSearch();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -54,21 +55,12 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
     }
   }, [searchTerm, currentPage, router, searchParams, locale]);
 
-  const {
-    data,
-    error: queryError,
-    isLoading,
-    isFetching,
-  } = useGetCharactersQuery({
-    pageNumber: currentPage,
-    pageSize: 20,
-    name: searchTerm || undefined,
-  });
+  const data = initialData;
+  const isLoading = !data;
 
   useEffect(() => {
-    if (queryError) {
+    if (!data && !isLoading) {
       setShowError(true);
-      // Auto-hide error after 5 seconds
       const timer = setTimeout(() => {
         setShowError(false);
       }, 5000);
@@ -76,7 +68,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
     } else {
       setShowError(false);
     }
-  }, [queryError]);
+  }, [data, isLoading]);
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -102,30 +94,8 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
   const characters: Character[] = data?.results ?? [];
   const paginationInfo: RickMortyResponse['info'] | null = data?.info ?? null;
 
-  const isFetchBaseQueryError = (
-    error: unknown
-  ): error is FetchBaseQueryError =>
-    typeof error === 'object' && error !== null && 'status' in error;
-
-  const isSerializedError = (error: unknown): error is SerializedError =>
-    typeof error === 'object' && error !== null && 'message' in error;
-
-  const getErrorMessage = (error: unknown): string => {
-    if (isFetchBaseQueryError(error)) {
-      const dataField = (error as FetchBaseQueryError).data;
-      if (typeof dataField === 'string') return dataField;
-      if (
-        dataField &&
-        typeof (dataField as { message?: string }).message === 'string'
-      ) {
-        return (dataField as { message?: string }).message as string;
-      }
-      return 'Unknown error';
-    }
-    if (isSerializedError(error)) {
-      return error.message ?? 'Unknown error';
-    }
-    return 'Unknown error';
+  const getErrorMessage = (): string => {
+    return 'Failed to load characters. Please try again.';
   };
 
   const getCharacterDescription = (character: Character): string => {
@@ -146,7 +116,7 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
     return `${statusEmoji} ${character.status} ${character.species} from ${origin}. Currently at: ${location}`;
   };
 
-  if (characters.length === 0 && !isLoading && !queryError) {
+  if (characters.length === 0 && !isLoading) {
     return (
       <div className="no-results">
         <p>No characters found.</p>
@@ -156,12 +126,11 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
 
   return (
     <div className="results">
-      {/* Error Toast - Top Right Corner */}
-      {showError && queryError && (
+      {showError && (
         <div className="error-toast">
           <div className="error-toast-content">
             <span className="error-icon">⚠️</span>
-            <span className="error-text">{getErrorMessage(queryError)}</span>
+            <span className="error-text">{getErrorMessage()}</span>
             <button
               className="error-close-btn"
               onClick={() => setShowError(false)}
@@ -174,7 +143,6 @@ const Results: React.FC<ResultsProps> = ({ onCharacterSelect }) => {
       )}
 
       {isLoading && <Loader />}
-      {isFetching && <Loader />}
       {characters.length === 0 ? (
         <NotFoundPage />
       ) : (

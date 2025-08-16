@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const baseURL = 'https://rickandmortyapi.com/api';
+const baseURL = '/api';
 
 const baseApi = createApi({
   reducerPath: 'api',

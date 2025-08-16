@@ -4,7 +4,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { NextIntlClientProvider } from 'next-intl';
 import LanguageSwitcher from '../LanguageSwitcher';
 
-// Mock next/navigation
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: vi.fn(),
@@ -12,14 +11,12 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/en',
 }));
 
-// Mock next-intl
 vi.mock('next-intl', async () => {
   const actual = await vi.importActual('next-intl');
   return {
     ...actual,
     useLocale: () => 'en',
     useTranslations: () => (key: string) => {
-      // Return actual translated text for common keys
       if (key === 'language') return 'Language';
       return key;
     },
@@ -56,7 +53,6 @@ describe('LanguageSwitcher', () => {
     const button = screen.getByRole('button', { name: 'Language' });
     fireEvent.click(button);
 
-    // Check that both language options are in the dropdown
     expect(
       screen.getByText('English', { selector: '.language-switcher__option' })
     ).toBeInTheDocument();

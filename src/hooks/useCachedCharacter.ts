@@ -41,10 +41,8 @@ export const useCachedCharacter = ({
     getCacheStats,
   } = useCharacterCache();
 
-  // Try to get from cache first
   const cachedCharacter = enableCache ? getCachedCharacter(id) : null;
 
-  // Use RTK Query for fresh data
   const {
     data: freshCharacter,
     isLoading,
@@ -59,14 +57,12 @@ export const useCachedCharacter = ({
     }
   );
 
-  // Cache the fresh character data when it arrives
   useEffect(() => {
     if (freshCharacter && enableCache) {
       setCachedCharacter(freshCharacter);
     }
   }, [freshCharacter, setCachedCharacter, enableCache]);
 
-  // Return cached character if available and not loading fresh data
   const character = freshCharacter || cachedCharacter || undefined;
 
   const clearCache = useCallback(() => {
@@ -75,7 +71,7 @@ export const useCachedCharacter = ({
 
   return {
     character,
-    isLoading: isLoading && !cachedCharacter, // Don't show loading if we have cached data
+    isLoading: isLoading && !cachedCharacter,
     isError,
     error: error as Error | null | undefined,
     isFetching,

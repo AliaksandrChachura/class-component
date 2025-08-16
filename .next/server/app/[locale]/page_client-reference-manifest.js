@@ -2,14 +2,6 @@ globalThis.__RSC_MANIFEST = globalThis.__RSC_MANIFEST || {};
 globalThis.__RSC_MANIFEST['/[locale]/page'] = {
   moduleLoading: { prefix: '/_next/' },
   ssrModuleMapping: {
-    '(app-pages-browser)/./src/app/providers.tsx': {
-      '*': {
-        id: '(ssr)/./src/app/providers.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
     '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':
       {
         '*': {
@@ -19,6 +11,14 @@ globalThis.__RSC_MANIFEST['/[locale]/page'] = {
           async: false,
         },
       },
+    '(app-pages-browser)/./src/app/providers.tsx': {
+      '*': {
+        id: '(ssr)/./src/app/providers.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
     '(app-pages-browser)/./src/components/LocaleProvider.tsx': {
       '*': {
         id: '(ssr)/./src/components/LocaleProvider.tsx',
@@ -27,9 +27,9 @@ globalThis.__RSC_MANIFEST['/[locale]/page'] = {
         async: false,
       },
     },
-    '(app-pages-browser)/./src/app/[locale]/page.tsx': {
+    '(app-pages-browser)/./src/features/Search/SearchPage.tsx': {
       '*': {
-        id: '(ssr)/./src/app/[locale]/page.tsx',
+        id: '(ssr)/./src/features/Search/SearchPage.tsx',
         name: '*',
         chunks: [],
         async: false,
@@ -125,24 +125,25 @@ globalThis.__RSC_MANIFEST['/[locale]/page'] = {
           async: false,
         },
       },
+    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
+      '*': {
+        id: '(ssr)/./src/features/About/AboutPage.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
+    '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
+      '*': {
+        id: '(ssr)/./src/components/CharacterDetails.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
   },
   edgeSSRModuleMapping: {},
   clientModules: {
-    '/Users/ales/Desktop/Cources/React/class-component/src/app/providers.tsx': {
-      id: '(app-pages-browser)/./src/app/providers.tsx',
-      name: '*',
-      chunks: [
-        'app/[locale]/layout',
-        'static/chunks/app/%5Blocale%5D/layout.js',
-      ],
-      async: false,
-    },
-    '/Users/ales/Desktop/Cources/React/class-component/src/styles/index.scss': {
-      id: '(app-pages-browser)/./src/styles/index.scss',
-      name: '*',
-      chunks: ['app/layout', 'static/chunks/app/layout.js'],
-      async: false,
-    },
     '/Users/ales/Desktop/Cources/React/class-component/node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':
       {
         id: '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js',
@@ -153,6 +154,15 @@ globalThis.__RSC_MANIFEST['/[locale]/page'] = {
         ],
         async: false,
       },
+    '/Users/ales/Desktop/Cources/React/class-component/src/app/providers.tsx': {
+      id: '(app-pages-browser)/./src/app/providers.tsx',
+      name: '*',
+      chunks: [
+        'app/[locale]/layout',
+        'static/chunks/app/%5Blocale%5D/layout.js',
+      ],
+      async: false,
+    },
     '/Users/ales/Desktop/Cources/React/class-component/src/components/LocaleProvider.tsx':
       {
         id: '(app-pages-browser)/./src/components/LocaleProvider.tsx',
@@ -163,9 +173,18 @@ globalThis.__RSC_MANIFEST['/[locale]/page'] = {
         ],
         async: false,
       },
-    '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/page.tsx':
+    '/Users/ales/Desktop/Cources/React/class-component/src/styles/index.scss': {
+      id: '(app-pages-browser)/./src/styles/index.scss',
+      name: '*',
+      chunks: [
+        'app/[locale]/layout',
+        'static/chunks/app/%5Blocale%5D/layout.js',
+      ],
+      async: false,
+    },
+    '/Users/ales/Desktop/Cources/React/class-component/src/features/Search/SearchPage.tsx':
       {
-        id: '(app-pages-browser)/./src/app/[locale]/page.tsx',
+        id: '(app-pages-browser)/./src/features/Search/SearchPage.tsx',
         name: '*',
         chunks: ['app/[locale]/page', 'static/chunks/app/%5Blocale%5D/page.js'],
         async: false,
@@ -310,22 +329,50 @@ globalThis.__RSC_MANIFEST['/[locale]/page'] = {
         chunks: ['app-pages-internals', 'static/chunks/app-pages-internals.js'],
         async: false,
       },
+    '/Users/ales/Desktop/Cources/React/class-component/src/features/About/AboutPage.tsx':
+      {
+        id: '(app-pages-browser)/./src/features/About/AboutPage.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    '/Users/ales/Desktop/Cources/React/class-component/src/components/CharacterDetails.tsx':
+      {
+        id: '(app-pages-browser)/./src/components/CharacterDetails.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
   },
   entryCSSFiles: {
     '/Users/ales/Desktop/Cources/React/class-component/src/': [],
-    '/Users/ales/Desktop/Cources/React/class-component/src/app/layout': [
-      { inlined: false, path: 'static/css/app/layout.css' },
-    ],
     '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/layout':
-      [],
+      [{ inlined: false, path: 'static/css/app/[locale]/layout.css' }],
     '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/page': [
       { inlined: false, path: 'static/css/app/[locale]/page.css' },
     ],
   },
   rscModuleMapping: {
+    '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':
+      {
+        '*': {
+          id: '(rsc)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js',
+          name: '*',
+          chunks: [],
+          async: false,
+        },
+      },
     '(app-pages-browser)/./src/app/providers.tsx': {
       '*': {
         id: '(rsc)/./src/app/providers.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
+    '(app-pages-browser)/./src/components/LocaleProvider.tsx': {
+      '*': {
+        id: '(rsc)/./src/components/LocaleProvider.tsx',
         name: '*',
         chunks: [],
         async: false,
@@ -339,26 +386,9 @@ globalThis.__RSC_MANIFEST['/[locale]/page'] = {
         async: false,
       },
     },
-    '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':
-      {
-        '*': {
-          id: '(rsc)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js',
-          name: '*',
-          chunks: [],
-          async: false,
-        },
-      },
-    '(app-pages-browser)/./src/components/LocaleProvider.tsx': {
+    '(app-pages-browser)/./src/features/Search/SearchPage.tsx': {
       '*': {
-        id: '(rsc)/./src/components/LocaleProvider.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
-    '(app-pages-browser)/./src/app/[locale]/page.tsx': {
-      '*': {
-        id: '(rsc)/./src/app/[locale]/page.tsx',
+        id: '(rsc)/./src/features/Search/SearchPage.tsx',
         name: '*',
         chunks: [],
         async: false,
@@ -454,6 +484,22 @@ globalThis.__RSC_MANIFEST['/[locale]/page'] = {
           async: false,
         },
       },
+    '(app-pages-browser)/./src/features/About/AboutPage.tsx': {
+      '*': {
+        id: '(rsc)/./src/features/About/AboutPage.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
+    '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
+      '*': {
+        id: '(rsc)/./src/components/CharacterDetails.tsx',
+        name: '*',
+        chunks: [],
+        async: false,
+      },
+    },
   },
   edgeRscModuleMapping: {},
 };

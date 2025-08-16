@@ -11,7 +11,7 @@ interface CharacterCache {
 }
 
 const CACHE_KEY = 'character-details-cache';
-const CACHE_EXPIRY_HOURS = 24; // Cache for 24 hours
+const CACHE_EXPIRY_HOURS = 24;
 
 export const useCharacterCache = () => {
   const localStorage = useLocalStorageOperations();
@@ -41,13 +41,11 @@ export const useCharacterCache = () => {
 
       if (!cachedCharacter) return null;
 
-      // Check if cache has expired
       const now = Date.now();
       const cacheAge = now - cachedCharacter.cachedAt;
-      const maxAge = CACHE_EXPIRY_HOURS * 60 * 60 * 1000; // Convert hours to milliseconds
+      const maxAge = CACHE_EXPIRY_HOURS * 60 * 60 * 1000;
 
       if (cacheAge > maxAge) {
-        // Remove expired cache entry
         const remainingCharacters = Object.fromEntries(
           Object.entries(cachedCharacters).filter(([key]) => Number(key) !== id)
         );

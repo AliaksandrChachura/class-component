@@ -15,30 +15,23 @@ export default function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLanguageChange = (newLocale: string) => {
-    // Prevent double-click by checking if already changing
     if (newLocale === locale) {
       return;
     }
-    console.log('newLocale', newLocale);
 
     try {
-      // Extract the path without locale more safely
       let pathWithoutLocale = '';
 
-      // Check if the current pathname starts with the current locale
       if (pathname.startsWith(`/${locale}/`)) {
         pathWithoutLocale = pathname.substring(locale.length + 1);
       } else if (pathname === `/${locale}`) {
         pathWithoutLocale = '';
       } else {
-        // If no locale prefix found, use the entire pathname
         pathWithoutLocale = pathname;
       }
 
-      // Build the new path
       const newPath = `/${newLocale}${pathWithoutLocale}`;
 
-      // Navigate to the new locale
       router.push(newPath);
       setIsOpen(false);
     } catch (error) {
@@ -56,14 +49,6 @@ export default function LanguageSwitcher() {
         return 'English';
     }
   };
-
-  // Debug logging
-  console.log('LanguageSwitcher render:', {
-    locale,
-    pathname,
-    isOpen,
-    locales,
-  });
 
   return (
     <div className="language-switcher">
@@ -97,7 +82,6 @@ export default function LanguageSwitcher() {
         <div className="language-switcher__dropdown">
           {locales.map((lang) => {
             const isActive = locale === lang;
-            console.log('Button render:', { lang, locale, isActive });
             return (
               <button
                 key={lang}

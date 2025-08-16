@@ -1,14 +1,22 @@
 {
   "version": 4,
-  "routes": { "/en": {}, "/ru": {}, "/en/results": {}, "/ru/results": {} },
+  "routes": {
+    "/en": {},
+    "/ru": {},
+    "/en/results": {},
+    "/ru/results": {},
+    "/en/about": {},
+    "/ru/about": {}
+  },
   "dynamicRoutes": {
-    "/[locale]": { "fallback": null },
-    "/[locale]/results": { "fallback": null }
+    "/[locale]": { "fallback": false },
+    "/[locale]/results": { "fallback": false },
+    "/[locale]/about": { "fallback": false }
   },
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "74922d83f5cddaeb70883c31e48aee9d",
-    "previewModeSigningKey": "4128db6ece637605a92c8bd919b123edcfbf8bf63fc50dea62f3fc1b8b1e30e7",
-    "previewModeEncryptionKey": "a9811a01c70cf614d7c07ca9b56c3d7a265696452aa3824b6ee1484fcaab6276"
+    "previewModeId": "90765cd36f1805cffee9be9dc5ccf3a7",
+    "previewModeSigningKey": "4b543db23db9ed2280652be796fe103ef6cf86ce57826a6923ff280de89c6098",
+    "previewModeEncryptionKey": "0462586ca68cbdc96b06d68d223200955560b6fd3f556629e22df312a629838a"
   }
 }

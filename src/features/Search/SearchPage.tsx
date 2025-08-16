@@ -7,8 +7,13 @@ import Header from '../../components/Header';
 import SearchStatus from '../../components/SearchStatus';
 import Results from '../../components/Results';
 import SearchParamsWrapper from '../../components/SearchParamsWrapper';
+import type { RickMortyResponse } from '../../types/api';
 
-const SearchPage: React.FC = () => {
+interface SearchPageProps {
+  initialData?: RickMortyResponse;
+}
+
+const SearchPage: React.FC<SearchPageProps> = ({ initialData }) => {
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
@@ -31,7 +36,10 @@ const SearchPage: React.FC = () => {
             <SearchStatus />
           </SearchParamsWrapper>
           <SearchParamsWrapper>
-            <Results onCharacterSelect={handleCharacterSelect} />
+            <Results
+              onCharacterSelect={handleCharacterSelect}
+              initialData={initialData}
+            />
           </SearchParamsWrapper>
         </div>
         {/* Details content will be handled by Next.js routing */}

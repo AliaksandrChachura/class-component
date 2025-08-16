@@ -4,12 +4,53 @@ import { locales, type Locale } from '../../i18n';
 import '../../styles/index.scss';
 import Providers from '../providers';
 import LocaleProvider from '../../components/LocaleProvider';
-import { metadata } from '../metadata';
+import type { Metadata } from 'next';
 
-export { metadata };
+export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return ['en', 'ru'].map((locale) => ({ locale }));
+  return locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!locales.includes(locale as Locale)) {
+    notFound();
+  }
+
+  return {
+    title: locale === 'en' ? 'Rick & Morty' : 'Рик и Морти',
+    description: locale === 'en' ? 'Search characters' : 'Поиск персонажей',
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        en: '/en',
+        ru: '/ru',
+      },
+    },
+    openGraph: {
+      title: locale === 'en' ? 'Rick & Morty' : 'Рик и Морти',
+      description: locale === 'en' ? 'Search characters' : 'Поиск персонажей',
+      locale: locale,
+      alternateLocale: locale === 'en' ? 'ru' : 'en',
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+  };
 }
 
 export default async function LocaleLayout({
@@ -21,12 +62,10 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  // Validate locale
   if (!locales.includes(locale as Locale)) {
     notFound();
   }
 
-  // Get messages manually to ensure proper locale handling
   let messages;
   try {
     if (locale === 'en') {
@@ -42,10 +81,14 @@ export default async function LocaleLayout({
   }
 
   return (
-    <NextIntlClientProvider messages={messages} locale={locale}>
-      <LocaleProvider>
-        <Providers>{children}</Providers>
-      </LocaleProvider>
-    </NextIntlClientProvider>
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          <LocaleProvider>
+            <Providers>{children}</Providers>
+          </LocaleProvider>
+        </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }

@@ -31,8 +31,6 @@ const getInitialSearchTerm = (): string => {
 };
 
 const getInitialTheme = (): string => {
-  // Default to light theme to prevent hydration mismatch
-  // Theme will be updated on client side
   return 'light';
 };
 
@@ -103,15 +101,14 @@ export function SearchProvider({ children }: SearchProviderProps) {
   const { setItem, removeItem } = useLocalStorageOperations();
   const [state, dispatch] = useReducer(searchReducer, initialState);
 
-  // Load theme from localStorage after component mounts to prevent hydration mismatch
   React.useEffect(() => {
     try {
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme === 'dark' || savedTheme === 'light') {
         dispatch({ type: 'SET_THEME', payload: savedTheme });
       }
-    } catch {
-      // Ignore localStorage errors
+    } catch (error) {
+      console.warn('Failed to access localStorage for theme:', error);
     }
   }, []);
 

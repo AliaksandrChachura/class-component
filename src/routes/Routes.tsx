@@ -6,7 +6,6 @@ import {
 import App from '../App';
 import AboutPage from '../features/About/AboutPage';
 import SearchPage from '../features/Search/SearchPage';
-// import { fetchCharacterDetails } from '../api/rickMortyAPI';
 import NotFoundPage from '../components/NotFoundPage';
 import CharacterDetailsPage from './CharacterDetailsPage';
 

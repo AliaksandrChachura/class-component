@@ -15,7 +15,6 @@ function ThemedShell({ children }: { children: React.ReactNode }) {
     setMounted(true);
   }, []);
 
-  // Prevent hydration mismatch by not rendering theme class until mounted
   if (!mounted) {
     return <div className="app">{children}</div>;
   }
