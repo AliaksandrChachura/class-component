@@ -133,14 +133,6 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
           async: false,
         },
       },
-    '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
-      '*': {
-        id: '(ssr)/./src/components/CharacterDetails.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
   },
   edgeSSRModuleMapping: {},
   clientModules: {
@@ -352,13 +344,6 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
         chunks: ['app-pages-internals', 'static/chunks/app-pages-internals.js'],
         async: false,
       },
-    '/Users/ales/Desktop/Cources/React/class-component/src/components/CharacterDetails.tsx':
-      {
-        id: '(app-pages-browser)/./src/components/CharacterDetails.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
   },
   entryCSSFiles: {
     '/Users/ales/Desktop/Cources/React/class-component/src/': [],
@@ -512,14 +497,6 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
           async: false,
         },
       },
-    '(app-pages-browser)/./src/components/CharacterDetails.tsx': {
-      '*': {
-        id: '(rsc)/./src/components/CharacterDetails.tsx',
-        name: '*',
-        chunks: [],
-        async: false,
-      },
-    },
   },
   edgeRscModuleMapping: {},
 };
