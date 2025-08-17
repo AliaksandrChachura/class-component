@@ -1,5 +1,5 @@
 globalThis.__RSC_MANIFEST = globalThis.__RSC_MANIFEST || {};
-globalThis.__RSC_MANIFEST['/api/characters/[id]/route'] = {
+globalThis.__RSC_MANIFEST['/api/search/route'] = {
   moduleLoading: { prefix: '/_next/' },
   ssrModuleMapping: {
     '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':
@@ -341,7 +341,7 @@ globalThis.__RSC_MANIFEST['/api/characters/[id]/route'] = {
   },
   entryCSSFiles: {
     '/Users/ales/Desktop/Cources/React/class-component/src/': [],
-    '/Users/ales/Desktop/Cources/React/class-component/src/app/api/characters/[id]/route':
+    '/Users/ales/Desktop/Cources/React/class-component/src/app/api/search/route':
       [],
   },
   rscModuleMapping: {

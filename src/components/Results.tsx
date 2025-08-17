@@ -5,6 +5,7 @@ import { useRouter } from './CreateNavigation';
 import { useSearch } from '../hooks/useSearch';
 import type { RickMortyResponse, Character } from '../types/api';
 import { useSearchContext } from '../context/SearchContext';
+import { useGetCharactersQuery } from '../api/endpoints/charactersApi';
 import Card from './Card';
 import Loader from './Loader';
 import Pagination from './Pagination';
@@ -33,6 +34,17 @@ const Results: React.FC<ResultsProps> = ({
 
   const searchTerm = state.searchTerm || searchParams.get('q') || '';
 
+  const { data: queryData, isLoading: isQueryLoading } = useGetCharactersQuery(
+    {
+      pageNumber: currentPage,
+      name: searchTerm,
+      pageSize: 20,
+    },
+    {
+      skip: !!initialData,
+    }
+  );
+
   useEffect(() => {
     const params = new URLSearchParams();
 
@@ -59,8 +71,8 @@ const Results: React.FC<ResultsProps> = ({
     }
   }, [searchTerm, currentPage, router, searchParams]);
 
-  const data = initialData;
-  const isLoading = !data;
+  const data = initialData || queryData;
+  const isLoading = !data || isQueryLoading;
 
   useEffect(() => {
     if (!data && !isLoading) {

@@ -1,8 +1,8 @@
-// File: /Users/ales/Desktop/Cources/React/class-component/src/app/api/characters/route.ts
-import * as entry from '../../../../../src/app/api/characters/route.js';
+// File: /Users/ales/Desktop/Cources/React/class-component/src/app/api/search/route.ts
+import * as entry from '../../../../../src/app/api/search/route.js';
 import type { NextRequest } from 'next/server.js';
 
-type TEntry = typeof import('../../../../../src/app/api/characters/route.js');
+type TEntry = typeof import('../../../../../src/app/api/search/route.js');
 
 type SegmentParams<T extends Object = any> =
   T extends Record<string, any>

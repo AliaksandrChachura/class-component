@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import { getCharacters } from '../../lib/server/apiClient';
 import SearchPage from '../../features/Search/SearchPage';
 import Loader from '../../components/Loader';
 import type { Metadata } from 'next';
@@ -27,21 +26,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function HomePage() {
-  try {
-    const initialData = await getCharacters({ page: 1 });
-
-    return (
-      <Suspense fallback={<Loader />}>
-        <SearchPage initialData={initialData} />
-      </Suspense>
-    );
-  } catch (error) {
-    console.error('Error fetching initial characters:', error);
-    return (
-      <Suspense fallback={<Loader />}>
-        <SearchPage />
-      </Suspense>
-    );
-  }
+export default function HomePage() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <SearchPage />
+    </Suspense>
+  );
 }
