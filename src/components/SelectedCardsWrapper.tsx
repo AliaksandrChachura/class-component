@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
-import { downloadCsv } from '../helper/index.ts';
 import { clearSelectedItems } from '../store/slices/cardsSlicer';
 import { useDispatch } from 'react-redux';
 import Card from './Card';
+import CSVDownloadButton from './CSVDownloadButton';
 
 const SelectedCardsWrapper: React.FC = () => {
   const selectedCards = useSelector(
@@ -16,9 +16,7 @@ const SelectedCardsWrapper: React.FC = () => {
     dispatch(clearSelectedItems());
   };
 
-  const handleDownloadSelectedCards = () => {
-    downloadCsv(selectedCards);
-  };
+  const characterIds = selectedCards.map((card) => card.id);
 
   if (selectedCards.length === 0) {
     return null;
@@ -34,6 +32,7 @@ const SelectedCardsWrapper: React.FC = () => {
         {selectedCards.map((card) => (
           <Card
             key={card.id}
+            id={card.id}
             name={card.name}
             description={card.description}
             image={card.image}
@@ -47,12 +46,12 @@ const SelectedCardsWrapper: React.FC = () => {
         >
           Clear Selected Cards
         </button>
-        <button
+        <CSVDownloadButton
+          characterIds={characterIds}
           className="download-selected-cards-button"
-          onClick={handleDownloadSelectedCards}
         >
           Download CSV
-        </button>
+        </CSVDownloadButton>
       </div>
     </div>
   );

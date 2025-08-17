@@ -1,0 +1,14 @@
+{
+  "version": 4,
+  "routes": { "/en": {}, "/ru": {}, "/en/results": {}, "/ru/results": {} },
+  "dynamicRoutes": {
+    "/[locale]": { "fallback": false },
+    "/[locale]/results": { "fallback": false }
+  },
+  "notFoundRoutes": [],
+  "preview": {
+    "previewModeId": "2bce87f41a2ff513d5d04181c145d44d",
+    "previewModeSigningKey": "b23046aed87a8c2605368825a2b33a4a50021989f5015015da74228945bcdc50",
+    "previewModeEncryptionKey": "0293ca14f9a74bc9f8701a52c9ca35da660bd82575ae210f028102d1af4dbe63"
+  }
+}

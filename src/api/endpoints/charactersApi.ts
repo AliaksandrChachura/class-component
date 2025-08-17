@@ -4,10 +4,10 @@ import type { RickMortyResponse, CharacterSearchPayload } from '../types';
 const charactersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCharacters: builder.query<RickMortyResponse, CharacterSearchPayload>({
-      keepUnusedDataFor: 600,
+      keepUnusedDataFor: 300,
       query: ({ pageNumber = 1, name = '', pageSize = 20 }) => {
         return {
-          url: '/character',
+          url: '/search',
           method: 'GET',
           params: {
             page: pageNumber,

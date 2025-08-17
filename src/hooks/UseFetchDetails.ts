@@ -5,7 +5,6 @@ export function useSearchParamsHelper() {
   const { state } = useSearch();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  //   const location = useLocation();
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const pageSize = parseInt(searchParams.get('pageSize') || '20', 10);

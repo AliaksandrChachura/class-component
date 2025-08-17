@@ -1,12 +1,15 @@
+'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import './AboutPage.scss';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from '../../components/CreateNavigation';
 
 const AboutPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const t = useTranslations('about');
 
   const handleHomeClick = () => {
-    navigate('/');
+    router.push('/');
   };
 
   return (
@@ -16,8 +19,8 @@ const AboutPage: React.FC = () => {
           <button className="home-button" onClick={handleHomeClick}>
             🏠 Home
           </button>
-          <h1>About This Project</h1>
-          <p className="subtitle">Rick and Morty Character Explorer</p>
+          <h1>{t('title')}</h1>
+          <p className="subtitle">{t('description')}</p>
         </div>
 
         <div className="about-content">
@@ -31,14 +34,12 @@ const AboutPage: React.FC = () => {
             </p>
 
             <div className="features-list">
-              <h3>Key Features:</h3>
+              <h3>{t('features')}:</h3>
               <ul>
-                <li>Search characters by name</li>
-                <li>View detailed character information</li>
-                <li>Responsive design for all devices</li>
-                <li>Error handling and loading states</li>
-                <li>Character details panel with additional information</li>
-                <li>Comprehensive testing coverage</li>
+                <li>{t('feature1')}</li>
+                <li>{t('feature2')}</li>
+                <li>{t('feature3')}</li>
+                <li>{t('feature4')}</li>
               </ul>
             </div>
           </section>

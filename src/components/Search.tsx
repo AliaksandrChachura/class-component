@@ -1,9 +1,12 @@
+'use client';
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSearch } from '../hooks/useSearch';
 
 const Search: React.FC = () => {
   const { state, setSearchTerm } = useSearch();
   const [inputValue, setInputValue] = useState(state.searchTerm);
+  const t = useTranslations('search');
 
   useEffect(() => {
     setInputValue(state.searchTerm);
@@ -30,9 +33,9 @@ const Search: React.FC = () => {
         value={inputValue}
         onChange={handleChange}
         onKeyPress={handleKeyPress}
-        placeholder="Search characters (e.g. Rick, Morty)..."
+        placeholder={t('placeholder')}
       />
-      <button onClick={handleSearch}>Search</button>
+      <button onClick={handleSearch}>{t('searchButton')}</button>
     </div>
   );
 };

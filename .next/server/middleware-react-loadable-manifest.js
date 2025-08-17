@@ -1,0 +1,2 @@
+self.__REACT_LOADABLE_MANIFEST =
+  '{"i18n/request.ts -> ../messages/en.json":{"id":"i18n/request.ts -> ../messages/en.json","files":["static/chunks/_app-pages-browser_src_messages_en_json.js"]},"i18n/request.ts -> ../messages/ru.json":{"id":"i18n/request.ts -> ../messages/ru.json","files":["static/chunks/_app-pages-browser_src_messages_ru_json.js"]}}';

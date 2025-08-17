@@ -1,4 +1,4 @@
-import { useReducer, useMemo, useCallback, type ReactNode } from 'react';
+import React, { useReducer, useMemo, useCallback, type ReactNode } from 'react';
 import { SearchContext } from './SearchContext';
 import type { RickMortyResponse } from '../api/types/index';
 import useLocalStorageOperations from '../hooks/useLocalStorageOperations';
@@ -31,12 +31,7 @@ const getInitialSearchTerm = (): string => {
 };
 
 const getInitialTheme = (): string => {
-  try {
-    const saved = localStorage.getItem('theme');
-    return saved === 'dark' ? 'dark' : 'light';
-  } catch {
-    return 'light';
-  }
+  return 'light';
 };
 
 const initialState: SearchState = {
@@ -105,6 +100,17 @@ interface SearchProviderProps {
 export function SearchProvider({ children }: SearchProviderProps) {
   const { setItem, removeItem } = useLocalStorageOperations();
   const [state, dispatch] = useReducer(searchReducer, initialState);
+
+  React.useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark' || savedTheme === 'light') {
+        dispatch({ type: 'SET_THEME', payload: savedTheme });
+      }
+    } catch (error) {
+      console.warn('Failed to access localStorage for theme:', error);
+    }
+  }, []);
 
   const setSearchTerm = useCallback(
     (term: string) => {

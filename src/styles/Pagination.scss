@@ -1,4 +1,4 @@
-@use './ThemeConsts.scss' as *;
+@import './ThemeConsts.scss';
 
 :root {
   --light-text: #{$light-text};

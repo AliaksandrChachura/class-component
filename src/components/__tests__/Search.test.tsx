@@ -1,122 +1,240 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Search from '../Search';
 import { SearchProvider } from '../../context/SearchProvider';
 
-const renderWithProvider = (
-  component: React.ReactElement,
-  initialStorage?: Record<string, string>
-) => {
-  if (initialStorage) {
-    Object.entries(initialStorage).forEach(([key, value]) => {
-      vi.spyOn(localStorage, 'getItem').mockImplementation((storageKey) => {
-        return storageKey === key ? value : null;
-      });
-    });
-  }
-  return render(<SearchProvider>{component}</SearchProvider>);
+// Mock next-intl
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    if (key === 'placeholder') return 'Search characters...';
+    if (key === 'searchButton') return 'Search';
+    return key;
+  },
+}));
+
+// Mock useSearch hook with better setup
+const mockUseSearch = {
+  state: {
+    searchTerm: '',
+  },
+  setSearchTerm: vi.fn(),
+};
+
+vi.mock('../../hooks/useSearch', () => ({
+  useSearch: () => mockUseSearch,
+}));
+
+const renderSearch = () => {
+  return render(
+    <SearchProvider>
+      <Search />
+    </SearchProvider>
+  );
 };
 
 describe('Search Component', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
+    mockUseSearch.state.searchTerm = '';
+    user = userEvent.setup();
   });
 
-  it('renders search input and button', () => {
-    renderWithProvider(<Search />);
+  describe('Rendering', () => {
+    it('renders search input and button', () => {
+      renderSearch();
 
-    const input = screen.getByPlaceholderText(/search characters/i);
-    const button = screen.getByRole('button', { name: /search/i });
+      expect(
+        screen.getByPlaceholderText('Search characters...')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Search' })
+      ).toBeInTheDocument();
+    });
 
-    expect(input).toBeInTheDocument();
-    expect(button).toBeInTheDocument();
+    it('updates input value when typing', async () => {
+      renderSearch();
+
+      const input = screen.getByPlaceholderText(
+        'Search characters...'
+      ) as HTMLInputElement;
+      await user.type(input, 'Rick');
+
+      expect(input.value).toBe('Rick');
+    });
+
+    it('updates input value when state.searchTerm changes', () => {
+      mockUseSearch.state.searchTerm = 'Morty';
+      renderSearch();
+
+      const input = screen.getByPlaceholderText(
+        'Search characters...'
+      ) as HTMLInputElement;
+      expect(input.value).toBe('Morty');
+    });
   });
 
-  it('starts with empty term when no localStorage value', () => {
-    vi.spyOn(localStorage, 'getItem').mockReturnValue(null);
+  describe('Search Functionality', () => {
+    it('calls setSearchTerm when search button is clicked', async () => {
+      renderSearch();
 
-    renderWithProvider(<Search />);
+      const input = screen.getByPlaceholderText('Search characters...');
+      const button = screen.getByRole('button', { name: 'Search' });
 
-    const input = screen.getByPlaceholderText(/search characters/i);
-    expect(input).toHaveValue('');
+      await user.type(input, 'Rick');
+      await user.click(button);
+
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith('Rick');
+    });
+
+    it('calls setSearchTerm when Enter key is pressed', async () => {
+      renderSearch();
+
+      const input = screen.getByPlaceholderText('Search characters...');
+
+      await user.type(input, 'Rick');
+      await user.keyboard('{Enter}');
+
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith('Rick');
+    });
+
+    it('trims whitespace when searching via button', async () => {
+      renderSearch();
+
+      const input = screen.getByPlaceholderText('Search characters...');
+      const button = screen.getByRole('button', { name: 'Search' });
+
+      await user.type(input, '  Rick  ');
+      await user.click(button);
+
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith('Rick');
+    });
+
+    it('trims whitespace when searching via Enter key', async () => {
+      renderSearch();
+
+      const input = screen.getByPlaceholderText('Search characters...');
+
+      await user.type(input, '  Rick  ');
+      await user.keyboard('{Enter}');
+
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith('Rick');
+    });
   });
 
-  it('updates input value when typing', async () => {
-    const user = userEvent.setup();
-    renderWithProvider(<Search />);
+  describe('Keyboard Handling', () => {
+    it('does not call setSearchTerm for other keys', async () => {
+      renderSearch();
 
-    const input = screen.getByPlaceholderText(/search characters/i);
+      const input = screen.getByPlaceholderText('Search characters...');
 
-    await user.type(input, 'Rick');
+      await user.type(input, 'Rick');
+      await user.keyboard('{Tab}');
 
-    expect(input).toHaveValue('Rick');
+      expect(mockUseSearch.setSearchTerm).not.toHaveBeenCalled();
+    });
+
+    it('handles Space key without triggering search', async () => {
+      renderSearch();
+
+      const input = screen.getByPlaceholderText('Search characters...');
+
+      await user.type(input, 'Rick');
+      await user.keyboard(' ');
+
+      expect(mockUseSearch.setSearchTerm).not.toHaveBeenCalled();
+    });
+
+    it('handles Escape key without triggering search', async () => {
+      renderSearch();
+
+      const input = screen.getByPlaceholderText('Search characters...');
+
+      await user.type(input, 'Rick');
+      await user.keyboard('{Escape}');
+
+      expect(mockUseSearch.setSearchTerm).not.toHaveBeenCalled();
+    });
   });
 
-  it('calls onSearch with trimmed value when search button clicked', () => {
-    renderWithProvider(<Search />);
+  describe('Edge Cases', () => {
+    it('handles empty search term via button', async () => {
+      renderSearch();
 
-    const input = screen.getByPlaceholderText(/search characters/i);
-    const button = screen.getByRole('button', { name: /search/i });
+      const button = screen.getByRole('button', { name: 'Search' });
 
-    fireEvent.change(input, { target: { value: '  Rick  ' } });
-    fireEvent.click(button);
+      await user.click(button);
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '"Rick"');
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith('');
+    });
+
+    it('handles empty search term via Enter key', async () => {
+      renderSearch();
+
+      const input = screen.getByPlaceholderText('Search characters...');
+
+      // Focus the input first, then press Enter
+      await user.click(input);
+      await user.keyboard('{Enter}');
+
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith('');
+    });
+
+    it('handles search with only whitespace via button', async () => {
+      renderSearch();
+
+      const input = screen.getByPlaceholderText('Search characters...');
+      const button = screen.getByRole('button', { name: 'Search' });
+
+      await user.type(input, '   ');
+      await user.click(button);
+
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith('');
+    });
+
+    it('handles search with only whitespace via Enter key', async () => {
+      renderSearch();
+
+      await user.type(
+        screen.getByPlaceholderText('Search characters...'),
+        '   '
+      );
+      await user.keyboard('{Enter}');
+
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith('');
+    });
   });
 
-  it('saves search term to localStorage when searching', () => {
-    renderWithProvider(<Search />);
+  describe('Input Validation', () => {
+    it('allows special characters in search term', async () => {
+      renderSearch();
 
-    const input = screen.getByPlaceholderText(/search characters/i);
-    const button = screen.getByRole('button', { name: /search/i });
+      const input = screen.getByPlaceholderText('Search characters...');
+      const button = screen.getByRole('button', { name: 'Search' });
 
-    fireEvent.change(input, { target: { value: 'Morty' } });
-    fireEvent.click(button);
+      const specialSearchTerm = 'Rick & Morty <script>alert("xss")</script>';
+      await user.type(input, specialSearchTerm);
+      await user.click(button);
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '"Morty"');
-  });
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith(
+        specialSearchTerm
+      );
+    });
 
-  it('works without onSearch prop', () => {
-    renderWithProvider(<Search />);
+    it('handles very long search terms', async () => {
+      renderSearch();
 
-    const input = screen.getByPlaceholderText(/search characters/i);
-    const button = screen.getByRole('button', { name: /search/i });
+      const input = screen.getByPlaceholderText('Search characters...');
+      const button = screen.getByRole('button', { name: 'Search' });
 
-    expect(() => {
-      fireEvent.change(input, { target: { value: 'Rick' } });
-      fireEvent.click(button);
-    }).not.toThrow();
-  });
+      const longSearchTerm = 'A'.repeat(1000);
+      await user.type(input, longSearchTerm);
+      await user.click(button);
 
-  it('handles empty search term correctly', () => {
-    renderWithProvider(<Search />);
-
-    const button = screen.getByRole('button', { name: /search/i });
-    fireEvent.click(button);
-
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '""');
-  });
-
-  it('trims whitespace from search term', () => {
-    renderWithProvider(<Search />);
-
-    const input = screen.getByPlaceholderText(/search characters/i);
-    const button = screen.getByRole('button', { name: /search/i });
-
-    fireEvent.change(input, { target: { value: '   ' } });
-    fireEvent.click(button);
-
-    expect(localStorage.setItem).toHaveBeenCalledWith('searchTerm', '""');
-  });
-
-  it('has correct container class', () => {
-    renderWithProvider(<Search />);
-
-    const container = screen
-      .getByPlaceholderText(/search characters/i)
-      .closest('.search');
-    expect(container).toBeInTheDocument();
+      expect(mockUseSearch.setSearchTerm).toHaveBeenCalledWith(longSearchTerm);
+    });
   });
 });

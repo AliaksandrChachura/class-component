@@ -1,15 +1,33 @@
+'use client';
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import Image from 'next/image';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useRouter } from './CreateNavigation';
 import { useCachedCharacter } from '../hooks/useCachedCharacter';
 
 const CharacterDetails: React.FC = () => {
-  const params = useParams();
-  const id = Number(params.id);
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const id = Number(Array.isArray(params?.id) ? params.id[0] : params?.id);
+
   const { character, isLoading, isError: error } = useCachedCharacter({ id });
-  const navigate = useNavigate();
 
   const handleClose = () => {
-    navigate('/results');
+    const qs = searchParams?.toString();
+
+    if (qs) {
+      // Parse the search params into a proper query object
+      const queryObj: Record<string, string> = {};
+      searchParams.forEach((value, key) => {
+        queryObj[key] = value;
+      });
+
+      router.push({ pathname: '/results', query: queryObj });
+    } else {
+      router.push('/results');
+    }
   };
 
   const handlePanelClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -35,7 +53,6 @@ const CharacterDetails: React.FC = () => {
     });
   };
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="character-details-container">
@@ -61,7 +78,6 @@ const CharacterDetails: React.FC = () => {
     );
   }
 
-  // Show error state
   if (error) {
     return (
       <div className="character-details-container">
@@ -93,7 +109,6 @@ const CharacterDetails: React.FC = () => {
     );
   }
 
-  // Show no character found state
   if (!character) {
     return (
       <div className="character-details-container">
@@ -125,7 +140,6 @@ const CharacterDetails: React.FC = () => {
     );
   }
 
-  // Show character details
   return (
     <div className="character-details-container" onClick={handleClose}>
       <div className="character-details-panel" onClick={handlePanelClick}>
@@ -143,10 +157,13 @@ const CharacterDetails: React.FC = () => {
         <div className="character-details-content">
           <div className="character-info">
             <div className="character-image-section">
-              <img
+              <Image
                 src={character.image}
                 alt={character.name}
+                width={400}
+                height={400}
                 className="character-detail-image"
+                style={{ objectFit: 'cover' }}
               />
               <div className="character-basic-info">
                 <h3>{character.name}</h3>

@@ -1,32 +1,49 @@
+'use client';
+
 import React from 'react';
-import { useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { useTranslations } from 'next-intl';
+import { useRouter, usePathname } from '../../components/CreateNavigation';
 import Header from '../../components/Header';
 import SearchStatus from '../../components/SearchStatus';
 import Results from '../../components/Results';
+import SearchParamsWrapper from '../../components/SearchParamsWrapper';
+import type { RickMortyResponse } from '../../types/api';
 
-const SearchPage: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isDetailsOpen = /\/results\/\d+/i.test(location.pathname);
+interface SearchPageProps {
+  initialData?: RickMortyResponse;
+}
+
+const SearchPage: React.FC<SearchPageProps> = ({ initialData }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const isDetailsOpen = /\/results\/\d+/i.test(pathname);
+  const t = useTranslations('search');
 
   const handleCharacterSelect = (characterId: number) => {
-    navigate(`/results/${characterId}`);
+    router.push({
+      pathname: '/results/[id]',
+      params: { id: characterId.toString() },
+    });
   };
 
   return (
     <div className="search-page">
-      <Header />
-      <h1>Rick and Morty Characters</h1>
+      <SearchParamsWrapper>
+        <Header />
+        <h1>{t('title')}</h1>
+      </SearchParamsWrapper>
       <div className={`search-layout ${isDetailsOpen ? 'split-view' : ''}`}>
         <div className="search-content">
-          <SearchStatus />
-          <Results onCharacterSelect={handleCharacterSelect} />
+          <SearchParamsWrapper>
+            <SearchStatus />
+          </SearchParamsWrapper>
+          <SearchParamsWrapper>
+            <Results
+              onCharacterSelect={handleCharacterSelect}
+              initialData={initialData}
+            />
+          </SearchParamsWrapper>
         </div>
-        {isDetailsOpen && (
-          <div className="details-content">
-            <Outlet />
-          </div>
-        )}
       </div>
     </div>
   );

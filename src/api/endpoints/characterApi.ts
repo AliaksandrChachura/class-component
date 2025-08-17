@@ -6,7 +6,7 @@ const characterApi = baseApi.injectEndpoints({
     getCharacter: builder.query<Character, { id: number }>({
       keepUnusedDataFor: 600,
       query: ({ id }) => ({
-        url: `/character/${id}`,
+        url: `/characters/${id}`,
         method: 'GET',
       }),
       providesTags: (_result, _error, { id }) => [{ type: 'Character', id }],

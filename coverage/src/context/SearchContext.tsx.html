@@ -23,15 +23,15 @@
         </h1>
         <div class="clearfix">
           <div class="fl pad1y space-right2">
-            <span class="strong">81.81% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Statements</span>
-            <span class="fraction">9/11</span>
+            <span class="fraction">11/11</span>
           </div>
 
           <div class="fl pad1y space-right2">
-            <span class="strong">50% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Branches</span>
-            <span class="fraction">1/2</span>
+            <span class="fraction">3/3</span>
           </div>
 
           <div class="fl pad1y space-right2">
@@ -41,9 +41,9 @@
           </div>
 
           <div class="fl pad1y space-right2">
-            <span class="strong">81.81% </span>
+            <span class="strong">100% </span>
             <span class="quiet">Lines</span>
-            <span class="fraction">9/11</span>
+            <span class="fraction">11/11</span>
           </div>
         </div>
         <p class="quiet">
@@ -115,10 +115,10 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">61x</span>
-<span class="cline-any cline-yes">61x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">66x</span>
+<span class="cline-any cline-yes">66x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">61x</span>
 <span class="cline-any cline-yes">61x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { createContext, useContext } from 'react';
@@ -147,9 +147,9 @@ export const SearchContext = createContext&lt;SearchContextType | undefined&gt;(
 &nbsp;
 export const useSearchContext = (): SearchContextType =&gt; {
   const context = useContext(SearchContext);
-  if (!context) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
-<span class="cstat-no" title="statement not covered" >    throw new Error('useSearchContext must be used within a SearchProvider');</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+  if (!context) {
+    throw new Error('useSearchContext must be used within a SearchProvider');
+  }
   return context;
 };
 &nbsp;</pre></td></tr></table></pre>
@@ -166,7 +166,7 @@ export const useSearchContext = (): SearchContextType =&gt; {
         rel="noopener noreferrer"
         >istanbul</a
       >
-      at 2025-08-10T12:07:03.160Z
+      at 2025-08-17T22:12:00.817Z
     </div>
     <script src="../../prettify.js"></script>
     <script>
