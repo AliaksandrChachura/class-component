@@ -1,0 +1,10 @@
+{
+  "c": [
+    "app/[locale]/layout",
+    "app/[locale]/page",
+    "app/[locale]/results/page",
+    "webpack"
+  ],
+  "r": [],
+  "m": []
+}

@@ -159,6 +159,7 @@ const Results: React.FC<ResultsProps> = ({
           {characters.map((character) => (
             <Card
               key={character.id}
+              id={character.id.toString()}
               name={character.name}
               description={getCharacterDescription(character)}
               image={character.image}

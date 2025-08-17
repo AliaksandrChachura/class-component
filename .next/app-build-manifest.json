@@ -43,10 +43,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/search/route.js"
     ],
-    "/_not-found/page": [
+    "/api/csv/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/api/csv/route.js"
     ]
   }
 }

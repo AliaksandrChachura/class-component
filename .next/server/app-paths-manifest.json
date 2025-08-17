@@ -1,5 +1,6 @@
 {
   "/api/characters/route": "app/api/characters/route.js",
+  "/api/csv/route": "app/api/csv/route.js",
   "/[locale]/results/page": "app/[locale]/results/page.js",
   "/[locale]/results/[id]/page": "app/[locale]/results/[id]/page.js"
 }

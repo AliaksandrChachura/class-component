@@ -7,13 +7,14 @@ import { toggleSelectedItem } from '../store/slices/cardsSlicer';
 import type { RootState } from '../store';
 
 interface Props {
+  id: string;
   name: string;
   description: string;
   image?: string;
   onClick?: () => void;
 }
 
-const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
+const Card: React.FC<Props> = ({ id, name, description, image, onClick }) => {
   const { setItem } = useLocalStorageOperations();
   const { state } = useSearchContext();
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
   );
 
   const handleSelectedCharacter = () => {
-    setItem('selectedCharacter', { name, description, image });
+    setItem('selectedCharacter', { id, name, description, image });
     if (onClick) {
       onClick();
     }
@@ -31,12 +32,10 @@ const Card: React.FC<Props> = ({ name, description, image, onClick }) => {
 
   const handleCheckCharacter = () => {
     setChecked(!checked);
-    dispatch(
-      toggleSelectedItem({ id: name, name, description, image: image || '' })
-    );
+    dispatch(toggleSelectedItem({ id, name, description, image: image || '' }));
   };
 
-  const isSelected = selectedCards.some((card) => card.id === name);
+  const isSelected = selectedCards.some((card) => card.id === id);
 
   const cardClass = `card ${state.theme}`;
 

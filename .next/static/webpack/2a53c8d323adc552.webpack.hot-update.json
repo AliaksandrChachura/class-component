@@ -1,0 +1,8 @@
+{
+  "c": ["app/[locale]/page", "app/[locale]/results/page", "webpack"],
+  "r": [],
+  "m": [
+    "(app-pages-browser)/./src/hooks/useCSVDownload.ts",
+    "(app-pages-browser)/./src/styles/CSVDownloadButton.scss"
+  ]
+}

@@ -1,20 +1,21 @@
 import type { Card } from '../types';
+import { downloadCharactersCSVByIds } from '../lib/csvDownloader';
 
 function isCardInSelectedCards(cards: Card[], card: Card) {
   return cards.some((c) => c.id === card.id);
 }
 
-function downloadCsv(cards: Card[]) {
-  const csvContent = cards
-    .map((card) => `${card.name},${card.description},${card.image}`)
-    .join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${cards.length}_items.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+/**
+ * Downloads a CSV file containing character data using the server action
+ * @param characterIds Array of character IDs to include in the CSV
+ */
+async function downloadCsv(characterIds: string[]) {
+  try {
+    await downloadCharactersCSVByIds(characterIds);
+  } catch (error) {
+    console.error('Error downloading CSV:', error);
+    throw error;
+  }
 }
 
 export { isCardInSelectedCards, downloadCsv };
