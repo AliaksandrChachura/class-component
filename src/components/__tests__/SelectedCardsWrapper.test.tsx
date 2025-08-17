@@ -62,8 +62,14 @@ describe('SelectedCardsWrapper Component', () => {
     return configureStore({
       reducer: {
         selectedItems: (
-          state: TestStoreState['selectedItems'] = { selectedCards: [] }
-        ) => state,
+          state: TestStoreState['selectedItems'] = { selectedCards: [] },
+          action: { type: string }
+        ) => {
+          if (action.type === 'selectedItems/clearSelectedItems') {
+            return { ...state, selectedCards: [] };
+          }
+          return state;
+        },
       },
       preloadedState: initialState as TestStoreState,
     });

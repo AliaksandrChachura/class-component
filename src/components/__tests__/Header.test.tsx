@@ -33,7 +33,7 @@ vi.mock('next-intl', () => ({
 vi.mock('../../api/baseApi', () => ({
   baseApi: {
     util: {
-      invalidateTags: vi.fn(),
+      invalidateTags: vi.fn(() => ({ type: 'baseApi/util/invalidateTags' })),
     },
   },
 }));
