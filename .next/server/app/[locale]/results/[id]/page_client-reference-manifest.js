@@ -1,5 +1,5 @@
 globalThis.__RSC_MANIFEST = globalThis.__RSC_MANIFEST || {};
-globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
+globalThis.__RSC_MANIFEST['/[locale]/results/[id]/page'] = {
   moduleLoading: { prefix: '/_next/' },
   ssrModuleMapping: {
     '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':
@@ -356,7 +356,10 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
       {
         id: '(app-pages-browser)/./src/components/CharacterDetails.tsx',
         name: '*',
-        chunks: [],
+        chunks: [
+          'app/[locale]/results/[id]/page',
+          'static/chunks/app/%5Blocale%5D/results/%5Bid%5D/page.js',
+        ],
         async: false,
       },
   },
@@ -371,6 +374,8 @@ globalThis.__RSC_MANIFEST['/[locale]/results/page'] = {
     ],
     '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/results/page':
       [{ inlined: false, path: 'static/css/app/[locale]/results/page.css' }],
+    '/Users/ales/Desktop/Cources/React/class-component/src/app/[locale]/results/[id]/page':
+      [],
   },
   rscModuleMapping: {
     '(app-pages-browser)/./node_modules/next-intl/dist/esm/development/shared/NextIntlClientProvider.js':

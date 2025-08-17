@@ -66,6 +66,21 @@ vi.mock('next-intl/navigation', () => ({
   }),
 }));
 
+// Mock CreateNavigation component to ensure its exported functions are mocked
+vi.mock('../components/CreateNavigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+  }),
+  usePathname: () => '/',
+  Link: vi.fn(),
+  redirect: vi.fn(),
+  default: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 // Mock next/image
 vi.mock('next/image', () => ({
   default: ({

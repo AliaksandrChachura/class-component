@@ -9,21 +9,16 @@ export async function getCharacters(
 ): Promise<RickMortyResponse> {
   const { page = 1, name = '' } = params;
 
-  let apiUrl = '/api/characters';
-  const searchParams = new URLSearchParams();
-  searchParams.set('page', page.toString());
-  if (name) {
-    searchParams.set('name', name);
-  }
-  if (searchParams.toString()) {
-    apiUrl += `?${searchParams.toString()}`;
-  }
-
+  // For server-side calls, we can directly call the Rick and Morty API
+  // instead of going through our own API route
   try {
-    const baseUrl = process.env.VERCEL_URL || 'http://localhost:3000';
-    const fullUrl = `${baseUrl}${apiUrl}`;
+    const apiUrl = new URL('https://rickandmortyapi.com/api/character');
+    apiUrl.searchParams.set('page', page.toString());
+    if (name) {
+      apiUrl.searchParams.set('name', name);
+    }
 
-    const response = await fetch(fullUrl, {
+    const response = await fetch(apiUrl.toString(), {
       next: {
         revalidate: 60,
         tags: ['characters', `page-${page}`, name ? `search-${name}` : 'all'],
@@ -31,6 +26,17 @@ export async function getCharacters(
     });
 
     if (!response.ok) {
+      if (response.status === 404) {
+        return {
+          info: {
+            count: 0,
+            pages: 0,
+            next: null,
+            prev: null,
+          },
+          results: [],
+        };
+      }
       throw new Error(`Failed to fetch characters: ${response.status}`);
     }
 
@@ -52,13 +58,15 @@ export async function getCharacters(
 
 export async function getCharacterById(id: string): Promise<Character> {
   try {
-    const baseUrl = process.env.VERCEL_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/characters/${id}`, {
-      next: {
-        revalidate: 300,
-        tags: ['character', `id-${id}`],
-      },
-    });
+    const response = await fetch(
+      `https://rickandmortyapi.com/api/character/${id}`,
+      {
+        next: {
+          revalidate: 300,
+          tags: ['character', `id-${id}`],
+        },
+      }
+    );
 
     if (!response.ok) {
       if (response.status === 404) {
