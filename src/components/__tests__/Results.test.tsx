@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import Results from '../Results';
 import { SearchProvider } from '../../context/SearchProvider';
+import { baseApi } from '../../api/baseApi';
 import type { RickMortyResponse, Character } from '../../types/api';
 
 // Mock next/navigation
@@ -64,12 +65,24 @@ vi.mock('../../context/SearchContext', () => ({
   useSearchContext: () => mockSearchContextValue,
 }));
 
+// Mock the charactersApi to avoid actual HTTP requests
+vi.mock('../../api/endpoints/charactersApi', () => ({
+  useGetCharactersQuery: vi.fn(() => ({
+    data: undefined,
+    isLoading: false,
+    error: null,
+  })),
+}));
+
 // Create a test Redux store
 const createTestStore = (preloadedState = {}) => {
   return configureStore({
     reducer: {
       selectedItems: (state = { selectedCards: [] }) => state,
+      [baseApi.reducerPath]: baseApi.reducer,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(baseApi.middleware),
     preloadedState,
   });
 };
